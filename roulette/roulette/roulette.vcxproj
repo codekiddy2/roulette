@@ -55,6 +55,7 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="D:\GitHub\Visual-Studio-gtkmm\properties\user_debug_64.props" />
+    <Import Project="..\..\..\Visual-Studio-gtkmm\properties\user_stack_boost.props" />
     <Import Project="D:\GitHub\Visual-Studio-gtkmm\properties\user_stack_gtkmm.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
@@ -98,18 +99,38 @@
     <ClCompile />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="chip.hh" />
+    <ClInclude Include="chipset.hh" />
+    <ClInclude Include="field.hpp" />
+    <ClInclude Include="History.hpp" />
     <ClInclude Include="MainWindow.h" />
+    <ClInclude Include="NumberSets.hpp" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="table.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="chip.cc" />
+    <ClCompile Include="chipset.cc" />
+    <ClCompile Include="field.cc" />
+    <ClCompile Include="History.cc" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="NumberSets.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="table.cc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="chip1.ico" />
+    <Image Include="chip100.ico" />
+    <Image Include="chip25.ico" />
+    <Image Include="chip5.ico" />
+    <Image Include="chip50.ico" />
+    <Image Include="RedDice.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -9,12 +9,33 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{4b06d344-866f-49e8-a419-a13d5d2f3746}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MainWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="History.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NumberSets.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="table.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="field.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="chipset.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="chip.hh">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -28,5 +49,43 @@
     <ClCompile Include="MainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="History.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NumberSets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="table.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="field.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chipset.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chip.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="RedDice.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="chip1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="chip5.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="chip25.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="chip50.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="chip100.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
