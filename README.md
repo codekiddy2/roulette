@@ -10,4 +10,4 @@ design roulette table and drag and drop chips onto table
 
 **Screenshot of current design**
 
-![](https://raw.githubusercontent.com/codekiddy2/Test/master/roulette/screenshot.png)
+![](https://raw.githubusercontent.com/codekiddy2/roulette/master/screenshot.png)
