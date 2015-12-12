@@ -125,6 +125,10 @@ short get_neighbor(const ETable table, const short refNum, const short position)
 	using std::find;
 	static set_t::const_iterator iter;
 
+#ifdef _MSC_VER
+#pragma warning (disable: 4061 4062) // TODO: case statement not handled
+#endif
+
 	switch (table)
 	{
 	case ETable::NoZero:
@@ -169,7 +173,8 @@ short get_neighbor(const ETable table, const short refNum, const short position)
 		}
 		break;
 
-	default:
+	case ETable::French:
+	case ETable::European:
 		iter = find(EuropeanWheel.begin(), EuropeanWheel.end(), refNum);
 		while (i != position)
 		{
@@ -189,6 +194,18 @@ short get_neighbor(const ETable table, const short refNum, const short position)
 			}
 		}
 		break;
+		// TODO: implement functionality
+
+		//case ETable::SingleImprisonment:
+		//case ETable::InfininiteImprisonment:
+		//case ETable::DoubleImprisonment:
+		//case ETable::TripleImprisonment:
+		//	break;
 	}
+
+#ifdef _MSC_VER
+#pragma warning (default: 4061 4062) // case statement not handled
+#endif // _MSC_VER
+	
 	return *iter;
 }

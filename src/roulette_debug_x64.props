@@ -11,7 +11,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifest>false</GenerateManifest>
-    <CodeAnalysisRuleSet>D:\Github\Install\VisualStudio\Team Tools\Static Analysis Tools\Rule Sets\NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>roulette.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemDefinitionGroup>
@@ -26,7 +26,7 @@
       <PreprocessorDefinitions>BOOST_ALL_NO_LIB;WIN32;WIN64;DEBUG;WINVER=0x0A00;_WIN32_WINNT=0x0A00;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CompileAsManaged>false</CompileAsManaged>
       <CompileAsWinRT>false</CompileAsWinRT>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <OpenMPSupport>false</OpenMPSupport>
@@ -42,6 +42,7 @@
       <DisableLanguageExtensions>true</DisableLanguageExtensions>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <BrowseInformation>true</BrowseInformation>
+      <DisableSpecificWarnings>4820;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -22,9 +22,18 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 
 #ifdef _MSC_VER
-__pragma(warning(disable: 4309 4505 4250 4710)) __pragma(warning(push, 0)) // disable warnings
 
-#define _SCL_SECURE_NO_WARNINGS // boost
+// disabled warnings for /W4
+#pragma warning(disable: 4309) // lvl2 'conversion' : truncation of constant value
+#pragma warning(disable: 4505) // lvl4 'function' : unreferenced local function has been removed
+#pragma warning(disable: 4250) // lvl2 'class1' : inherits 'class2::member' via dominance
+#pragma warning(disable: 4710) // lvl4 the compiler did not perform the inlining.
+#pragma warning(disable: 4996) // lvl3 The compiler encountered a deprecated declaration.
+#pragma warning(push, 0))
+
+// disabled in property sheet for /WAll
+//#pragma warning (disable: 4820) // '4' bytes padding added after data member
+
 #endif // _MSC_VER
 
 // std
@@ -64,7 +73,9 @@ __pragma(warning(disable: 4309 4505 4250 4710)) __pragma(warning(push, 0)) // di
 //#define DEBUG_DND_VERBOSE
 
 #ifdef _MSC_VER
-__pragma(warning(default: 4309 4505 4250 4710)) __pragma(warning(pop)) // enable warnings
+// reenable warnings for /W4
+#pragma warning(default: 4309 4505 4250 4710 4996))
+#pragma warning(pop))
 #endif // _MSC_VER
 
 #endif // ! PCH_HH

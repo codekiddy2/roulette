@@ -1,8 +1,3 @@
-
-#ifdef _MSC_VER
-#pragma region begin
-#endif // _MSC_VER
-
 /*
 roulette - roulette simulation program
 
@@ -30,6 +25,10 @@ using std::cerr;
 using std::endl;
 using std::cout;
 
+
+#ifdef _MSC_VER
+#pragma region begin
+#endif // _MSC_VER
 
 Gdk::RGBA Chip::mBackground;
 std::vector<Gtk::TargetEntry> listTargets;
@@ -85,7 +84,7 @@ Provides DragContext.
 
 
 #ifdef _MSC_VER
-#pragma warning (disable: 4100) // unreferenced formal parameter
+#pragma warning (disable: 4100) // TODO: unreferenced formal parameter
 #endif // _MSC_VER
 
 
@@ -123,7 +122,7 @@ void Chip::on_drag_begin(const Glib::RefPtr<Gdk::DragContext>& context)
 }
 
 #ifdef _MSC_VER
-#pragma warning (default: 4100)
+#pragma warning (default: 4100) // unreferenced formal parameter
 
 #pragma endregion
 

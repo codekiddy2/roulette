@@ -1,8 +1,3 @@
-
-#ifdef _MSC_VER
-#pragma region begin
-#endif // _MSC_VER
-
 /*
 roulette - roulette simulation program
 
@@ -22,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
+
 #include "pch.hh"
 #include "field.hh"
 #include "sets.hh"
@@ -31,6 +27,9 @@ using std::cerr;
 using std::endl;
 using std::cout;
 
+#ifdef _MSC_VER
+#pragma region begin
+#endif // _MSC_VER
 
 Field::Field(const int num) :
 	//The GType name will actually be gtkmm__CustomObject_Field
@@ -110,7 +109,7 @@ drag_leave:
 
 
 #ifdef _MSC_VER
-#pragma warning (disable: 4100) // unreferenced formal parameter
+#pragma warning (disable: 4100) // TODO: unreferenced formal parameter
 #endif // _MSC_VER
 
 bool Field::on_drag_motion(const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time)
@@ -161,7 +160,7 @@ void Field::on_drag_data_received(const Glib::RefPtr<Gdk::DragContext>& context,
 }
 
 #ifdef _MSC_VER
-#pragma warning (default: 4100)
+#pragma warning (default: 4100) // unreferenced formal parameter
 
 #pragma endregion
 
