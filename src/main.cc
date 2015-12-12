@@ -1,5 +1,6 @@
-#ifndef CHIPSET_HH
-#define CHIPSET_HH 1
+
+#include "pch.hh"
+#include "window.hh"
 
 /*
 roulette - roulette simulation program
@@ -20,31 +21,20 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
-#include "chip.hh"
 
-#include <gtkmm/gdkmm/rgba.h>
-#include <gtkmm/buttonbox.h>
-
-
-class Chipset final
-	: public Gtk::ButtonBox
+int main(int argc, char* argv[])
 {
-public:
-	// constructors
-	Chipset(Gdk::RGBA& color);
-	Chipset(const Chipset&) = delete;
-	Chipset(const Chipset&&) = delete;
-	Chipset& operator=(const Chipset&) = delete;
-	Chipset& operator=(const Chipset&&) = delete;
 
-private:
-	/// begin initializer list
-	Chip mChip1;
-	Chip mChip5;
-	Chip mChip25;
-	Chip mChip50;
-	Chip mChip100;
-	/// end initializer list
-};
+	Glib::RefPtr<Gtk::Application> app = Gtk::Application::create( argc, argv, "roulette.exe" );
 
-#endif // ! CHIPSET_HH
+	Window* p_window = new Window;
+
+	if ( p_window )
+	{
+		return app->run( *p_window );
+	}
+	else
+	{
+		return 1;
+	}
+}

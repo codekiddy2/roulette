@@ -1,7 +1,6 @@
 
 #include "pch.hh"
-#include "field.hh"
-#include "sets.hh"
+#include "control.hh"
 
 /*
 roulette - roulette simulation program
@@ -23,102 +22,66 @@ along with this program. If not, see http://www.gnu.org/licenses.
 */
 
 
-Field::Field(Gdk::RGBA& color, int num) :
-	//The GType name will actually be gtkmm__CustomObject_Field
-	Glib::ObjectBase("Field"),
+Control::Control(Gdk::RGBA& color, std::string name) :
+	//The GType name will actually be gtkmm__CustomObject_Control
+	Glib::ObjectBase("Control"),
 	Gtk::Widget(),
-	mName(std::to_string(num)),
-	//mBackground(color),
-	mLayout(create_pango_layout(mName.c_str()))
+	mBackground(color),
+	mName(name),
+	mLayout(create_pango_layout(name))
 {
 	set_has_window(true);
 
 	mFont.set_family("Sherif");
 	mLayout->set_font_description(mFont);
 
-	if (IsRed(num))
-	{
-		mBackground.set("Red");
-	}
-	else if (num != 0)
-	{
-		mBackground.set("Black");
-	}
-	else
-	{
-		mBackground = color;
-	}
-}
-
-
-Field::Field(Gdk::RGBA& color, std::string text) :
-	//The GType name will actually be gtkmm__CustomObject_Field
-	Glib::ObjectBase("Field"),
-	Gtk::Widget(),
-	mName(text),
-	//mBackground(color),
-	mLayout(create_pango_layout(text))
-{
-	set_has_window(true);
-
-	mFont.set_family("Sherif");
-	mLayout->set_font_description(mFont);
-
-	if (text == "RED")
-	{
-		mBackground.set("Red");
-	}
-	else if (text == "BLACK")
-	{
-		mBackground.set("Black");
-	}
-	else
-	{
-		mBackground = color;
-	}
+	// make me receive 'clicked' event
+	set_events(Gdk::EventMask::BUTTON_PRESS_MASK);
 }
 
 
 // (optional) Return what Gtk::SizeRequestMode is preferred by the widget.
-Gtk::SizeRequestMode Field::get_request_mode_vfunc() const
+Gtk::SizeRequestMode Control::get_request_mode_vfunc() const
 {
 	//Accept the default value supplied by the base class.
 	return Gtk::Widget::get_request_mode_vfunc();
 }
 
 // Calculate the minimum and natural width of the widget.
-void Field::get_preferred_width_vfunc(int& minimum_width, int& natural_width) const
+void Control::get_preferred_width_vfunc(int& minimum_width, int& natural_width) const
 {
-	minimum_width = 60;
-	natural_width = 60;
+	// or refIcon->get_width();
+	minimum_width = 50;
+	natural_width = 50;
 }
 
 
 // Calculate the minimum and natural height of the widget.
-void Field::get_preferred_height_vfunc(int& minimum_height, int& natural_height) const
+void Control::get_preferred_height_vfunc(int& minimum_height, int& natural_height) const
 {
-	minimum_height = 83;
-	natural_height = 83;
+	// or refIcon->get_height();
+	minimum_height = 50;
+	natural_height = 50;
 }
 
 // Calculate the minimum and natural width of the widget, if it would be given the specified height.
-void Field::get_preferred_width_for_height_vfunc(int /* height */,
+void Control::get_preferred_width_for_height_vfunc(int /* height */,
 	int& minimum_width, int& natural_width) const
 {
-	minimum_width = 60;
-	natural_width = 60;
+	minimum_width = 50;
+	natural_width = 50;
 }
 
 // Calculate the minimum and natural height of the widget, if it would be given the specified width.
-void Field::get_preferred_height_for_width_vfunc(int /* width */,
+void Control::get_preferred_height_for_width_vfunc(int /* width */,
 	int& minimum_height, int& natural_height) const
 {
-	minimum_height = 83;
-	natural_height = 83;
+	minimum_height = 50;
+	natural_height = 50;
 }
 
 // Position the widget, given the height and width that it has actually been given.
-void Field::on_size_allocate(Gtk::Allocation& allocation)
+void Control::on_size_allocate(Gtk::Allocation& allocation)
 {
 	//Do something with the space that we have actually been given:
 	//(We will not be given heights or widths less than we have requested, though
@@ -135,21 +98,21 @@ void Field::on_size_allocate(Gtk::Allocation& allocation)
 }
 
 // (optional)
-void Field::on_map()
+void Control::on_map()
 {
 	//Call base class:
 	Gtk::Widget::on_map();
 }
 
 // (optional)
-void Field::on_unmap()
+void Control::on_unmap()
 {
 	//Call base class:
 	Gtk::Widget::on_unmap();
 }
 
 // Associate a Gdk::Window with the widget.
-void Field::on_realize()
+void Control::on_realize()
 {
 	//Do not call base class Gtk::Widget::on_realize().
 	//It's intended only for widgets that set_has_window(false).
@@ -185,7 +148,7 @@ void Field::on_realize()
 }
 
 // (optional) Break the association with the Gdk::Window.
-void Field::on_unrealize()
+void Control::on_unrealize()
 {
 	m_refGdkWindow.reset();
 
@@ -194,7 +157,7 @@ void Field::on_unrealize()
 }
 
 // Draw on the supplied Cairo::Context.
-bool Field::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+bool Control::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
 	Gtk::Allocation allocation = get_allocation();
 	const int width = allocation.get_width();
@@ -212,7 +175,10 @@ bool Field::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	// stroke lines around filed
 	cr->set_source_rgb(1.0, 1.0, 1.0);
 	cr->set_line_width(1.0);
-	cr->rectangle(0.0, 0.0, width, height);
+	cr->move_to(0.0, 0.0);
+	cr->line_to(0.0, height);
+	cr->line_to(width, height);
+	cr->line_to(width, 0.0);
 	cr->stroke();
 
 	// show text
@@ -221,7 +187,7 @@ bool Field::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	return true;
 }
 
-void Field::draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
+void Control::draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
 	int rectangle_width, int rectangle_height)
 {
 	int text_width;

@@ -1,5 +1,5 @@
-#ifndef CHIP_HH
-#define CHIP_HH 1
+#ifndef CONTROL_HH
+#define CONTROL_HH 1
 
 /*
 roulette - roulette simulation program
@@ -23,27 +23,29 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <string>
 #include <gtkmm/widget.h>
 #include <glibmm/refptr.h>
+#include <pangomm/layout.h>
+#include <pangomm/fontdescription.h>
 #include <gdkmm/color.h>
 #include <gdkmm/window.h>
-#include <gdkmm/pixbuf.h>
 #include <gdkmm/rectangle.h> // Gtk::Allocation
 #include <cairomm/refptr.h>
 #include <cairomm/context.h>
 
 
-class Chip final
+class Control final
 	: public Gtk::Widget
 {
 public:
 	// constructors
-	Chip(Gdk::RGBA& color, std::string icon);
-	Chip(const Chip&) = delete;
-	Chip(const Chip&&) = delete;
-	Chip& operator=(const Chip&) = delete;
-	Chip& operator=(const Chip&&) = delete;
+	Control(Gdk::RGBA& color, std::string name);
+	Control(const Control&) = delete;
+	Control(const Control&&) = delete;
+	Control& operator=(const Control&) = delete;
+	Control& operator=(const Control&&) = delete;
 
 protected:
-	//Overrides:
+
+	// Overrides
 	Gtk::SizeRequestMode get_request_mode_vfunc() const override;
 	void get_preferred_width_vfunc(int& minimum_width, int& natural_width) const override;
 	void get_preferred_height_for_width_vfunc(int width, int& minimum_height, int& natural_height) const  override;
@@ -61,12 +63,16 @@ protected:
 
 private:
 	// members
-	Glib::RefPtr<Gdk::Pixbuf> refIcon;
+	Pango::FontDescription mFont;
 
 	/// begin initializer list
-	std::string mName;
 	Gdk::RGBA mBackground;
+	std::string mName;
+	Glib::RefPtr<Pango::Layout> mLayout;
 	/// end initializer list
+
+	// methods
+	void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int rectangle_width, int rectangle_height);
 };
 
-#endif // ! CHIP_HH
+#endif // ! CONTROL_HH

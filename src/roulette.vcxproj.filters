@@ -14,47 +14,38 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MainWindow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="History.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NumberSets.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="table.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="field.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="chipset.hh">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="chip.hh">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="control.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="controlset.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="history.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="field.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sets.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="table.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="window.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MainWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="History.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="NumberSets.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="table.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -67,11 +58,29 @@
     <ClCompile Include="chip.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="control.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="controlset.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="window.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sets.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="history.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="RedDice.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="chip1.ico">
       <Filter>Resource Files</Filter>
     </Image>
@@ -85,6 +94,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="chip100.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="roulette.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

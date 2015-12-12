@@ -1,5 +1,5 @@
-#ifndef CHIPSET_HH
-#define CHIPSET_HH 1
+#ifndef TABLE_HH
+#define TABLE_HH 1
 
 /*
 roulette - roulette simulation program
@@ -20,31 +20,30 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
-#include "chip.hh"
+#include "field.hh"
 
-#include <gtkmm/gdkmm/rgba.h>
-#include <gtkmm/buttonbox.h>
+#include <vector>
+#include <gtkmm/box.h>
+#include <gtkmm/grid.h>
+#include <gdkmm/rgba.h>
 
 
-class Chipset final
-	: public Gtk::ButtonBox
+class Table final :
+	public Gtk::Box
 {
 public:
 	// constructors
-	Chipset(Gdk::RGBA& color);
-	Chipset(const Chipset&) = delete;
-	Chipset(const Chipset&&) = delete;
-	Chipset& operator=(const Chipset&) = delete;
-	Chipset& operator=(const Chipset&&) = delete;
+	Table(Gdk::RGBA& color);
+	~Table();
+	Table(const Table&) = delete;
+	Table(const Table&&) = delete;
+	Table& operator=(const Table&) = delete;
+	Table& operator=(const Table&&) = delete;
 
 private:
-	/// begin initializer list
-	Chip mChip1;
-	Chip mChip5;
-	Chip mChip25;
-	Chip mChip50;
-	Chip mChip100;
-	/// end initializer list
+	// members
+	Gtk::Grid mGrid;
+	std::vector<Field*> mFields;
 };
 
-#endif // ! CHIPSET_HH
+#endif // ! TABLE_HH

@@ -1,17 +1,35 @@
 
-#include "stdafx.h"
+#include "pch.hh"
 #include "chip.hh"
 
+/*
+roulette - roulette simulation program
 
-Chip::Chip(std::string text) :
+Copyright (C) 2015 codekiddy
+
+roulette is free software: you can redistribute it
+and/or modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation, either version 3
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see http://www.gnu.org/licenses.
+*/
+
+
+Chip::Chip(Gdk::RGBA& color, std::string text) :
 	//The GType name will actually be gtkmm__CustomObject_Chip
 	Glib::ObjectBase("Chip"),
 	Gtk::Widget(),
-	mName(text)
+	mName(text),
+	mBackground(color)
 {
 	set_has_window(true);
-
-	mBackground.set_rgb_p(0.0, 0.5, 0.0);
 
 	if (boost::filesystem::exists(mName))
 	{
@@ -149,19 +167,15 @@ bool Chip::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	const int chip_cy = refIcon->get_height() / 2;
 
 	// paint the background
-	static double red = mBackground.get_red_p();
-	static double green = mBackground.get_green_p();
-	static double blue = mBackground.get_blue_p();
+	static double red = mBackground.get_red();
+	static double green = mBackground.get_green();
+	static double blue = mBackground.get_blue();
 
 	cr->set_source_rgb(red, green, blue);
 	cr->paint();
 
 	// draw chip
-	//cr->rectangle(20, 20, refIcon->get_width(), refIcon->get_height());
-	//cr->clip();
 	Gdk::Cairo::set_source_pixbuf(cr, refIcon, cx - chip_cx, cy - chip_cy);
-
-	//cr->move_to(width / 2, height / 2);
 	cr->paint();
 
 	return true;
