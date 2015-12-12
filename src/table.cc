@@ -25,8 +25,10 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 Table::Table(Gdk::RGBA& color)
 {
-	add(mGrid);
-	override_background_color(color);
+	pack_end(mGrid, Gtk::PACK_EXPAND_WIDGET);
+
+	mGrid.set_column_homogeneous(true);
+	mGrid.set_row_homogeneous(true);
 
 	// zero
 	mFields.push_back(new Field(color, 0));

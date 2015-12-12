@@ -31,5 +31,5 @@ Controlset::Controlset(Gdk::RGBA& color) :
 	pack_end(mBtnSpin, Gtk::PACK_SHRINK);
 	pack_end(mBtnSpin50, Gtk::PACK_SHRINK);
 
-	override_background_color(color);
+	//override_background_color(color);
 }

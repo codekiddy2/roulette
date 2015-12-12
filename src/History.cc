@@ -35,7 +35,7 @@ History::History() :
 	mTagGreen(Gtk::TextBuffer::Tag::create())
 {
 	// window properties
-	set_size_request(100, 0);
+	//set_size_request(100, 0);
 	set_policy(Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
 
 	// packing

@@ -33,8 +33,11 @@ Window::Window() :
 	mFrameBets("Bets")
 {
 	// Window options
+	int width = 500;
+	int height = 300;
+
 	set_title("roulette");
-	set_size_request(500, 300);
+	set_size_request(width, height);
 	set_position(Gtk::WIN_POS_CENTER);
 
 	if (boost::filesystem::exists("roulette.ico"))
@@ -43,33 +46,33 @@ Window::Window() :
 		set_icon(refIcon);
 	}
 
-	// packing
-	add(mVBoxTop);
-	mVBoxTop.pack_start(mHBoxArea);
-	mVBoxTop.pack_start(mHboxControls);
-
-	// history widnow
+	// begin packing
+	add(mHBoxTop);
+	
+	// PACKING from left to right
+	mHBoxTop.pack_start(mFrameHistory, Gtk::PACK_SHRINK); // history widnow
 	mFrameHistory.add(mHistory);
-	mHBoxArea.pack_start(mFrameHistory, Gtk::PACK_EXPAND_WIDGET);
+	mFrameHistory.set_size_request(width / 5, 0);
+	mHBoxTop.pack_start(mVBoxArea, Gtk::PACK_EXPAND_WIDGET);
 
-	// Table
+	// PACKING from top to bottom
+	mVBoxArea.pack_start(mFrameBets, Gtk::PACK_EXPAND_WIDGET); // Table
 	mFrameBets.add(mTable);
-	mHBoxArea.pack_start(mFrameBets, Gtk::PACK_EXPAND_WIDGET);
-
-	// buttons
-	mHboxControls.pack_end(mControlset, Gtk::PACK_SHRINK);
-
-	// buttonbox properties
+	mVBoxArea.pack_start(mHBoxControls, Gtk::PACK_SHRINK);
+	mHBoxControls.override_background_color(mBackground); // TODO: temporary background color
+	
+	// PACKING from right to left
+	mHBoxControls.pack_end(mControlset, Gtk::PACK_SHRINK); // Controlset
+	mHBoxControls.pack_end(mChipset, Gtk::PACK_SHRINK); // chipset
+	
+	// Controlset properties
 	mControlset.set_spacing(0);
 	mControlset.set_border_width(0);
-	mControlset.set_layout(Gtk::BUTTONBOX_END);
+	//mControlset.set_layout(Gtk::BUTTONBOX_END);
 
-	// chipset
-	mHboxControls.pack_end(mChipset, Gtk::PACK_EXPAND_WIDGET);
-
+	// Chipset properties
 	mChipset.set_spacing(0);
 	mChipset.set_border_width(0);
-	//mChipset.set_layout(Gtk::BUTTONBOX_END);
 
 	show_all();
 

@@ -46,9 +46,9 @@ public:
 
 private:
 	// members
-	Gtk::VBox mVBoxTop;
-	Gtk::HBox mHBoxArea;
-	Gtk::HBox mHboxControls;
+	Gtk::HBox mHBoxTop;
+	Gtk::VBox mVBoxArea;
+	Gtk::HBox mHBoxControls;
 	Glib::RefPtr<Gdk::Pixbuf> refIcon;
 
 	/// begin initializer list

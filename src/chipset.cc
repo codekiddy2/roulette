@@ -35,5 +35,6 @@ Chipset::Chipset(Gdk::RGBA& color) :
 	pack_end(mChip50, Gtk::PACK_SHRINK);
 	pack_end(mChip100, Gtk::PACK_SHRINK);
 
-	override_background_color(color);
+	// TODO: temporary background color
+	// override_background_color(color);
 }
