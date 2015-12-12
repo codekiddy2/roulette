@@ -1,7 +1,3 @@
-
-#include "pch.hh"
-#include "chip.hh"
-
 /*
 roulette - roulette simulation program
 
@@ -21,12 +17,15 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
+#include "pch.hh"
+#include "chip.hh"
 
-Chip::Chip(const Gdk::RGBA& background, const std::string file_name) :
+Gdk::RGBA Chip::mBackground;
+
+Chip::Chip(const std::string file_name) :
 	//The GType name will actually be gtkmm__CustomObject_Chip
 	Glib::ObjectBase("Chip"),
-	Gtk::Widget(),
-	mBackground(background)
+	Gtk::Widget()
 {
 	set_has_window(true);
 
@@ -36,6 +35,10 @@ Chip::Chip(const Gdk::RGBA& background, const std::string file_name) :
 	}
 }
 
+void Chip::set_background_color(const Gdk::RGBA & color)
+{
+	mBackground = color;
+}
 
 // (optional) Return what Gtk::SizeRequestMode is preferred by the widget.
 Gtk::SizeRequestMode Chip::get_request_mode_vfunc() const

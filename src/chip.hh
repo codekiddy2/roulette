@@ -36,11 +36,10 @@ class Chip final
 {
 public:
 	// constructors
-	Chip(const Gdk::RGBA& background, const std::string file_name);
-	Chip(const Chip&) = delete;
-	Chip(const Chip&&) = delete;
-	Chip& operator=(const Chip&) = delete;
-	Chip& operator=(const Chip&&) = delete;
+	Chip(const std::string file_name);
+
+	// methods
+	static void set_background_color(const Gdk::RGBA& color);
 
 protected:
 	//Overrides:
@@ -62,10 +61,13 @@ protected:
 private:
 	// members
 	Glib::RefPtr<Gdk::Pixbuf> refIcon;
+	static Gdk::RGBA mBackground;
 
-	/// begin initializer list
-	Gdk::RGBA mBackground;
-	/// end initializer list
+	// deleted
+	Chip(const Chip&) = delete;
+	Chip(const Chip&&) = delete;
+	Chip& operator=(const Chip&) = delete;
+	Chip& operator=(const Chip&&) = delete;
 };
 
 #endif // ! CHIP_HH

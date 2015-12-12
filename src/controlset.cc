@@ -1,4 +1,3 @@
-
 /*
 roulette - roulette simulation program
 
@@ -22,10 +21,10 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "controlset.hh"
 
 
-Controlset::Controlset(const Gdk::RGBA& color) :
-	mBtnClose(color, "Close"),
-	mBtnSpin(color, "Spin"),
-	mBtnSpin50(color, "Spin 50x")
+Controlset::Controlset() :
+	mBtnClose("Close"),
+	mBtnSpin("Spin"),
+	mBtnSpin50("Spin 50x")
 {
 	pack_end(mBtnClose, Gtk::PACK_SHRINK);
 	pack_end(mBtnSpin, Gtk::PACK_SHRINK);

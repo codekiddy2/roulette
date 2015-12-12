@@ -41,34 +41,35 @@ class Window final :
 public:
 	// constructors
 	Window();
-	~Window();
-	Window(const Window&) = delete;
-	Window(const Window&&) = delete;
-	Window& operator=(const Window&) = delete;
-	Window& operator=(const Window&&) = delete;
+	virtual ~Window();
 
 private:
+	// methods
+	bool on_button_close(GdkEventButton* button_event);
+	bool on_button_spin(GdkEventButton* button_event);
+	bool on_button_spin50(GdkEventButton* button_event);
+
 	// members
 	Gtk::HBox mHBoxTop;
 	Gtk::VBox mVBoxArea;
 	Gtk::HBox mHBoxControls;
 	Glib::RefPtr<Gdk::Pixbuf> refIcon;
-
-	/// begin initializer list
-	Gdk::RGBA mBackground; // TODO: static RGBA
-	Table mTable;
 	Chipset mChipset;
 	Controlset mControlset;
+	Table mTable;
+
+	/// begin initializer list
 	History* mHistory;
 	Engine mEngine;
 	Gtk::Frame mFrameHistory;
 	Gtk::Frame mFrameBets;
 	/// end of initializer list
 
-	// methods
-	bool on_button_close(GdkEventButton* button_event);
-	bool on_button_spin(GdkEventButton* button_event);
-	bool on_button_spin50(GdkEventButton* button_event);
+	// deleted
+	Window(const Window&) = delete;
+	Window(const Window&&) = delete;
+	Window& operator=(const Window&) = delete;
+	Window& operator=(const Window&&) = delete;
 };
 
 #endif // ! WINDOW_HH

@@ -33,22 +33,25 @@ class Table final :
 {
 public:
 	// constructors
-	Table(const Gdk::RGBA& color, const ETable table_type = ETable::European);
-	~Table();
-	Table(const Table&) = delete;
-	Table(const Table&&) = delete;
-	Table& operator=(const Table&) = delete;
-	Table& operator=(const Table&&) = delete;
+	Table(const ETable table_type = ETable::European);
+	virtual ~Table();
 
 	// methods
 	ETable get_table_type();
 
 private:
 	// members
+	std::vector<Field*> mFields;
+
 	/// begin initializer list
 	ETable mTableType;
 	/// end initializer list
-	std::vector<Field*> mFields;
+
+	// deleted
+	Table(const Table&) = delete;
+	Table(const Table&&) = delete;
+	Table& operator=(const Table&) = delete;
+	Table& operator=(const Table&&) = delete;
 };
 
 #endif // ! TABLE_HH

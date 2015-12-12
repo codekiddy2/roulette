@@ -40,6 +40,7 @@ short which_column(const short number);
 short which_dozen(const short number);
 short get_neighbor(const ETable table, const short refNum, const short position);
 
+// TODO: consider using unordered set to avoid vector messing with numbers
 typedef const std::vector<short> set_t;
 
 extern set_t NoZeroWheel;
@@ -231,4 +232,3 @@ enum class EField
 };
 
 #endif // ! SETS_HH
-

@@ -31,11 +31,7 @@ class Chipset final
 {
 public:
 	// constructors
-	Chipset(const Gdk::RGBA& color);
-	Chipset(const Chipset&) = delete;
-	Chipset(const Chipset&&) = delete;
-	Chipset& operator=(const Chipset&) = delete;
-	Chipset& operator=(const Chipset&&) = delete;
+	Chipset();
 
 private:
 	/// begin initializer list
@@ -45,6 +41,12 @@ private:
 	Chip mChip50;
 	Chip mChip100;
 	/// end initializer list
+
+	// deleted
+	Chipset(const Chipset&) = delete;
+	Chipset(const Chipset&&) = delete;
+	Chipset& operator=(const Chipset&) = delete;
+	Chipset& operator=(const Chipset&&) = delete;
 };
 
 #endif // ! CHIPSET_HH

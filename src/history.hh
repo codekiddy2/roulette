@@ -20,15 +20,13 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
-//#include "engine.hh"
-
+#include <string>
 #include <glibmm/refptr.h>
 #include <gtkmm/box.h>
 #include <gtkmm/textview.h>
 #include <gtkmm/textbuffer.h>
 #include <gtkmm/scrolledwindow.h>
 
-class Engine;
 
 class History final
 	: public Gtk::ScrolledWindow
@@ -36,26 +34,64 @@ class History final
 public:
 	// constructors
 	History();
-	History(const History&) = delete;
-	History(const History&&) = delete;
-	History& operator=(const History&) = delete;
-	History& operator=(const History&&) = delete;
 
 	// methods
 	void apply_tags();
 
-	/// begin initializer list
+	inline void set_red_buffer_text(std::string text);
+	inline void set_black_buffer_text(std::string text);
+	inline void set_green_buffer_text(std::string text);
+
+	inline Glib::ustring get_red_buffer_text() const;
+	inline Glib::ustring get_black_buffer_text() const;
+	inline Glib::ustring get_green_buffer_text() const;
+
 private:
-	friend class Engine; // to set result
+	// members
+	Gtk::HBox mHBox;
+
+	/// begin initializer list
 	Glib::RefPtr<Gtk::TextBuffer::TagTable> mTagTable;
 	Glib::RefPtr<Gtk::TextBuffer> refRedBuffer, refBlackBuffer, refGreenBuffer;
 	Gtk::TextView mViewRed, mViewBlack, mViewGreen;
 	Glib::RefPtr<Gtk::TextBuffer::Tag> mTagRed, mTagBlack, mTagGreen;
 	/// end initializer list
 	
-private:
-	// members
-	Gtk::HBox mHBox;
+	// deleted
+	History(const History&) = delete;
+	History(const History&&) = delete;
+	History& operator=(const History&) = delete;
+	History& operator=(const History&&) = delete;
 };
+
+void History::set_red_buffer_text(std::string text)
+{
+	refRedBuffer->set_text(text);
+}
+
+void History::set_black_buffer_text(std::string text)
+{
+	refBlackBuffer->set_text(text);
+}
+
+void History::set_green_buffer_text(std::string text)
+{
+	refGreenBuffer->set_text(text);
+}
+
+Glib::ustring History::get_red_buffer_text() const
+{
+	return refRedBuffer->get_text();
+}
+
+Glib::ustring History::get_black_buffer_text() const
+{
+	return refBlackBuffer->get_text();
+}
+
+Glib::ustring History::get_green_buffer_text() const
+{
+	return refGreenBuffer->get_text();
+}
 
 #endif // ! HISTORY_HH

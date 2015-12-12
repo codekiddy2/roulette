@@ -1,6 +1,3 @@
-
-#include "pch.hh"
-
 /*
 roulette - roulette simulation program
 
@@ -25,3 +22,5 @@ stdafx.cc
 compiles PCH file for faster compilation and intellisense
 Reference additional includes in pch.hh and not here
 */
+
+#include "pch.hh"

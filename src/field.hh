@@ -36,16 +36,11 @@ class Field final
 	: public Gtk::Widget
 {
 public:
-	Field(const Gdk::RGBA& color, const int num);
-	Field(const Gdk::RGBA& color, std::string text);
-	Field(const Field&) = delete;
-	Field(const Field&&) = delete;
-	Field& operator=(const Field&) = delete;
-	Field& operator=(const Field&&) = delete;
+	Field(const int num);
+	Field(const std::string text);
 
 protected:
-
-	//Overrides:
+	// overrides:
 	Gtk::SizeRequestMode get_request_mode_vfunc() const override;
 	void get_preferred_width_vfunc(int& minimum_width, int& natural_width) const override;
 	void get_preferred_height_for_width_vfunc(int width, int& minimum_height, int& natural_height) const  override;
@@ -58,19 +53,27 @@ protected:
 	void on_unrealize() override;
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
+	// members
 	Glib::RefPtr<Gdk::Window> refGdkWindow;
 
 private:
+	// methods
+	void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int field_width, int field_height);
+	
+	// members
 	Pango::FontDescription mFont;
 
-/// begin initializer list
+	/// begin initializer list
 	std::string mName;
 	Gdk::RGBA mBackground;
 	Glib::RefPtr<Pango::Layout> mLayout;
-/// end initializer list
+	/// end initializer list
 
-	void draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
-		int field_width, int field_height);
+	// deleted
+	Field(const Field&) = delete;
+	Field(const Field&&) = delete;
+	Field& operator=(const Field&) = delete;
+	Field& operator=(const Field&&) = delete;
 };
 
 #endif // ! FIELD_HH

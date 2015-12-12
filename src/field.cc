@@ -1,8 +1,3 @@
-
-#include "pch.hh"
-#include "field.hh"
-#include "sets.hh"
-
 /*
 roulette - roulette simulation program
 
@@ -22,13 +17,17 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
+#include "pch.hh"
+#include "field.hh"
+#include "sets.hh"
 
-Field::Field(const Gdk::RGBA& color, const int num) :
+
+Field::Field(const int num) :
 	//The GType name will actually be gtkmm__CustomObject_Field
 	Glib::ObjectBase("Field"),
 	Gtk::Widget(),
 	mName(std::to_string(num)),
-	mBackground(color),
+	mBackground("rgb(0, 102, 0)"), // green
 	mLayout(create_pango_layout(mName.c_str()))
 {
 	set_has_window(true);
@@ -47,12 +46,12 @@ Field::Field(const Gdk::RGBA& color, const int num) :
 }
 
 
-Field::Field(const Gdk::RGBA& color, std::string text) :
+Field::Field(const std::string text) :
 	//The GType name will actually be gtkmm__CustomObject_Field
 	Glib::ObjectBase("Field"),
 	Gtk::Widget(),
 	mName(text),
-	mBackground(color),
+	mBackground("rgb(0, 102, 0)"), // green
 	mLayout(create_pango_layout(text))
 {
 	set_has_window(true);
@@ -197,7 +196,7 @@ bool Field::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	cr->paint();
 
 	// stroke lines around filed
-	cr->set_source_rgb(1.0, 1.0, 1.0); // white
+	cr->set_source_rgb(1.0, 1.0, 1.0); // white lines
 	cr->set_line_width(1.0);
 	cr->rectangle(0.0, 0.0, field_width, field_height);
 	cr->stroke();
@@ -217,13 +216,7 @@ void Field::draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
 	//get the text dimensions (it updates the variables -- by reference)
 	mLayout->get_pixel_size(text_width, text_height);
 
-	static Gdk::RGBA color("rgb(255, 255, 255)");
-	static double red = color.get_red();
-	static double green = color.get_green();
-	static double blue = color.get_blue();
-
-	cr->set_source_rgb(red, green, blue);
-
+	cr->set_source_rgb(1.0, 1.0, 1.0); // white text
 	cr->move_to((field_width - text_width) / 2, (field_height - text_height) / 2);
 
 	mLayout->show_in_cairo_context(cr);

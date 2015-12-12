@@ -1,7 +1,3 @@
-
-#include "pch.hh"
-#include "sets.hh"
-
 /*
 roulette - roulette simulation program
 
@@ -20,6 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
+
+#include "pch.hh"
+#include "sets.hh"
+
 
 bool is_red(const int number)
 {

@@ -1,7 +1,3 @@
-
-#include "pch.hh"
-#include "control.hh"
-
 /*
 roulette - roulette simulation program
 
@@ -21,12 +17,15 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
+#include "pch.hh"
+#include "control.hh"
 
-Control::Control(const Gdk::RGBA& color, const std::string name) :
+Gdk::RGBA Control::mBackground;
+
+Control::Control(const std::string name) :
 	//The GType name will actually be gtkmm__CustomObject_Control
 	Glib::ObjectBase("Control"),
 	Gtk::Widget(),
-	mBackground(color),
 	mName(name),
 	mLayout(create_pango_layout(name))
 {
@@ -39,6 +38,10 @@ Control::Control(const Gdk::RGBA& color, const std::string name) :
 	set_events(Gdk::EventMask::BUTTON_PRESS_MASK);
 }
 
+void Control::set_background_color(const Gdk::RGBA & color)
+{
+	mBackground = color;
+}
 
 // (optional) Return what Gtk::SizeRequestMode is preferred by the widget.
 Gtk::SizeRequestMode Control::get_request_mode_vfunc() const

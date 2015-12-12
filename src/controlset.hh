@@ -32,19 +32,21 @@ class Controlset final
 {
 public:
 	// constructors
-	Controlset(const Gdk::RGBA& color);
+	Controlset();
+
+private:
+	friend class Window; // to set signals
+	/// begin initialization list
+	Control mBtnClose;
+	Control mBtnSpin;
+	Control mBtnSpin50;
+	/// end initialization list
+
+	// deleted
 	Controlset(const Controlset&) = delete;
 	Controlset(const Controlset&&) = delete;
 	Controlset& operator=(const Controlset&) = delete;
 	Controlset& operator=(const Controlset&&) = delete;
-
-private:
-	friend class Window; // to set signals
-/// begin initialization list
-	Control mBtnClose;
-	Control mBtnSpin;
-	Control mBtnSpin50;
-/// end initialization list
 };
 
 #endif // ! CONTROLSET_HH

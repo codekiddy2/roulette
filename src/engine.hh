@@ -1,5 +1,5 @@
 #ifndef ENGINE_HH
-#define ENGINE_HH
+#define ENGINE_HH 1
 
 /*
 roulette - roulette simulation program
@@ -20,31 +20,34 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
-#include "sets.hh"
-
-#include <boost/random.hpp>
 #include <boost/random/random_device.hpp>
 
+
 class History;
+enum class ETable;
 
 class Engine final
 {
 public:
 	// constructors
 	Engine(History* history);
-	Engine(const Engine&) = delete;
-	Engine(const Engine&&) = delete;
-	Engine& operator=(const Engine&) = delete;
-	Engine& operator=(const Engine&&) = delete;
 
 	// methods
 	void spin(const ETable table_type) const;
 
 private:
+	// members
+	static boost::random::random_device rng;
+
 	/// begin initializer list
 	History* pHistory;
 	/// end initializer list
-	static boost::random::random_device rng;
+
+	// deleted
+	Engine(const Engine&) = delete;
+	Engine(const Engine&&) = delete;
+	Engine& operator=(const Engine&) = delete;
+	Engine& operator=(const Engine&&) = delete;
 };
 
 #endif // !ENGINE_HH

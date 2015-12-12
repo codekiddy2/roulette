@@ -21,6 +21,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "engine.hh"
 
 #include "history.hh" // forward declared class
+#include "sets.hh" // forward declared enum
+
 
 boost::random::random_device Engine::rng;
 
@@ -37,9 +39,8 @@ void Engine::spin(const ETable table_type) const
 
 	typedef boost::random::uniform_smallint<> dist_t;
 
-	// TODO: temporary using underscore to avoid C4459,
-	// red/black declared in sets.hh as 'Red' and 'Black'
-	string red_, black_, green_, newline = "\n", tab = "\t";
+	string red_output, black_output, green_output;
+	string single_space = " ", triple_space = "   ", newline = "\n", tab = "\t";
 
 	switch (table_type)
 	{
@@ -50,32 +51,35 @@ void Engine::spin(const ETable table_type) const
 		static dist_t dist(0, static_cast<int>(EuropeanWheel.size()));
 		int result = dist(Engine::rng);
 
+		// format result to be properly aligned with past results
 		if (result == 0)
 		{
-			green_.append(to_string(result) + tab);
+			green_output.append(triple_space + to_string(result) + tab);
 		}
 		else if (is_red(result))
 		{
-			red_.append(to_string(result) + tab);
+			red_output.append(triple_space + to_string(result) + tab);
 		}
 		else // black result :)
 		{
-			black_.append(to_string(result) + tab);
+			black_output.append(single_space + to_string(result) + tab);
 		}
 
-		green_.append(newline);
-		green_.append(pHistory->refGreenBuffer->get_text());
+		// what ever the result each column in history applies text
+		green_output.append(newline);
+		green_output.append(pHistory->get_green_buffer_text());
 
-		red_.append(newline);
-		red_.append(pHistory->refRedBuffer->get_text());
+		red_output.append(newline);
+		red_output.append(pHistory->get_red_buffer_text());
 
-		black_.append(newline);
-		black_.append(pHistory->refBlackBuffer->get_text());
+		black_output.append(newline);
+		black_output.append(pHistory->get_black_buffer_text());
 
-		pHistory->refGreenBuffer->set_text(green_);
-		pHistory->refRedBuffer->set_text(red_);
-		pHistory->refBlackBuffer->set_text(black_);
+		pHistory->set_green_buffer_text(green_output);
+		pHistory->set_red_buffer_text(red_output);
+		pHistory->set_black_buffer_text(black_output);
 
+		// apply colors
 		pHistory->apply_tags();
 		break;
 	}

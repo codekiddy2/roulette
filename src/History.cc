@@ -57,6 +57,11 @@ History::History() :
 	mViewRed.set_sensitive(false);
 	mViewGreen.set_sensitive(false);
 
+	// initial buffer to prevent alignment of numbers
+	refRedBuffer->set_text("\t");
+	refGreenBuffer->set_text("\t");
+	refBlackBuffer->set_text("\t");
+
 	// set background color
 	Gdk::RGBA color("Black");
 	mViewBlack.override_background_color(color);

@@ -37,14 +37,12 @@ class Control final
 {
 public:
 	// constructors
-	Control(const Gdk::RGBA& color, const std::string name);
-	Control(const Control&) = delete;
-	Control(const Control&&) = delete;
-	Control& operator=(const Control&) = delete;
-	Control& operator=(const Control&&) = delete;
+	Control(const std::string name);
+	
+	// methods
+	static void set_background_color(const Gdk::RGBA& color);
 
 protected:
-
 	// Overrides
 	Gtk::SizeRequestMode get_request_mode_vfunc() const override;
 	void get_preferred_width_vfunc(int& minimum_width, int& natural_width) const override;
@@ -62,17 +60,23 @@ protected:
 	Glib::RefPtr<Gdk::Window> refGdkWindow;
 
 private:
+	// methods
+	void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int control_width, int control_height);
+
 	// members
 	Pango::FontDescription mFont;
+	static Gdk::RGBA mBackground;
 
 	/// begin initializer list
-	Gdk::RGBA mBackground;
 	std::string mName;
 	Glib::RefPtr<Pango::Layout> mLayout;
 	/// end initializer list
 
-	// methods
-	void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int control_width, int control_height);
+	// deleted
+	Control(const Control&) = delete;
+	Control(const Control&&) = delete;
+	Control& operator=(const Control&) = delete;
+	Control& operator=(const Control&&) = delete;
 };
 
 #endif // ! CONTROL_HH

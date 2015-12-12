@@ -23,10 +23,6 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 
 Window::Window() :
-	mBackground("rgb(0, 102, 0)"),
-	mTable(mBackground),
-	mChipset(mBackground),
-	mControlset(mBackground),
 	mHistory(new History),
 	mEngine(mHistory),
 	mFrameHistory("History"),
@@ -48,7 +44,8 @@ Window::Window() :
 
 	// begin packing
 	add(mHBoxTop);
-	
+	Gdk::RGBA background("rgb(0, 102, 0)"); // green
+
 	// PACKING from left to right
 	mHBoxTop.pack_start(mFrameHistory, Gtk::PACK_SHRINK); // history widnow
 	mFrameHistory.add(*mHistory);
@@ -59,11 +56,13 @@ Window::Window() :
 	mVBoxArea.pack_start(mFrameBets, Gtk::PACK_EXPAND_WIDGET); // Table
 	mFrameBets.add(mTable);
 	mVBoxArea.pack_start(mHBoxControls, Gtk::PACK_SHRINK);
-	mHBoxControls.override_background_color(mBackground); // TODO: temporary background color
+	mHBoxControls.override_background_color(background); // TODO: temporary background color
 	
 	// PACKING from right to left
 	mHBoxControls.pack_end(mControlset, Gtk::PACK_SHRINK); // Controlset
+	Control::set_background_color(background);
 	mHBoxControls.pack_end(mChipset, Gtk::PACK_SHRINK); // chipset
+	Chip::set_background_color(background);
 	
 	// Controlset properties
 	mControlset.set_spacing(0);
