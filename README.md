@@ -8,5 +8,6 @@ feel free to join, it's just for fun.
 
 design roulette table and drag and drop chips onto table
 
-**Screenshot of current design**
+**Current look**
 
+![](https://raw.githubusercontent.com/codekiddy2/roulette/master/screenshot.png)
