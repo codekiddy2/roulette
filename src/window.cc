@@ -21,6 +21,10 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "window.hh"
 #include "sets.hh"
 
+using std::cerr;
+using std::cout;
+using std::endl;
+
 
 Window::Window() :
 	mHistory(new History),
@@ -41,6 +45,12 @@ Window::Window() :
 		refIcon = Gdk::Pixbuf::create_from_file("roulette.ico");
 		set_icon(refIcon);
 	}
+#ifdef DEBUG_FILE_LOG
+	else
+	{
+		cerr << "File Error: " << "roulette.ico" << " not found in Window::Window()" << endl;
+	}
+#endif // DEBUG_FILE_LOG
 
 	// begin packing
 	add(mHBoxTop);

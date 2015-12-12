@@ -1,3 +1,8 @@
+
+#ifdef _MSC_VER
+#pragma region begin
+#endif // _MSC_VER
+
 /*
 roulette - roulette simulation program
 
@@ -20,6 +25,11 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "pch.hh"
 #include "field.hh"
 #include "sets.hh"
+#include "dnd.hh"
+
+using std::cerr;
+using std::endl;
+using std::cout;
 
 
 Field::Field(const int num) :
@@ -32,7 +42,7 @@ Field::Field(const int num) :
 {
 	set_has_window(true);
 
-	mFont.set_family("Sherif");
+	mFont.set_family("Sans");
 	mLayout->set_font_description(mFont);
 
 	if (is_red(num))
@@ -43,6 +53,10 @@ Field::Field(const int num) :
 	{
 		mBackground.set("Black");
 	}
+	
+	drag_dest_set(listTargets,	Gtk::DestDefaults::DEST_DEFAULT_ALL, Gdk::DragAction::ACTION_COPY);
+
+	//signal_drag_data_received().connect(sigc::mem_fun(*this, &Field::on_drag_data_received));
 }
 
 
@@ -56,7 +70,7 @@ Field::Field(const std::string text) :
 {
 	set_has_window(true);
 
-	mFont.set_family("Sherif");
+	mFont.set_family("Arial");
 	mLayout->set_font_description(mFont);
 
 	if (text == "RED")
@@ -68,7 +82,134 @@ Field::Field(const std::string text) :
 		mBackground.set("Black");
 	}
 }
+#ifdef _MSC_VER
+#pragma endregion
 
+#pragma region dnd
+#endif //_MSC_VER
+/*
+The destination widget will emit these signals, in this order:
+
+drag_motion:
+Provides DragContext and coordinates.
+You can call the drag_status() method of the DragContext to indicate which action will be accepted.
+
+drag_drop:
+Provides DragContext and coordinates.
+You can call drag_get_data(), which triggers the drag_data_get signal in the source widget,
+and then the drag_data_received signal in the destination widget.
+
+drag_data_received:
+Provides info about the dragged data format,
+and a Gtk::SelectionData structure which contains the dropped data.
+You should call the drag_finish() method of the DragContext to indicate whether the operation was successful.
+
+drag_leave:
+*/
+
+
+
+#ifdef _MSC_VER
+#pragma warning (disable: 4100) // unreferenced formal parameter
+#endif // _MSC_VER
+
+bool Field::on_drag_motion(const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time)
+{
+	// TODO: implement functionality
+#ifdef DEBUG_DND_VERBOSE
+	cout << "Field: on_drag_motion" << endl;
+#endif // DEBUG_DND_VERBOSE
+
+	return Gtk::Widget::on_drag_motion(context, x, y, time);
+}
+
+bool Field::on_drag_drop(const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time)
+{
+	// TODO: implement functionality
+#ifdef DEBUG_DND_LOG
+	cout << "Field: on_drag_drop" << endl;
+#endif // DEBUG_DND_LOG
+
+	return Gtk::Widget::on_drag_drop(context, x, y, time);
+}
+
+void Field::on_drag_leave(const Glib::RefPtr<Gdk::DragContext>& context, guint time)
+{
+	// TODO: implement functionality
+#ifdef DEBUG_DND_LOG
+	cout << "Field: on_drag_leave" << endl;
+#endif // DEBUG_DND_LOG
+
+	return Gtk::Widget::on_drag_leave(context, time);
+}
+
+void Field::on_drag_data_received(const Glib::RefPtr<Gdk::DragContext>& context,
+	int /*x*/, int /*y*/, const Gtk::SelectionData& selection_data, guint /*info*/, guint time)
+{
+#ifdef DEBUG_DND_LOG
+	cout << "Field: on_drag_data_received" << endl;
+#endif // DEBUG_DND_LOG
+
+	const int length = selection_data.get_length();
+
+	if ((length >= 0) && (selection_data.get_format() == 8))
+	{
+		selection_data.get_pixbuf();
+	}
+
+	context->drag_finish(false, false, time);
+}
+
+#ifdef _MSC_VER
+#pragma warning (default: 4100)
+
+#pragma endregion
+
+#pragma region drawing
+#endif // _MSC_VER
+
+// Draw on the supplied Cairo::Context.
+bool Field::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+{
+	Gtk::Allocation allocation = get_allocation();
+	const int field_width = allocation.get_width();
+	const int field_height = allocation.get_height();
+
+	// paint the background
+	Gdk::Cairo::set_source_rgba(cr, mBackground);
+	cr->paint();
+
+	// stroke lines around filed
+	cr->set_source_rgb(1.0, 1.0, 1.0); // white lines
+	cr->set_line_width(1.0);
+	cr->rectangle(0.0, 0.0, field_width, field_height);
+	cr->stroke();
+
+	// show text
+	draw_text(cr, field_width, field_height);
+
+	return true;
+}
+
+void Field::draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
+	int field_width, int field_height)
+{
+	int text_width;
+	int text_height;
+
+	//get the text dimensions (it updates the variables -- by reference)
+	mLayout->get_pixel_size(text_width, text_height);
+
+	cr->set_source_rgb(1.0, 1.0, 1.0); // white text
+	cr->move_to((field_width - text_width) / 2, (field_height - text_height) / 2);
+
+	mLayout->show_in_cairo_context(cr);
+}
+#ifdef _MSC_VER
+#pragma endregion
+
+#pragma region widget
+#endif // _MSC_VER
 
 // (optional) Return what Gtk::SizeRequestMode is preferred by the widget.
 Gtk::SizeRequestMode Field::get_request_mode_vfunc() const
@@ -183,41 +324,6 @@ void Field::on_unrealize()
 	//Call base class:
 	Gtk::Widget::on_unrealize();
 }
-
-// Draw on the supplied Cairo::Context.
-bool Field::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
-{
-	Gtk::Allocation allocation = get_allocation();
-	const int field_width = allocation.get_width();
-	const int field_height = allocation.get_height();
-	
-	// paint the background
-	cr->set_source_rgb(mBackground.get_red(), mBackground.get_green(), mBackground.get_blue());
-	cr->paint();
-
-	// stroke lines around filed
-	cr->set_source_rgb(1.0, 1.0, 1.0); // white lines
-	cr->set_line_width(1.0);
-	cr->rectangle(0.0, 0.0, field_width, field_height);
-	cr->stroke();
-
-	// show text
-	draw_text(cr, field_width, field_height);
-
-	return true;
-}
-
-void Field::draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
-	int field_width, int field_height)
-{
-	int text_width;
-	int text_height;
-
-	//get the text dimensions (it updates the variables -- by reference)
-	mLayout->get_pixel_size(text_width, text_height);
-
-	cr->set_source_rgb(1.0, 1.0, 1.0); // white text
-	cr->move_to((field_width - text_width) / 2, (field_height - text_height) / 2);
-
-	mLayout->show_in_cairo_context(cr);
-}
+#ifdef _MSC_VER
+#pragma endregion
+#endif // _MSC_VER

@@ -1,3 +1,8 @@
+
+#ifdef _MSC_VER
+#pragma region begin
+#endif // _MSC_VER
+
 /*
 roulette - roulette simulation program
 
@@ -19,8 +24,15 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 #include "pch.hh"
 #include "chip.hh"
+#include "dnd.hh"
+
+using std::cerr;
+using std::endl;
+using std::cout;
+
 
 Gdk::RGBA Chip::mBackground;
+std::vector<Gtk::TargetEntry> listTargets;
 
 Chip::Chip(const std::string file_name) :
 	//The GType name will actually be gtkmm__CustomObject_Chip
@@ -33,12 +45,120 @@ Chip::Chip(const std::string file_name) :
 	{
 		refIcon = Gdk::Pixbuf::create_from_file(file_name, 48, 48); // load 48 x 48 version from ico file
 	}
+#ifdef DEBUG_FILE_LOG
+	else
+	{
+		cerr << "File Error: " << file_name << " not found in Chip::Chip(const std::string file_name)" << endl;
+	}
+#endif // DEBUG_FILE_LOG
+
+	listTargets.push_back(Gtk::TargetEntry("Field"));
+	
+	// Make Chip a drag source
+	drag_source_set(listTargets, Gdk::ModifierType::BUTTON1_MASK, Gdk::ACTION_COPY);
+
+	// signals
+	//signal_drag_data_get().connect(sigc::mem_fun(*this, &Chip::on_drag_data_get));
+	//signal_drag_end().connect(sigc::mem_fun(*this, &Chip::on_drag_end));
+	//signal_drag_begin().connect(sigc::mem_fun(*this, &Chip::on_drag_begin));
+}
+
+#ifdef _MSC_VER
+#pragma endregion
+
+#pragma region dnd
+#endif //_MSC_VER
+
+/*
+The source widget will emit these signals, in this order:
+
+drag_begin:
+Provides DragContext.
+
+drag_data_get:
+Provides info about the dragged data format, and a Gtk::SelectionData structure,
+in which you should put the requested data.
+
+drag_end:
+Provides DragContext.
+*/
+
+
+#ifdef _MSC_VER
+#pragma warning (disable: 4100) // unreferenced formal parameter
+#endif // _MSC_VER
+
+
+void Chip::on_drag_data_get(const Glib::RefPtr<Gdk::DragContext>& context,
+	Gtk::SelectionData & selection_data, guint /*info*/, guint /*time*/)
+{
+	context->set_icon(refIcon, refIcon->get_width() / 2, refIcon->get_height() / 2);
+
+	selection_data.set_pixbuf(refIcon);
+	selection_data.set(selection_data.get_target(), 8, refIcon->get_pixels(), static_cast<int>(refIcon->get_byte_length()));
+
+#ifdef DEBUG_DND_LOG
+	cout << "Chip: on_drag_data_get" << endl;
+#endif // DEBUG_DND_LOG
+}
+
+void Chip::on_drag_end(const Glib::RefPtr<Gdk::DragContext>& context)
+{
+	// TODO: implement functionality
+#ifdef DEBUG_DND_LOG
+	cout << "Chip: on_drag_end" << endl;
+#endif // DEBUG_DND_LOG
+
+	return Gtk::Widget::on_drag_end(context);
+}
+
+void Chip::on_drag_begin(const Glib::RefPtr<Gdk::DragContext>& context)
+{
+	// TODO: implement functionality
+#ifdef DEBUG_DND_LOG
+	cout << "Chip: on_drag_begin" << endl;
+#endif // DEBUG_DND_LOG
+
+	return Gtk::Widget::on_drag_begin(context);
+}
+
+#ifdef _MSC_VER
+#pragma warning (default: 4100)
+
+#pragma endregion
+
+#pragma region drawing
+#endif // _MSC_VER
+
+// Draw on the supplied Cairo::Context.
+bool Chip::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+{
+	Gtk::Allocation allocation = get_allocation();
+
+	// paint the background
+	Gdk::Cairo::set_source_rgba(cr, mBackground);
+	cr->paint();
+
+	// draw chip in the middle
+	Gdk::Cairo::set_source_pixbuf(cr, refIcon,
+		allocation.get_width() * 0.5 - (refIcon->get_width() / 2),
+		allocation.get_height() * 0.5 - (refIcon->get_height() / 2));
+
+	cr->paint();
+
+	return true;
 }
 
 void Chip::set_background_color(const Gdk::RGBA & color)
 {
 	mBackground = color;
 }
+
+#ifdef _MSC_VER
+#pragma endregion
+
+#pragma region widget
+#endif // _MSC_VER
 
 // (optional) Return what Gtk::SizeRequestMode is preferred by the widget.
 Gtk::SizeRequestMode Chip::get_request_mode_vfunc() const
@@ -156,30 +276,6 @@ void Chip::on_unrealize()
 	Gtk::Widget::on_unrealize();
 }
 
-// Draw on the supplied Cairo::Context.
-bool Chip::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
-{
-	Gtk::Allocation allocation = get_allocation();
-
-	// TODO: these variables are used only once, consider removing them
-	const double cx = allocation.get_width() * 0.5;
-	const double cy = allocation.get_height() * 0.5;
-
-	const int chip_cx = refIcon->get_width() / 2;
-	const int chip_cy = refIcon->get_height() / 2;
-
-	// paint the background
-	// TODO: background color change will have no affect here
-	static double red = mBackground.get_red();
-	static double green = mBackground.get_green();
-	static double blue = mBackground.get_blue();
-
-	cr->set_source_rgb(red, green, blue);
-	cr->paint();
-
-	// draw chip in the middle
-	Gdk::Cairo::set_source_pixbuf(cr, refIcon, cx - chip_cx, cy - chip_cy);
-	cr->paint();
-
-	return true;
-}
+#ifdef _MSC_VER
+#pragma endregion
+#endif // _MSC_VER

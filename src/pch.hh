@@ -20,13 +20,9 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
-/*
-PCH includes
-TODO: modify or add more includes here for faster compilation and intellisense
-*/
 
 #ifdef _MSC_VER
-__pragma(warning(disable: 4309 4505 4250)) __pragma(warning(push, 0)) // disable warnings
+__pragma(warning(disable: 4309 4505 4250 4710)) __pragma(warning(push, 0)) // disable warnings
 
 #define _SCL_SECURE_NO_WARNINGS // boost
 #endif // _MSC_VER
@@ -34,7 +30,8 @@ __pragma(warning(disable: 4309 4505 4250)) __pragma(warning(push, 0)) // disable
 // std
 #include <vector>
 #include <string>
-#include <algorithm>	// used in GetNeighbor function
+#include <algorithm>	// used in get_neighbor function
+#include <iostream> // for debugging
 
 // gtkmm
 #ifdef GTKMM_ATKMM_ENABLED
@@ -62,8 +59,12 @@ __pragma(warning(disable: 4309 4505 4250)) __pragma(warning(push, 0)) // disable
 #include <boost/filesystem.hpp>
 #include <boost/random/random_device.hpp>
 
+#define DEBUG_FILE_LOG
+#define DEBUG_DND_LOG
+//#define DEBUG_DND_VERBOSE
+
 #ifdef _MSC_VER
-__pragma(warning(default: 4309 4505)) __pragma(warning(pop)) // enable warnings
+__pragma(warning(default: 4309 4505 4250 4710)) __pragma(warning(pop)) // enable warnings
 #endif // _MSC_VER
 
 #endif // ! PCH_HH

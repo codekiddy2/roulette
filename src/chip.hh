@@ -22,9 +22,11 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 #include <string>
 #include <gtkmm/widget.h>
+#include <gtkmm/selectiondata.h>
 #include <glibmm/refptr.h>
 #include <gdkmm/rgba.h>
 #include <gdkmm/window.h>
+#include <gdkmm/dragcontext.h>
 #include <gdkmm/pixbuf.h>
 #include <gdkmm/rectangle.h> // Gtk::Allocation
 #include <cairomm/refptr.h>
@@ -54,6 +56,14 @@ protected:
 	void on_realize() override;
 	void on_unrealize() override;
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+
+	// dnd
+	void on_drag_data_get(const Glib::RefPtr<Gdk::DragContext>& context,
+		Gtk::SelectionData& selection_data, guint info, guint time) override;
+
+	void on_drag_end(const Glib::RefPtr< Gdk::DragContext >& context) override;
+
+	void on_drag_begin(const Glib::RefPtr< Gdk::DragContext >& context) override;
 
 	// members
 	Glib::RefPtr<Gdk::Window> refGdkWindow;

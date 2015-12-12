@@ -22,10 +22,13 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 #include <string>
 #include <gtkmm/widget.h>
+#include <gtkmm/selectiondata.h>
 #include <glibmm/refptr.h>
 #include <pangomm/layout.h>
 #include <pangomm/fontdescription.h>
 #include <gdkmm/rgba.h>
+#include <gdkmm/dragcontext.h>
+#include <gdkmm/pixbuf.h>
 #include <gdkmm/window.h>
 #include <gdkmm/rectangle.h> // Gtk::Allocation
 #include <cairomm/refptr.h>
@@ -53,13 +56,20 @@ protected:
 	void on_unrealize() override;
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
+	// dnd overrides
+	bool on_drag_motion(const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time) override;
+	bool on_drag_drop(const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time) override;
+	void on_drag_leave(const Glib::RefPtr<Gdk::DragContext>& context, guint time) override;
+	void on_drag_data_received(const Glib::RefPtr<Gdk::DragContext>& context,
+		int x, int y, const Gtk::SelectionData& selection_data, guint info, guint time) override;
+
 	// members
 	Glib::RefPtr<Gdk::Window> refGdkWindow;
 
 private:
 	// methods
 	void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int field_width, int field_height);
-	
+
 	// members
 	Pango::FontDescription mFont;
 

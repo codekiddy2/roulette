@@ -54,24 +54,16 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="D:\GitHub\Visual-Studio-gtkmm\properties\user_debug_64.props" />
-    <Import Project="D:\GitHub\Visual-Studio-gtkmm\properties\user_stack_boost.props" />
-    <Import Project="D:\GitHub\Visual-Studio-gtkmm\properties\user_stack_gtkmm.props" />
+    <Import Project="roulette_debug_x64.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="D:\GitHub\Visual-Studio-gtkmm\properties\user_release_64.props" />
-    <Import Project="D:\GitHub\Visual-Studio-gtkmm\properties\user_stack_gtkmm.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="D:\GitHub\Visual-Studio-gtkmm\properties\user_debug_32.props" />
-    <Import Project="D:\GitHub\Visual-Studio-gtkmm\properties\user_stack_gtkmm.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="D:\GitHub\Visual-Studio-gtkmm\properties\user_release_32.props" />
-    <Import Project="D:\GitHub\Visual-Studio-gtkmm\properties\user_stack_gtkmm.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
@@ -82,8 +74,10 @@
     <Link />
     <Link />
     <ClCompile />
+    <ClCompile />
+    <Link />
     <ClCompile>
-      <PrecompiledHeaderFile>pch.hh</PrecompiledHeaderFile>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -93,6 +87,9 @@
     <ClCompile>
       <PrecompiledHeaderFile>pch.hh</PrecompiledHeaderFile>
     </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile />
@@ -101,6 +98,9 @@
     <ClCompile>
       <PrecompiledHeaderFile>pch.hh</PrecompiledHeaderFile>
     </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile />
@@ -109,12 +109,16 @@
     <ClCompile>
       <PrecompiledHeaderFile>pch.hh</PrecompiledHeaderFile>
     </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+    </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="chip.hh" />
     <ClInclude Include="chipset.hh" />
     <ClInclude Include="control.hh" />
     <ClInclude Include="controlset.hh" />
+    <ClInclude Include="dnd.hh" />
     <ClInclude Include="engine.hh" />
     <ClInclude Include="field.hh" />
     <ClInclude Include="history.hh" />

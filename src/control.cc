@@ -31,7 +31,7 @@ Control::Control(const std::string name) :
 {
 	set_has_window(true);
 
-	mFont.set_family("Sherif");
+	mFont.set_family("Arial");
 	mLayout->set_font_description(mFont);
 
 	// make me receive 'clicked' event
