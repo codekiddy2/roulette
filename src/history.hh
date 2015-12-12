@@ -20,40 +20,41 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
+//#include "engine.hh"
+
 #include <glibmm/refptr.h>
 #include <gtkmm/box.h>
 #include <gtkmm/textview.h>
 #include <gtkmm/textbuffer.h>
 #include <gtkmm/scrolledwindow.h>
 
+class Engine;
 
 class History final
 	: public Gtk::ScrolledWindow
 {
-// constructors
 public:
+	// constructors
 	History();
 	History(const History&) = delete;
 	History(const History&&) = delete;
 	History& operator=(const History&) = delete;
 	History& operator=(const History&&) = delete;
 
+	// methods
+	void apply_tags();
 
-/// declaration in order of initializer list
+	/// begin initializer list
 private:
+	friend class Engine; // to set result
 	Glib::RefPtr<Gtk::TextBuffer::TagTable> mTagTable;
-
-public:
 	Glib::RefPtr<Gtk::TextBuffer> refRedBuffer, refBlackBuffer, refGreenBuffer;
 	Gtk::TextView mViewRed, mViewBlack, mViewGreen;
 	Glib::RefPtr<Gtk::TextBuffer::Tag> mTagRed, mTagBlack, mTagGreen;
-/// end of initializer list
-
-// methods
-	void apply_tags();
-
+	/// end initializer list
+	
 private:
-// other members
+	// members
 	Gtk::HBox mHBox;
 };
 

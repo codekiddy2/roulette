@@ -1,7 +1,4 @@
 
-#include "pch.hh"
-#include "controlset.hh"
-
 /*
 roulette - roulette simulation program
 
@@ -21,8 +18,11 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
+#include "pch.hh"
+#include "controlset.hh"
 
-Controlset::Controlset(Gdk::RGBA& color) :
+
+Controlset::Controlset(const Gdk::RGBA& color) :
 	mBtnClose(color, "Close"),
 	mBtnSpin(color, "Spin"),
 	mBtnSpin50(color, "Spin 50x")
@@ -30,6 +30,4 @@ Controlset::Controlset(Gdk::RGBA& color) :
 	pack_end(mBtnClose, Gtk::PACK_SHRINK);
 	pack_end(mBtnSpin, Gtk::PACK_SHRINK);
 	pack_end(mBtnSpin50, Gtk::PACK_SHRINK);
-
-	//override_background_color(color);
 }

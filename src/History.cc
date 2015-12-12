@@ -1,7 +1,3 @@
-
-#include "pch.hh"
-#include "history.hh"
-
 /*
 roulette - roulette simulation program
 
@@ -21,6 +17,9 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
+#include "pch.hh"
+#include "history.hh"
+
 
 History::History() :
 	mTagTable(Gtk::TextTagTable::create()),
@@ -35,7 +34,6 @@ History::History() :
 	mTagGreen(Gtk::TextBuffer::Tag::create())
 {
 	// window properties
-	//set_size_request(100, 0);
 	set_policy(Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
 
 	// packing
@@ -60,9 +58,10 @@ History::History() :
 	mViewGreen.set_sensitive(false);
 
 	// set background color
-	mViewBlack.override_background_color(Gdk::RGBA("Black"));
-	mViewRed.override_background_color(Gdk::RGBA("Black"));
-	mViewGreen.override_background_color(Gdk::RGBA("Black"));
+	Gdk::RGBA color("Black");
+	mViewBlack.override_background_color(color);
+	mViewRed.override_background_color(color);
+	mViewGreen.override_background_color(color);
 }
 
 void History::apply_tags()

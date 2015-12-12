@@ -23,12 +23,12 @@ along with this program. If not, see http://www.gnu.org/licenses.
 */
 
 
-Field::Field(Gdk::RGBA& color, int num) :
+Field::Field(const Gdk::RGBA& color, const int num) :
 	//The GType name will actually be gtkmm__CustomObject_Field
 	Glib::ObjectBase("Field"),
 	Gtk::Widget(),
 	mName(std::to_string(num)),
-	//mBackground(color),
+	mBackground(color),
 	mLayout(create_pango_layout(mName.c_str()))
 {
 	set_has_window(true);
@@ -36,7 +36,7 @@ Field::Field(Gdk::RGBA& color, int num) :
 	mFont.set_family("Sherif");
 	mLayout->set_font_description(mFont);
 
-	if (IsRed(num))
+	if (is_red(num))
 	{
 		mBackground.set("Red");
 	}
@@ -44,19 +44,15 @@ Field::Field(Gdk::RGBA& color, int num) :
 	{
 		mBackground.set("Black");
 	}
-	else
-	{
-		mBackground = color;
-	}
 }
 
 
-Field::Field(Gdk::RGBA& color, std::string text) :
+Field::Field(const Gdk::RGBA& color, std::string text) :
 	//The GType name will actually be gtkmm__CustomObject_Field
 	Glib::ObjectBase("Field"),
 	Gtk::Widget(),
 	mName(text),
-	//mBackground(color),
+	mBackground(color),
 	mLayout(create_pango_layout(text))
 {
 	set_has_window(true);
@@ -71,10 +67,6 @@ Field::Field(Gdk::RGBA& color, std::string text) :
 	else if (text == "BLACK")
 	{
 		mBackground.set("Black");
-	}
-	else
-	{
-		mBackground = color;
 	}
 }
 
@@ -127,9 +119,9 @@ void Field::on_size_allocate(Gtk::Allocation& allocation)
 	//Use the offered allocation for this container:
 	set_allocation(allocation);
 
-	if (m_refGdkWindow)
+	if (refGdkWindow)
 	{
-		m_refGdkWindow->move_resize(allocation.get_x(), allocation.get_y(),
+		refGdkWindow->move_resize(allocation.get_x(), allocation.get_y(),
 			allocation.get_width(), allocation.get_height());
 	}
 }
@@ -156,7 +148,7 @@ void Field::on_realize()
 
 	set_realized();
 
-	if (!m_refGdkWindow)
+	if (!refGdkWindow)
 	{
 		//Create the GdkWindow:
 
@@ -175,19 +167,19 @@ void Field::on_realize()
 		attributes.window_type = GDK_WINDOW_CHILD;
 		attributes.wclass = GDK_INPUT_OUTPUT;
 
-		m_refGdkWindow = Gdk::Window::create(get_parent_window(), &attributes,
+		refGdkWindow = Gdk::Window::create(get_parent_window(), &attributes,
 			GDK_WA_X | GDK_WA_Y);
-		set_window(m_refGdkWindow);
+		set_window(refGdkWindow);
 
 		//make the widget receive expose events
-		m_refGdkWindow->set_user_data(gobj());
+		refGdkWindow->set_user_data(gobj());
 	}
 }
 
 // (optional) Break the association with the Gdk::Window.
 void Field::on_unrealize()
 {
-	m_refGdkWindow.reset();
+	refGdkWindow.reset();
 
 	//Call base class:
 	Gtk::Widget::on_unrealize();
@@ -197,32 +189,27 @@ void Field::on_unrealize()
 bool Field::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
 	Gtk::Allocation allocation = get_allocation();
-	const int width = allocation.get_width();
-	const int height = allocation.get_height();
-
-
+	const int field_width = allocation.get_width();
+	const int field_height = allocation.get_height();
+	
 	// paint the background
-	double red = mBackground.get_red();
-	double green = mBackground.get_green();
-	double blue = mBackground.get_blue();
-
-	cr->set_source_rgb(red, green, blue);
+	cr->set_source_rgb(mBackground.get_red(), mBackground.get_green(), mBackground.get_blue());
 	cr->paint();
 
 	// stroke lines around filed
-	cr->set_source_rgb(1.0, 1.0, 1.0);
+	cr->set_source_rgb(1.0, 1.0, 1.0); // white
 	cr->set_line_width(1.0);
-	cr->rectangle(0.0, 0.0, width, height);
+	cr->rectangle(0.0, 0.0, field_width, field_height);
 	cr->stroke();
 
 	// show text
-	draw_text(cr, width, height);
+	draw_text(cr, field_width, field_height);
 
 	return true;
 }
 
 void Field::draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
-	int rectangle_width, int rectangle_height)
+	int field_width, int field_height)
 {
 	int text_width;
 	int text_height;
@@ -230,14 +217,14 @@ void Field::draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
 	//get the text dimensions (it updates the variables -- by reference)
 	mLayout->get_pixel_size(text_width, text_height);
 
-	static Gdk::Color color("White");
+	static Gdk::RGBA color("rgb(255, 255, 255)");
 	static double red = color.get_red();
 	static double green = color.get_green();
 	static double blue = color.get_blue();
 
 	cr->set_source_rgb(red, green, blue);
 
-	cr->move_to((rectangle_width - text_width) / 2, (rectangle_height - text_height) / 2);
+	cr->move_to((field_width - text_width) / 2, (field_height - text_height) / 2);
 
 	mLayout->show_in_cairo_context(cr);
 }

@@ -1,8 +1,3 @@
-
-#include "pch.hh"
-#include "window.hh"
-#include "sets.hh"
-
 /*
 roulette - roulette simulation program
 
@@ -22,13 +17,18 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
+#include "pch.hh"
+#include "window.hh"
+#include "sets.hh"
+
 
 Window::Window() :
 	mBackground("rgb(0, 102, 0)"),
 	mTable(mBackground),
 	mChipset(mBackground),
 	mControlset(mBackground),
-	mHistory(),
+	mHistory(new History),
+	mEngine(mHistory),
 	mFrameHistory("History"),
 	mFrameBets("Bets")
 {
@@ -51,7 +51,7 @@ Window::Window() :
 	
 	// PACKING from left to right
 	mHBoxTop.pack_start(mFrameHistory, Gtk::PACK_SHRINK); // history widnow
-	mFrameHistory.add(mHistory);
+	mFrameHistory.add(*mHistory);
 	mFrameHistory.set_size_request(width / 5, 0);
 	mHBoxTop.pack_start(mVBoxArea, Gtk::PACK_EXPAND_WIDGET);
 
@@ -82,6 +82,11 @@ Window::Window() :
 	mControlset.mBtnSpin50.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_spin50));
 }
 
+Window::~Window()
+{
+	delete mHistory;
+}
+
 bool Window::on_button_close(GdkEventButton* /*button_event*/)
 {
 	close();
@@ -90,45 +95,8 @@ bool Window::on_button_close(GdkEventButton* /*button_event*/)
 
 bool Window::on_button_spin(GdkEventButton* /*button_event*/)
 {
-	using namespace std;
-	using namespace boost::random;
 
-
-	static random_device rng;
-	static uniform_smallint<> dist(0, 38);
-
-	int result = dist(rng);
-	string red, black, green, newline = "\n", tab = "\t";
-
-
-	if (result == 0)
-	{
-		green.append(to_string(result) + tab);
-	}
-	else if (IsRed(result))
-	{
-		red.append(to_string(result) + tab);
-	}
-	else // black result :)
-	{
-		black.append(to_string(result) + tab);
-	}
-
-	green.append(newline);
-	green.append(mHistory.refGreenBuffer->get_text());
-
-	red.append(newline);
-	red.append(mHistory.refRedBuffer->get_text());
-
-	black.append(newline);
-	black.append(mHistory.refBlackBuffer->get_text());
-
-	mHistory.refGreenBuffer->set_text(green);
-	mHistory.refRedBuffer->set_text(red);
-	mHistory.refBlackBuffer->set_text(black);
-
-	mHistory.apply_tags();
-
+	mEngine.spin(mTable.get_table_type());
 	return true;
 }
 

@@ -23,84 +23,83 @@ along with this program. If not, see http://www.gnu.org/licenses.
 */
 
 
-Table::Table(Gdk::RGBA& color)
+Table::Table(const Gdk::RGBA& color, const ETable table_type) :
+	mTableType(table_type)
 {
-	pack_end(mGrid, Gtk::PACK_EXPAND_WIDGET);
-
-	mGrid.set_column_homogeneous(true);
-	mGrid.set_row_homogeneous(true);
+	set_column_homogeneous(true);
+	set_row_homogeneous(true);
 
 	// zero
 	mFields.push_back(new Field(color, 0));
-	mGrid.attach(*mFields.back(), 0, 0, 1, 3);
+	attach(*mFields.back(), 0, 0, 1, 3);
 
 	// dummy
 	mFields.push_back(new Field(color, ""));
-	mGrid.attach(*mFields.back(), 0, 3, 1, 2);
+	attach(*mFields.back(), 0, 3, 1, 2);
 
 	// column 3
 	for (int i = 3, col = 1; i <= 36; i += 3, ++col)
 	{
 		mFields.push_back(new Field(color, i));
-		mGrid.attach(*mFields.back(), col, 0, 1, 1);
+		attach(*mFields.back(), col, 0, 1, 1);
 	}
 
 	mFields.push_back(new Field(color, "2 to 1"));
-	mGrid.attach(*mFields.back(), 13, 0, 1, 1);
+	attach(*mFields.back(), 13, 0, 1, 1);
 	
 	// column 2
 	for (int i = 2, col = 1; i <= 35; i += 3, ++col)
 	{
 		mFields.push_back(new Field(color, i));
-		mGrid.attach(*mFields.back(), col, 1, 1, 1);
+		attach(*mFields.back(), col, 1, 1, 1);
 	}
 
 	mFields.push_back(new Field(color, "2 to 1"));
-	mGrid.attach(*mFields.back(), 13, 1, 1, 1);
+	attach(*mFields.back(), 13, 1, 1, 1);
 
 	// column 1
 	for (int i = 1, col = 1; i <= 34; i += 3, ++col)
 	{
 		mFields.push_back(new Field(color, i));
-		mGrid.attach(*mFields.back(), col, 2, 1, 1);
+		attach(*mFields.back(), col, 2, 1, 1);
 	}
 
 	mFields.push_back(new Field(color, "2 to 1"));
-	mGrid.attach(*mFields.back(), 13, 2, 1, 1);
+	attach(*mFields.back(), 13, 2, 1, 1);
 
 	// dozens
 	mFields.push_back(new Field(color, "1st 12"));
-	mGrid.attach(*mFields.back(), 1, 3, 4, 1);
+	attach(*mFields.back(), 1, 3, 4, 1);
 
 	mFields.push_back(new Field(color, "2nd 12"));
-	mGrid.attach(*mFields.back(), 5, 3, 4, 1);
+	attach(*mFields.back(), 5, 3, 4, 1);
 
 	mFields.push_back(new Field(color, "3rd 12"));
-	mGrid.attach(*mFields.back(), 9, 3, 4, 1);
+	attach(*mFields.back(), 9, 3, 4, 1);
 
 	// dummy
 	mFields.push_back(new Field(color, ""));
-	mGrid.attach(*mFields.back(), 13, 3, 1, 2);
+	attach(*mFields.back(), 13, 3, 1, 2);
 
 
 	// low/high red/black high/low
 	mFields.push_back(new Field(color, "1 to 18"));
-	mGrid.attach(*mFields.back(), 1, 4, 2, 1);
+	attach(*mFields.back(), 1, 4, 2, 1);
 
 	mFields.push_back(new Field(color, "EVEN"));
-	mGrid.attach(*mFields.back(), 3, 4, 2, 1);
+	attach(*mFields.back(), 3, 4, 2, 1);
 
 	mFields.push_back(new Field(color, "RED"));
-	mGrid.attach(*mFields.back(), 5, 4, 2, 1);
+	attach(*mFields.back(), 5, 4, 2, 1);
 
 	mFields.push_back(new Field(color, "BLACK"));
-	mGrid.attach(*mFields.back(), 7, 4, 2, 1);
+	attach(*mFields.back(), 7, 4, 2, 1);
 
 	mFields.push_back(new Field(color, "ODD"));
-	mGrid.attach(*mFields.back(), 9, 4, 2, 1);
+	attach(*mFields.back(), 9, 4, 2, 1);
 
 	mFields.push_back(new Field(color, "19 to 36"));
-	mGrid.attach(*mFields.back(), 11, 4, 2, 1);
+	attach(*mFields.back(), 11, 4, 2, 1);
 }
 
 Table::~Table()
@@ -109,4 +108,9 @@ Table::~Table()
 	{
 		delete mFields.at(i);
 	}
+}
+
+ETable Table::get_table_type()
+{
+	return mTableType;
 }

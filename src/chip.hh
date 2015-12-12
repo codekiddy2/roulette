@@ -23,7 +23,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <string>
 #include <gtkmm/widget.h>
 #include <glibmm/refptr.h>
-#include <gdkmm/color.h>
+#include <gdkmm/rgba.h>
 #include <gdkmm/window.h>
 #include <gdkmm/pixbuf.h>
 #include <gdkmm/rectangle.h> // Gtk::Allocation
@@ -36,7 +36,7 @@ class Chip final
 {
 public:
 	// constructors
-	Chip(Gdk::RGBA& color, std::string icon);
+	Chip(const Gdk::RGBA& background, const std::string file_name);
 	Chip(const Chip&) = delete;
 	Chip(const Chip&&) = delete;
 	Chip& operator=(const Chip&) = delete;
@@ -57,14 +57,13 @@ protected:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
 	// members
-	Glib::RefPtr<Gdk::Window> m_refGdkWindow;
+	Glib::RefPtr<Gdk::Window> refGdkWindow;
 
 private:
 	// members
 	Glib::RefPtr<Gdk::Pixbuf> refIcon;
 
 	/// begin initializer list
-	std::string mName;
 	Gdk::RGBA mBackground;
 	/// end initializer list
 };

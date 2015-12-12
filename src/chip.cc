@@ -22,20 +22,18 @@ along with this program. If not, see http://www.gnu.org/licenses.
 */
 
 
-Chip::Chip(Gdk::RGBA& color, std::string text) :
+Chip::Chip(const Gdk::RGBA& background, const std::string file_name) :
 	//The GType name will actually be gtkmm__CustomObject_Chip
 	Glib::ObjectBase("Chip"),
 	Gtk::Widget(),
-	mName(text),
-	mBackground(color)
+	mBackground(background)
 {
 	set_has_window(true);
 
-	if (boost::filesystem::exists(mName))
+	if (boost::filesystem::exists(file_name))
 	{
-		refIcon = Gdk::Pixbuf::create_from_file(mName, 48, 48); // load 48 x 48 from ico file
+		refIcon = Gdk::Pixbuf::create_from_file(file_name, 48, 48); // load 48 x 48 version from ico file
 	}
-
 }
 
 
@@ -89,9 +87,9 @@ void Chip::on_size_allocate(Gtk::Allocation& allocation)
 	//Use the offered allocation for this container:
 	set_allocation(allocation);
 
-	if (m_refGdkWindow)
+	if (refGdkWindow)
 	{
-		m_refGdkWindow->move_resize(allocation.get_x(), allocation.get_y(),
+		refGdkWindow->move_resize(allocation.get_x(), allocation.get_y(),
 			allocation.get_width(), allocation.get_height());
 	}
 }
@@ -118,7 +116,7 @@ void Chip::on_realize()
 
 	set_realized();
 
-	if (!m_refGdkWindow)
+	if (!refGdkWindow)
 	{
 		//Create the GdkWindow:
 
@@ -137,19 +135,19 @@ void Chip::on_realize()
 		attributes.window_type = GDK_WINDOW_CHILD;
 		attributes.wclass = GDK_INPUT_OUTPUT;
 
-		m_refGdkWindow = Gdk::Window::create(get_parent_window(), &attributes,
+		refGdkWindow = Gdk::Window::create(get_parent_window(), &attributes,
 			GDK_WA_X | GDK_WA_Y);
-		set_window(m_refGdkWindow);
+		set_window(refGdkWindow);
 
 		//make the widget receive expose events
-		m_refGdkWindow->set_user_data(gobj());
+		refGdkWindow->set_user_data(gobj());
 	}
 }
 
 // (optional) Break the association with the Gdk::Window.
 void Chip::on_unrealize()
 {
-	m_refGdkWindow.reset();
+	refGdkWindow.reset();
 
 	//Call base class:
 	Gtk::Widget::on_unrealize();
@@ -159,14 +157,16 @@ void Chip::on_unrealize()
 bool Chip::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
 	Gtk::Allocation allocation = get_allocation();
-	const int width = allocation.get_width();
-	const int height = allocation.get_height();
-	const double cx = width * 0.5;
-	const double cy = height * 0.5;
+
+	// TODO: these variables are used only once, consider removing them
+	const double cx = allocation.get_width() * 0.5;
+	const double cy = allocation.get_height() * 0.5;
+
 	const int chip_cx = refIcon->get_width() / 2;
 	const int chip_cy = refIcon->get_height() / 2;
 
 	// paint the background
+	// TODO: background color change will have no affect here
 	static double red = mBackground.get_red();
 	static double green = mBackground.get_green();
 	static double blue = mBackground.get_blue();
@@ -174,7 +174,7 @@ bool Chip::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	cr->set_source_rgb(red, green, blue);
 	cr->paint();
 
-	// draw chip
+	// draw chip in the middle
 	Gdk::Cairo::set_source_pixbuf(cr, refIcon, cx - chip_cx, cy - chip_cy);
 	cr->paint();
 

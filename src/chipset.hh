@@ -22,7 +22,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 #include "chip.hh"
 
-#include <gtkmm/gdkmm/rgba.h>
+#include <gdkmm/rgba.h>
 #include <gtkmm/buttonbox.h>
 
 
@@ -31,7 +31,7 @@ class Chipset final
 {
 public:
 	// constructors
-	Chipset(Gdk::RGBA& color);
+	Chipset(const Gdk::RGBA& color);
 	Chipset(const Chipset&) = delete;
 	Chipset(const Chipset&&) = delete;
 	Chipset& operator=(const Chipset&) = delete;

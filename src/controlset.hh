@@ -22,22 +22,24 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 #include "control.hh"
 
-#include <gtkmm/gdkmm/rgba.h>
+#include <gdkmm/rgba.h>
 #include <gtkmm/buttonbox.h>
 
+class window;
 
 class Controlset final
 	: public Gtk::ButtonBox
 {
 public:
 	// constructors
-	Controlset(Gdk::RGBA& color);
+	Controlset(const Gdk::RGBA& color);
 	Controlset(const Controlset&) = delete;
 	Controlset(const Controlset&&) = delete;
 	Controlset& operator=(const Controlset&) = delete;
 	Controlset& operator=(const Controlset&&) = delete;
 
-//private:
+private:
+	friend class Window; // to set signals
 /// begin initialization list
 	Control mBtnClose;
 	Control mBtnSpin;

@@ -25,7 +25,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <glibmm/refptr.h>
 #include <pangomm/layout.h>
 #include <pangomm/fontdescription.h>
-#include <gdkmm/color.h>
+#include <gdkmm/rgba.h>
 #include <gdkmm/window.h>
 #include <gdkmm/rectangle.h> // Gtk::Allocation
 #include <cairomm/refptr.h>
@@ -36,8 +36,12 @@ class Field final
 	: public Gtk::Widget
 {
 public:
-	Field(Gdk::RGBA& color, int num);
-	Field(Gdk::RGBA& color, std::string text);
+	Field(const Gdk::RGBA& color, const int num);
+	Field(const Gdk::RGBA& color, std::string text);
+	Field(const Field&) = delete;
+	Field(const Field&&) = delete;
+	Field& operator=(const Field&) = delete;
+	Field& operator=(const Field&&) = delete;
 
 protected:
 
@@ -54,7 +58,7 @@ protected:
 	void on_unrealize() override;
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
-	Glib::RefPtr<Gdk::Window> m_refGdkWindow;
+	Glib::RefPtr<Gdk::Window> refGdkWindow;
 
 private:
 	Pango::FontDescription mFont;
@@ -66,7 +70,7 @@ private:
 /// end initializer list
 
 	void draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
-		int rectangle_width, int rectangle_height);
+		int field_width, int field_height);
 };
 
 #endif // ! FIELD_HH

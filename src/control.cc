@@ -22,7 +22,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 */
 
 
-Control::Control(Gdk::RGBA& color, std::string name) :
+Control::Control(const Gdk::RGBA& color, const std::string name) :
 	//The GType name will actually be gtkmm__CustomObject_Control
 	Glib::ObjectBase("Control"),
 	Gtk::Widget(),
@@ -90,9 +90,9 @@ void Control::on_size_allocate(Gtk::Allocation& allocation)
 	//Use the offered allocation for this container:
 	set_allocation(allocation);
 
-	if (m_refGdkWindow)
+	if (refGdkWindow)
 	{
-		m_refGdkWindow->move_resize(allocation.get_x(), allocation.get_y(),
+		refGdkWindow->move_resize(allocation.get_x(), allocation.get_y(),
 			allocation.get_width(), allocation.get_height());
 	}
 }
@@ -119,7 +119,7 @@ void Control::on_realize()
 
 	set_realized();
 
-	if (!m_refGdkWindow)
+	if (!refGdkWindow)
 	{
 		//Create the GdkWindow:
 
@@ -138,19 +138,19 @@ void Control::on_realize()
 		attributes.window_type = GDK_WINDOW_CHILD;
 		attributes.wclass = GDK_INPUT_OUTPUT;
 
-		m_refGdkWindow = Gdk::Window::create(get_parent_window(), &attributes,
+		refGdkWindow = Gdk::Window::create(get_parent_window(), &attributes,
 			GDK_WA_X | GDK_WA_Y);
-		set_window(m_refGdkWindow);
+		set_window(refGdkWindow);
 
 		//make the widget receive expose events
-		m_refGdkWindow->set_user_data(gobj());
+		refGdkWindow->set_user_data(gobj());
 	}
 }
 
 // (optional) Break the association with the Gdk::Window.
 void Control::on_unrealize()
 {
-	m_refGdkWindow.reset();
+	refGdkWindow.reset();
 
 	//Call base class:
 	Gtk::Widget::on_unrealize();
@@ -165,15 +165,16 @@ bool Control::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
 
 	// paint the background
-	double red = mBackground.get_red();
-	double green = mBackground.get_green();
-	double blue = mBackground.get_blue();
+	// TODO: background color change will have no affect here
+	static double red = mBackground.get_red();
+	static double green = mBackground.get_green();
+	static double blue = mBackground.get_blue();
 
 	cr->set_source_rgb(red, green, blue);
 	cr->paint();
 
 	// stroke lines around filed
-	cr->set_source_rgb(1.0, 1.0, 1.0);
+	cr->set_source_rgb(1.0, 1.0, 1.0); // white
 	cr->set_line_width(1.0);
 	cr->move_to(0.0, 0.0);
 	cr->line_to(0.0, height);
@@ -188,22 +189,22 @@ bool Control::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 }
 
 void Control::draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
-	int rectangle_width, int rectangle_height)
+	int control_width, int control_height)
 {
 	int text_width;
 	int text_height;
 
-	//get the text dimensions (it updates the variables -- by reference)
+	// get the text dimensions (it updates the variables -- by reference)
 	mLayout->get_pixel_size(text_width, text_height);
 
-	static Gdk::Color color("White");
+	static Gdk::RGBA color("rgb(255, 255, 255)"); // white
 	static double red = color.get_red();
 	static double green = color.get_green();
 	static double blue = color.get_blue();
 
 	cr->set_source_rgb(red, green, blue);
 
-	cr->move_to((rectangle_width - text_width) / 2, (rectangle_height - text_height) / 2);
+	cr->move_to((control_width - text_width) / 2, (control_height - text_height) / 2);
 
 	mLayout->show_in_cairo_context(cr);
 }

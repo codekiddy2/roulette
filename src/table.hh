@@ -21,28 +21,33 @@ along with this program. If not, see http://www.gnu.org/licenses.
 */
 
 #include "field.hh"
+#include "sets.hh"
 
 #include <vector>
-#include <gtkmm/box.h>
 #include <gtkmm/grid.h>
 #include <gdkmm/rgba.h>
 
 
 class Table final :
-	public Gtk::Box
+	public Gtk::Grid
 {
 public:
 	// constructors
-	Table(Gdk::RGBA& color);
+	Table(const Gdk::RGBA& color, const ETable table_type = ETable::European);
 	~Table();
 	Table(const Table&) = delete;
 	Table(const Table&&) = delete;
 	Table& operator=(const Table&) = delete;
 	Table& operator=(const Table&&) = delete;
 
+	// methods
+	ETable get_table_type();
+
 private:
 	// members
-	Gtk::Grid mGrid;
+	/// begin initializer list
+	ETable mTableType;
+	/// end initializer list
 	std::vector<Field*> mFields;
 };
 

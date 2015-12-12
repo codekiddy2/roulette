@@ -1,6 +1,5 @@
-
-#include "pch.hh"
-#include "chipset.hh"
+#ifndef ENGINE_HH
+#define ENGINE_HH
 
 /*
 roulette - roulette simulation program
@@ -21,17 +20,31 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
+#include "sets.hh"
 
-Chipset::Chipset(const Gdk::RGBA& color) :
-	mChip1(color, "chip1.ico"),
-	mChip5(color, "chip5.ico"),
-	mChip25(color, "chip25.ico"),
-	mChip50(color, "chip50.ico"),
-	mChip100(color, "chip100.ico")
+#include <boost/random.hpp>
+#include <boost/random/random_device.hpp>
+
+class History;
+
+class Engine final
 {
-	pack_end(mChip1, Gtk::PACK_SHRINK);
-	pack_end(mChip5, Gtk::PACK_SHRINK);
-	pack_end(mChip25, Gtk::PACK_SHRINK);
-	pack_end(mChip50, Gtk::PACK_SHRINK);
-	pack_end(mChip100, Gtk::PACK_SHRINK);
-}
+public:
+	// constructors
+	Engine(History* history);
+	Engine(const Engine&) = delete;
+	Engine(const Engine&&) = delete;
+	Engine& operator=(const Engine&) = delete;
+	Engine& operator=(const Engine&&) = delete;
+
+	// methods
+	void spin(const ETable table_type) const;
+
+private:
+	/// begin initializer list
+	History* pHistory;
+	/// end initializer list
+	static boost::random::random_device rng;
+};
+
+#endif // !ENGINE_HH

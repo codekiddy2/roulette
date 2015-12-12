@@ -25,7 +25,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <glibmm/refptr.h>
 #include <pangomm/layout.h>
 #include <pangomm/fontdescription.h>
-#include <gdkmm/color.h>
+#include <gdkmm/rgba.h>
 #include <gdkmm/window.h>
 #include <gdkmm/rectangle.h> // Gtk::Allocation
 #include <cairomm/refptr.h>
@@ -37,7 +37,7 @@ class Control final
 {
 public:
 	// constructors
-	Control(Gdk::RGBA& color, std::string name);
+	Control(const Gdk::RGBA& color, const std::string name);
 	Control(const Control&) = delete;
 	Control(const Control&&) = delete;
 	Control& operator=(const Control&) = delete;
@@ -59,7 +59,7 @@ protected:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
 	// members
-	Glib::RefPtr<Gdk::Window> m_refGdkWindow;
+	Glib::RefPtr<Gdk::Window> refGdkWindow;
 
 private:
 	// members
@@ -72,7 +72,7 @@ private:
 	/// end initializer list
 
 	// methods
-	void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int rectangle_width, int rectangle_height);
+	void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int control_width, int control_height);
 };
 
 #endif // ! CONTROL_HH

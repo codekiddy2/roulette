@@ -115,6 +115,7 @@
     <ClInclude Include="chipset.hh" />
     <ClInclude Include="control.hh" />
     <ClInclude Include="controlset.hh" />
+    <ClInclude Include="engine.hh" />
     <ClInclude Include="field.hh" />
     <ClInclude Include="history.hh" />
     <ClInclude Include="window.hh" />
@@ -127,6 +128,7 @@
     <ClCompile Include="chipset.cc" />
     <ClCompile Include="control.cc" />
     <ClCompile Include="controlset.cc" />
+    <ClCompile Include="engine.cc" />
     <ClCompile Include="field.cc" />
     <ClCompile Include="history.cc" />
     <ClCompile Include="main.cc" />

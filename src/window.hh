@@ -24,10 +24,12 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "history.hh"
 #include "chipset.hh"
 #include "controlset.hh"
+#include "engine.hh"
 
 #include <gtkmm/box.h>
 #include <gtkmm/frame.h>
 #include <gtkmm/window.h>
+#include <gdkmm/rgba.h>
 #include <gdkmm/pixbuf.h>
 #include <gdkmm/event.h>
 #include <glibmm/refptr.h>
@@ -39,6 +41,7 @@ class Window final :
 public:
 	// constructors
 	Window();
+	~Window();
 	Window(const Window&) = delete;
 	Window(const Window&&) = delete;
 	Window& operator=(const Window&) = delete;
@@ -52,11 +55,12 @@ private:
 	Glib::RefPtr<Gdk::Pixbuf> refIcon;
 
 	/// begin initializer list
-	Gdk::RGBA mBackground;
+	Gdk::RGBA mBackground; // TODO: static RGBA
 	Table mTable;
 	Chipset mChipset;
 	Controlset mControlset;
-	History mHistory;
+	History* mHistory;
+	Engine mEngine;
 	Gtk::Frame mFrameHistory;
 	Gtk::Frame mFrameBets;
 	/// end of initializer list
