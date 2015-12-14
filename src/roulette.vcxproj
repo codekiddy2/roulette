@@ -82,6 +82,7 @@
     <ClCompile />
     <ClCompile>
       <EnablePREfast>false</EnablePREfast>
+      <DisableSpecificWarnings>4514;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -118,11 +119,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="bet.hh" />
     <ClInclude Include="chip.hh" />
     <ClInclude Include="chipset.hh" />
     <ClInclude Include="control.hh" />
     <ClInclude Include="controlset.hh" />
     <ClInclude Include="engine.hh" />
+    <ClInclude Include="error.hh" />
     <ClInclude Include="field.hh" />
     <ClInclude Include="history.hh" />
     <ClInclude Include="window.hh" />
@@ -131,6 +134,7 @@
     <ClInclude Include="table.hh" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="bet.cc" />
     <ClCompile Include="chip.cc" />
     <ClCompile Include="chipset.cc" />
     <ClCompile Include="control.cc" />

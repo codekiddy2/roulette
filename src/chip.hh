@@ -1,3 +1,4 @@
+
 #ifndef CHIP_HH
 #define CHIP_HH 1
 
@@ -20,6 +21,16 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
+///<summary>
+//
+//	chip.hh
+//
+//	Declaration of Bet class
+//
+//	TODO: add description
+//
+///</summary>
+
 #include <string>
 #include <gtkmm/widget.h>
 #include <gtkmm/selectiondata.h>
@@ -32,54 +43,56 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <cairomm/refptr.h>
 #include <cairomm/context.h>
 
-
-class Chip final
-	: public Gtk::Widget
+namespace roulette
 {
-public:
-	// constructors
-	Chip(const int value);
+	class Chip final
+		: public Gtk::Widget
+	{
+	public:
+		// constructors
+		Chip(const int value);
 
-	// methods
-	static void set_background_color(const Gdk::RGBA& color);
+		// methods
+		static void set_background_color(const Gdk::RGBA& color);
 
-protected:
-	//Overrides:
-	Gtk::SizeRequestMode get_request_mode_vfunc() const override;
-	void get_preferred_width_vfunc(int& minimum_width, int& natural_width) const override;
-	void get_preferred_height_for_width_vfunc(int width, int& minimum_height, int& natural_height) const  override;
-	void get_preferred_height_vfunc(int& minimum_height, int& natural_height) const override;
-	void get_preferred_width_for_height_vfunc(int height, int& minimum_width, int& natural_width) const override;
-	void on_size_allocate(Gtk::Allocation& allocation) override;
-	void on_map() override;
-	void on_unmap() override;
-	void on_realize() override;
-	void on_unrealize() override;
-	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+	protected:
+		//Overrides:
+		Gtk::SizeRequestMode get_request_mode_vfunc() const override;
+		void get_preferred_width_vfunc(int& minimum_width, int& natural_width) const override;
+		void get_preferred_height_for_width_vfunc(int width, int& minimum_height, int& natural_height) const  override;
+		void get_preferred_height_vfunc(int& minimum_height, int& natural_height) const override;
+		void get_preferred_width_for_height_vfunc(int height, int& minimum_width, int& natural_width) const override;
+		void on_size_allocate(Gtk::Allocation& allocation) override;
+		void on_map() override;
+		void on_unmap() override;
+		void on_realize() override;
+		void on_unrealize() override;
+		bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
-	// dnd
-	void on_drag_begin(const Glib::RefPtr< Gdk::DragContext >& context) override;
-	void on_drag_data_get(const Glib::RefPtr<Gdk::DragContext>& context,
-		Gtk::SelectionData& selection_data, guint info, guint time) override;
-	void on_drag_end(const Glib::RefPtr< Gdk::DragContext >& context) override;
+		// dnd
+		void on_drag_begin(const Glib::RefPtr< Gdk::DragContext >& context) override;
+		void on_drag_data_get(const Glib::RefPtr<Gdk::DragContext>& context,
+			Gtk::SelectionData& selection_data, guint info, guint time) override;
+		void on_drag_end(const Glib::RefPtr< Gdk::DragContext >& context) override;
 
-	// members
-	Glib::RefPtr<Gdk::Window> refGdkWindow;
+		// members
+		Glib::RefPtr<Gdk::Window> refGdkWindow;
 
-private:
-	// members
-	Glib::RefPtr<Gdk::Pixbuf> refIcon;
-	static Gdk::RGBA mBackground;
+	private:
+		// members
+		Glib::RefPtr<Gdk::Pixbuf> refIcon;
+		static Gdk::RGBA mBackground;
 
-	/// begin initializer list
-	const int mValue;
-	/// end initializer list
+		/// begin initializer list
+		const int mValue;
+		/// end initializer list
 
-	// deleted
-	Chip(const Chip&) = delete;
-	Chip(const Chip&&) = delete;
-	Chip& operator=(const Chip&) = delete;
-	Chip& operator=(const Chip&&) = delete;
-};
+		// deleted
+		Chip(const Chip&) = delete;
+		Chip(const Chip&&) = delete;
+		Chip& operator=(const Chip&) = delete;
+		Chip& operator=(const Chip&&) = delete;
+	};
+} // namespace roulette
 
 #endif // ! CHIP_HH

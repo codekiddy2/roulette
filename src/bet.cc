@@ -1,0 +1,985 @@
+/*
+roulette - roulette simulation program
+
+Copyright (C) 2015 codekiddy
+
+roulette is free software: you can redistribute it
+and/or modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation, either version 3
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see http://www.gnu.org/licenses.
+*/
+
+///<summary>
+//
+//	bet.cc
+//
+//	Definition of Bet class
+//
+// TODO: make print_properties print into a widget
+//	TODO: add description
+//
+///</summary>
+
+#include "pch.hh"
+#include "sets.hh"
+
+#pragma warning(push, 3)
+
+#include "bet.hh"
+
+#include <cmath>		// due to SetPart2
+#include <iostream>		// due to PrintProperties
+#include <algorithm>	// due to sort in SetPart1
+
+
+namespace roulette
+{
+#pragma region
+
+	// TODO selection as array
+	Bet::Bet(const ETable table, const EBet bet, const float chips, Selection_t* selection, Bet* parent) :
+		mId(bet),
+		mpParent(parent),
+		mpChilds(nullptr),
+		mpSelection(selection),
+		mpName(nullptr),
+		mCoverage(1),
+		mChips(0.f),
+		mReturn(0.f),
+		mPayout(0.f),
+		mWin(0.f),
+		mResult(0.f),
+		mLose(0.f),
+		mOdds(0.f),
+		mProbWin(0.f),
+		mProbPush(0.f),
+		mProbLose(0.f),
+		mExpectedValue(0.f),
+		mExpectedReturn(0.f),
+		mAverageWin(0.f),
+		mFirstMoment(0),
+		mSecondMoment(0),
+		mThirdMoment(0),
+		mFourthMoment(0),
+		mSkewness(0.f),
+		mKurtosis(0.f),
+		mVariance(0.f),
+		mBinomialVariance(0.f),
+		mStandardDeviation(0.f),
+		mBinomialStandardDeviation(0.f)
+	{
+		AssignName();
+
+		if (parent)
+			SetPart1(chips);
+		else
+		{
+			mpChilds = new Childs_t;
+			mpSelection = new Selection_t;
+			FillChilds(table, selection, chips);
+			short nums = table > ETable::American ? 37 : static_cast<short>(table);
+
+			for (Ushort_t i = 0; i < mpChilds->size(); ++i)
+				mpChilds->at(i).SetPart2(table, nums, chips);
+
+			SetPart1(chips);
+			SetPart2(table, nums, chips);
+		}
+	}
+
+
+	Bet::~Bet()
+	{
+		delete mpChilds;
+		delete mpSelection;
+	}
+
+
+	Bet::Bet(const Bet& ref) :
+		mId(ref.mId),
+		mpParent(ref.mpParent),
+		mpChilds(nullptr),
+		mpSelection(new Selection_t(*ref.mpSelection)),
+		mpName(ref.mpName),
+		mCoverage(ref.mCoverage),
+		mChips(ref.mChips),
+		mReturn(ref.mReturn),
+		mPayout(ref.mPayout),
+		mWin(ref.mWin),
+		mResult(ref.mResult),
+		mLose(ref.mLose),
+		mOdds(ref.mOdds),
+		mProbWin(ref.mProbWin),
+		mProbPush(ref.mProbPush),
+		mProbLose(ref.mProbLose),
+		mExpectedValue(ref.mExpectedValue),
+		mExpectedReturn(ref.mExpectedReturn),
+		mAverageWin(ref.mAverageWin),
+		mFirstMoment(ref.mFirstMoment),
+		mSecondMoment(ref.mSecondMoment),
+		mThirdMoment(ref.mThirdMoment),
+		mFourthMoment(ref.mFourthMoment),
+		mSkewness(ref.mSkewness),
+		mKurtosis(ref.mKurtosis),
+		mVariance(ref.mVariance),
+		mBinomialVariance(ref.mBinomialVariance),
+		mStandardDeviation(ref.mStandardDeviation),
+		mBinomialStandardDeviation(ref.mBinomialStandardDeviation)
+	{
+		if (ref.mpChilds)
+			mpChilds = new Childs_t(*ref.mpChilds);
+	}
+
+
+	Bet::Bet(Bet&& ref) :
+		mId(ref.mId),
+		mpParent(ref.mpParent),
+		mpChilds(ref.mpChilds),
+		mpSelection(ref.mpSelection),
+		mpName(ref.mpName),
+		mCoverage(ref.mCoverage),
+		mChips(ref.mChips),
+		mReturn(ref.mReturn),
+		mPayout(ref.mPayout),
+		mWin(ref.mWin),
+		mResult(ref.mResult),
+		mLose(ref.mLose),
+		mOdds(ref.mOdds),
+		mProbWin(ref.mProbWin),
+		mProbPush(ref.mProbPush),
+		mProbLose(ref.mProbLose),
+		mExpectedValue(ref.mExpectedValue),
+		mExpectedReturn(ref.mExpectedReturn),
+		mAverageWin(ref.mAverageWin),
+		mFirstMoment(ref.mFirstMoment),
+		mSecondMoment(ref.mSecondMoment),
+		mThirdMoment(ref.mThirdMoment),
+		mFourthMoment(ref.mFourthMoment),
+		mSkewness(ref.mSkewness),
+		mKurtosis(ref.mKurtosis),
+		mVariance(ref.mVariance),
+		mBinomialVariance(ref.mBinomialVariance),
+		mStandardDeviation(ref.mStandardDeviation),
+		mBinomialStandardDeviation(ref.mBinomialStandardDeviation)
+	{
+		ref.mpChilds = nullptr;
+		ref.mpSelection = nullptr;
+	}
+
+
+	Bet& Bet::operator=(Bet&& ref)
+	{
+		if (this != &ref)
+		{
+			mId = ref.mId;
+			mpParent = ref.mpParent;
+			delete mpChilds; // 1.
+			mpChilds = ref.mpChilds;
+			ref.mpChilds = nullptr;
+			delete mpSelection; // 2.
+			mpSelection = ref.mpSelection;
+			ref.mpSelection = nullptr;
+			mpName = ref.mpName;
+			mCoverage = ref.mCoverage;
+			mChips = ref.mChips;
+			mReturn = ref.mReturn;
+			mPayout = ref.mPayout;
+			mWin = ref.mWin;
+			mResult = ref.mResult;
+			mLose = ref.mLose;
+			mOdds = ref.mOdds;
+			mProbWin = ref.mProbWin;
+			mProbPush = ref.mProbPush;
+			mProbLose = ref.mProbLose;
+			mExpectedValue = ref.mExpectedValue;
+			mExpectedReturn = ref.mExpectedReturn;
+			mAverageWin = ref.mAverageWin;
+			mFirstMoment = ref.mFirstMoment;
+			mSecondMoment = ref.mSecondMoment;
+			mThirdMoment = ref.mThirdMoment;
+			mFourthMoment = ref.mFourthMoment;
+			mSkewness = ref.mSkewness;
+			mKurtosis = ref.mKurtosis;
+			mVariance = ref.mVariance;
+			mBinomialVariance = ref.mBinomialVariance;
+			mStandardDeviation = ref.mStandardDeviation;
+			mBinomialStandardDeviation = ref.mBinomialStandardDeviation;
+		}
+		return *this;
+	}
+
+
+	void Bet::FillChilds(const ETable& table, const Selection_t* const selection, const float& chips)
+	{
+		short temp[6];
+
+		switch (mId)
+		{
+		case EBet::StraightUp:	// TODO these bets do not need a childs
+		case EBet::Split:
+		case EBet::Street:
+		case EBet::Corner:
+		case EBet::Line:		// TODO	pass address of set directly
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(*selection), this));
+			break;
+		case EBet::Basket:
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Basket), this));
+			break;
+		case EBet::Column1:
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Column1), this));
+			break;
+		case EBet::Column2:
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Column2), this));
+			break;
+		case EBet::Column3:
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Column3), this));
+			break;
+		case EBet::Dozen1:
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Dozen1), this));
+			break;
+		case EBet::Dozen2:
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Dozen2), this));
+			break;
+		case EBet::Dozen3:
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Dozen3), this));
+			break;
+		case EBet::High:
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(High), this));
+			break;
+		case EBet::Low:
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Low), this));
+			break;
+		case EBet::Red:
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Red), this));
+			break;
+		case EBet::Black:
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Black), this));
+			break;
+		case EBet::Even:
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Even), this));
+			break;
+		case EBet::Odd:
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Odd), this));
+			break;
+		case EBet::VoisinsDeZero:
+			for (short i = 0; i < 10; i += 2)
+				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(voisinsDeZero + i, voisinsDeZero + (i + 2)), this));
+			mpChilds->push_back(Bet(table, EBet::Street, chips, new Selection_t(voisinsDeZero + 10, voisinsDeZero + 13), this));
+			mpChilds->push_back(Bet(table, EBet::Corner, chips, new Selection_t(voisinsDeZero + 13, voisinsDeZero + 17), this));
+			break;
+		case EBet::TriesDuCylindre:
+			for (short i = 0; i < 12; i += 2)
+				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(triesDuCylindre + i, triesDuCylindre + (i + 2)), this));
+			break;
+		case EBet::OrphelinsEnPlen:
+			for (short i = 0; i < 8; ++i)
+				mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, orphelinsEnPlen[i]), this));
+			break;
+		case EBet::OrphelinsACheval:
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 1), this));
+			for (short i = 1; i < 8; i += 2)
+				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(orphelinsACheval + i, orphelinsACheval + (i + 2)), this));
+			break;
+		case EBet::Jeu0:
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 26), this));
+			for (short i = 1; i < 6; i += 2)
+				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(jeu0 + i, jeu0 + (i + 2)), this));
+			break;
+		case EBet::Jeu79:
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 19), this));
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 27), this));
+			for (short i = 2; i < 9; i += 2)
+				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(jeu79 + i, jeu79 + (i + 2)), this));
+			break;
+		case EBet::RedSplits:
+			for (short i = 0; i < 4; i += 2)
+				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(redSplits, redSplits + (i + 2)), this));
+			break;
+		case EBet::BlackSplits:
+			for (short i = 0; i < 14; i += 2)
+				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(blackSplits, blackSplits + (i + 2)), this));
+			break;
+		case EBet::Snake:
+			for (short i = 0; i < 12; ++i)
+				mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, Snake[i]), this));
+			break;
+		case EBet::Neighbor1:
+		case EBet::Neighbor2:
+		case EBet::Neighbor3:
+		case EBet::Neighbor4:
+		case EBet::Neighbor5:
+			for (short i = -(static_cast<short>(mId) - 4); i <= (static_cast<short>(mId) - 4); ++i)
+				mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, get_neighbor(table, selection->at(0), i)), this));
+			break;
+		case EBet::FinalesEnPlen0:
+		case EBet::FinalesEnPlen1:
+		case EBet::FinalesEnPlen2:
+		case EBet::FinalesEnPlen3:
+		case EBet::FinalesEnPlen4:
+		case EBet::FinalesEnPlen5:
+		case EBet::FinalesEnPlen6:
+			for (short i = static_cast<short>(mId) - 64; i <= static_cast<short>(mId) - 34; i += 10)
+				mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, i), this));
+			break;
+		case EBet::FinalesEnPlen7:
+		case EBet::FinalesEnPlen8:
+		case EBet::FinalesEnPlen9:
+			for (short i = static_cast<short>(mId) - 64; i <= static_cast<short>(mId) - 44; i += 10)
+				mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, i), this));
+			break;
+		case EBet::FinalesACheval01:
+			for (temp[0] = 0, temp[1] = 1; temp[0] <= 20; temp[0] += 10, temp[1] += 10)
+				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 30), this));
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 31), this));
+			break;
+		case EBet::FinalesACheval12:
+			temp[0] = 31; temp[1] = 32;
+			mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+			for (temp[0] = 1, temp[1] = 2; temp[0] <= 11; temp[0] += 10, temp[1] + 10)
+				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 21), this));
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 22), this));
+			break;
+		case EBet::FinalesACheval23:
+			temp[0] = 2; temp[1] = 3;
+			mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+			for (temp[0] = 22, temp[1] = 23; temp[0] <= 32; temp[0] += 10, temp[1] + 10)
+				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 12), this));
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 13), this));
+			break;
+		case EBet::FinalesACheval34:
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 3), this));
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 4), this));
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 33), this));
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 34), this));
+			for (temp[0] = 13, temp[1] = 14; temp[0] <= 23; temp[0] += 10, temp[1] + 10)
+				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+			break;
+		case EBet::FinalesACheval45:
+			temp[0] = 34; temp[1] = 35;
+			mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+			for (temp[0] = 4, temp[1] = 5; temp[0] <= 14; temp[0] += 10, temp[1] + 10)
+				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 24), this));
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 25), this));
+			break;
+		case EBet::FinalesACheval56:
+			temp[0] = 5; temp[1] = 6;
+			mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+			for (temp[0] = 25, temp[1] = 26; temp[0] <= 35; temp[0] += 10, temp[1] += 10)
+				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 15), this));
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 16), this));
+			break;
+		case EBet::FinalesACheval67:
+			for (temp[0] = 16, temp[1] = 17; temp[0] <= 26; temp[0] += 10, temp[1] + 10)
+				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 6), this));
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 7), this));
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 36), this));
+			break;
+		case EBet::FinalesACheval78:
+			for (temp[0] = 7, temp[1] = 8; temp[0] <= 17; temp[0] += 10, temp[1] + 10)
+				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 27), this));
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 28), this));
+			break;
+		case EBet::FinalesACheval89:
+			temp[0] = 8; temp[1] = 9;
+			mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+			temp[0] = 28; temp[1] = 29;
+			mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 18), this));
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 19), this));
+			break;
+		case EBet::FinalesACheval910:
+			for (temp[0] = 19, temp[1] = 20; temp[0] <= 29; temp[0] += 10, temp[1] + 10)
+				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 9), this));
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 10), this));
+			break;
+
+		case EBet::FinalesACheval03:
+		case EBet::FinalesACheval14:
+		case EBet::FinalesACheval25:
+		case EBet::FinalesACheval36:
+			for (temp[0] = static_cast<short>(mId) - 84, temp[1] = static_cast<short>(mId) - 81; temp[0] <= static_cast<short>(mId) - 54; temp[0] += 10, temp[1] += 10)
+				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+			break;
+		case EBet::FinalesACheval47:
+		case EBet::FinalesACheval58:
+		case EBet::FinalesACheval69:
+		case EBet::FinalesACheval710:
+		case EBet::FinalesACheval811:
+		case EBet::FinalesACheval912:
+			for (temp[0] = static_cast<short>(mId) - 84, temp[1] = static_cast<short>(mId) - 81; temp[0] <= static_cast<short>(mId) - 64; temp[0] += 10, temp[1] += 10)
+				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+			break;
+		case EBet::Maximus00:
+			//	TODO Solve maximus bets
+			break;
+		case EBet::Maximus0:
+		{
+			Selection_t temp(1, 0); // 0
+			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(temp), this));
+			temp.push_back(1); // 0, 1
+			mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp), this));
+			temp.at(1) = 3; // 0, 3
+			mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp), this));
+			temp.at(1) = 2; // 0, 2
+			mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp), this));
+			temp.push_back(1); // 0, 2, 1
+			mpChilds->push_back(Bet(table, EBet::Street, chips, new Selection_t(temp), this));
+			temp.at(2) = 3; // 0, 2, 3
+			mpChilds->push_back(Bet(table, EBet::Street, chips, new Selection_t(temp), this));
+			switch (table)
+			{
+			case ETable::American:
+				mpChilds->at(2).mpSelection->at(1) = 37; // 0, 3 ---> 0, 37
+				mpChilds->at(5).mpSelection->at(2) = 37; // 0,2,3 ---> 0, 2, 37
+				temp.push_back(1); // 0, 2, 3, 1
+				temp.push_back(37);	// 0, 2, 3, 1, 37
+				mpChilds->push_back(Bet(table, EBet::Basket, chips, new Selection_t(temp), this));
+				break;
+			case ETable::NoZero:
+				break;
+			default:
+				temp.erase(temp.begin() + 4); // 0, 2, 3, 1
+				mpChilds->push_back(Bet(table, EBet::Corner, chips, new Selection_t(temp), this));
+				break;
+			}
+			break;
+		}
+		case EBet::Maximus13:
+			break;
+		case EBet::Maximus2:
+			break;
+		case EBet::Maximus35:
+			break;
+		case EBet::Maximus3436:
+			break;
+		case EBet::MaximusColumn2:
+			break;
+		case EBet::MaximusColumn13:
+			break;
+		}
+	}
+
+#pragma endregion Construction and destruction
+
+
+	// TODO implement map of strings with names 
+#pragma region
+
+	// TODO printProperties mozda krivo pise
+	void Bet::PrintProperties(const bool& childs) const
+	{
+		using std::cout;
+		using std::endl;
+
+		cout << endl << "BET PROPERTIES";
+		if (mpParent)
+			cout << " Childs_t bet" << endl;
+		else
+			cout << " Parent bet" << endl;
+		cout << "*************************" << endl << endl;
+		cout << "mpName			" << mpName << endl;
+		cout << "mCoverage		" << mCoverage << endl;
+		cout << "mChips			" << mChips << endl;
+		cout << "mReturn			" << mReturn << endl;
+		cout << "mPayout			" << mPayout << endl;
+		cout << "mWin			" << mWin << endl;
+		cout << "mProbWin			" << mProbWin << endl;
+		cout << "mProbPush		" << mProbPush << endl;
+		cout << "mProbLose		" << mProbLose << endl;
+		cout << "mResult			" << mResult << endl;
+		cout << "Expected value		" << mExpectedValue << endl;
+		cout << "mOdds			" << mOdds << endl;
+		cout << "Expected return		" << mExpectedReturn << endl;
+		cout << "mLose			" << mLose << endl;
+		cout << "Average win		" << mAverageWin << endl;
+		cout << "1st moment		" << mFirstMoment << endl;
+		cout << "2nd moment		" << mSecondMoment << endl;
+		cout << "3rd moment		" << mThirdMoment << endl;
+		cout << "4th moment		" << mFourthMoment << endl;
+		cout << "Binomial variance	" << mBinomialVariance << endl;
+		cout << "Binomial StdDev		" << mBinomialStandardDeviation << endl;
+		cout << "mVariance		" << mVariance << endl;
+		cout << "Stdandard deviation	" << mStandardDeviation << endl;
+		cout << "mSkewness		" << mSkewness << endl;
+		cout << "mKurtosis		" << mKurtosis << endl;
+		cout << "----------------" << endl;
+		cout << "Covered numbers:" << endl;
+
+		if (mpChilds) // it is parent
+			for (Ushort_t i = 0; i < mpChilds->size(); ++i)
+			{
+				cout << mpChilds->at(i).mpName << ":" << endl;
+				for (Ushort_t j = 0; j < mpChilds->at(i).mpSelection->size(); ++j)
+					cout << mpChilds->at(i).mpSelection->at(j) << endl;
+			}
+
+		else for (Ushort_t i = 0; i < mpSelection->size(); ++i)
+			cout << mpSelection->at(i) << endl;
+
+		if (childs)	// print child properties
+			for (Ushort_t i = 0; i < mpChilds->size(); ++i)
+				mpChilds->at(i).PrintProperties();
+	}
+
+
+	void Bet::AssignName()
+	{
+		switch (mId)
+		{
+		case EBet::StraightUp:
+			mpName = "Straight up";
+			break;
+		case EBet::Split:
+			mpName = "Split";
+			break;
+		case EBet::Street:
+			mpName = "Street";
+			break;
+		case EBet::Corner:
+			mpName = "Corner";
+			break;
+		case EBet::Basket:
+			mpName = "Basket";
+			break;
+		case EBet::Line:
+			mpName = "Line";
+			break;
+		case EBet::Column1:
+			mpName = "Column1";
+			break;
+		case EBet::Column2:
+			mpName = "Column2";
+			break;
+		case EBet::Column3:
+			mpName = "Column3";
+			break;
+		case EBet::Dozen1:
+			mpName = "Dozen1";
+			break;
+		case EBet::Dozen2:
+			mpName = "Dozen2";
+			break;
+		case EBet::Dozen3:
+			mpName = "Dozen3";
+			break;
+		case EBet::High:
+			mpName = "High";
+			break;
+		case EBet::Low:
+			mpName = "Low";
+			break;
+		case EBet::Red:
+			mpName = "Red";
+			break;
+		case EBet::Black:
+			mpName = "Black";
+			break;
+		case EBet::Even:
+			mpName = "Even";
+			break;
+		case EBet::Odd:
+			mpName = "Odd";
+			break;
+		case EBet::VoisinsDeZero:
+			mpName = "Voisins de zero";
+			break;
+		case EBet::TriesDuCylindre:
+			mpName = "Tries du cylindre";
+			break;
+		case EBet::OrphelinsEnPlen:
+			mpName = "Orphelins en plen";
+			break;
+		case EBet::OrphelinsACheval:
+			mpName = "Orphelins a Cheval";
+			break;
+		case EBet::Jeu0:
+			mpName = "Jeu 0";
+			break;
+		case EBet::Jeu79:
+			mpName = "Jeu 7/9";
+			break;
+		case EBet::RedSplits:
+			mpName = "Red splits";
+			break;
+		case EBet::BlackSplits:
+			mpName = "Black Splits";
+			break;
+		case EBet::Snake:
+			mpName = "Snake";
+			break;
+		case EBet::Neighbor1:
+			mpName = "Neighbor 1";
+			break;
+		case EBet::Neighbor2:
+			mpName = "Neighbor 2";
+			break;
+		case EBet::Neighbor3:
+			mpName = "Neighbor 3";
+			break;
+		case EBet::Neighbor4:
+			mpName = "Neighbor 4";
+			break;
+		case EBet::Neighbor5:
+			mpName = "Neighbor 5";
+			break;
+		case EBet::FinalesEnPlen0:
+			mpName = "Finales en plen 0";
+			break;
+		case EBet::FinalesEnPlen1:
+			mpName = "Finales en plen 1";
+			break;
+		case EBet::FinalesEnPlen2:
+			mpName = "Finales en plen 2";
+			break;
+		case EBet::FinalesEnPlen3:
+			mpName = "Finales en plen 3";
+			break;
+		case EBet::FinalesEnPlen4:
+			mpName = "Finales en plen 4";
+			break;
+		case EBet::FinalesEnPlen5:
+			mpName = "Finales en plen 5";
+			break;
+		case EBet::FinalesEnPlen6:
+			mpName = "Finales en plen 6";
+			break;
+		case EBet::FinalesEnPlen7:
+			mpName = "Finales en plen 7";
+			break;
+		case EBet::FinalesEnPlen8:
+			mpName = "Finales en plen 8";
+			break;
+		case EBet::FinalesEnPlen9:
+			mpName = "Finales en plen 9";
+			break;
+		case EBet::FinalesACheval01:
+			mpName = "Finales a cheval 0/1";
+			break;
+		case EBet::FinalesACheval12:
+			mpName = "Finales a cheval 1/2";
+			break;
+		case EBet::FinalesACheval23:
+			mpName = "Finales a cheval 2/3";
+			break;
+		case EBet::FinalesACheval34:
+			mpName = "Finales a cheval 3/4";
+			break;
+		case EBet::FinalesACheval45:
+			mpName = "Finales a cheval 4/5";
+			break;
+		case EBet::FinalesACheval56:
+			mpName = "Finales a cheval 5/6";
+			break;
+		case EBet::FinalesACheval67:
+			mpName = "Finales a cheval 6/7";
+			break;
+		case EBet::FinalesACheval78:
+			mpName = "Finales a cheval 7/8";
+			break;
+		case EBet::FinalesACheval89:
+			mpName = "Finales a cheval 8/9";
+			break;
+		case EBet::FinalesACheval910:
+			mpName = "Finales a cheval 9/10";
+			break;
+		case EBet::FinalesACheval03:
+			mpName = "Finales a cheval 0/3";
+			break;
+		case EBet::FinalesACheval14:
+			mpName = "Finales a cheval 1/4";
+			break;
+		case EBet::FinalesACheval25:
+			mpName = "Finales a cheval 2/5";
+			break;
+		case EBet::FinalesACheval36:
+			mpName = "Finales a cheval 3/6";
+			break;
+		case EBet::FinalesACheval47:
+			mpName = "Finales a cheval 4/7";
+			break;
+		case EBet::FinalesACheval58:
+			mpName = "Finales a cheval 5/8";
+			break;
+		case EBet::FinalesACheval69:
+			mpName = "Finales a cheval 6/9";
+			break;
+		case EBet::FinalesACheval710:
+			mpName = "Finales a cheval 7/10";
+			break;
+		case EBet::FinalesACheval811:
+			mpName = "Finales a cheval 8/11";
+			break;
+		case EBet::FinalesACheval912:
+			mpName = "Finales a cheval 9/12";
+			break;
+		case EBet::Maximus0:
+			mpName = "Maximus 0";
+			break;
+		case EBet::Maximus00:
+			mpName = "Maximus 00";
+			break;
+		case EBet::Maximus13:
+			mpName = "Maximus 1/3";
+			break;
+		case EBet::Maximus2:
+			mpName = "Maximus 2";
+			break;
+		case EBet::Maximus35:
+			mpName = "Maximus 35";
+			break;
+		case EBet::Maximus3436:
+			mpName = "Maximus 34, 36";
+			break;
+		case EBet::MaximusColumn2:
+			mpName = "Maximus column 2";
+			break;
+		case EBet::MaximusColumn13:
+			mpName = "Maximus column 13";
+			break;
+		default:
+			throw error("Bet -> AssignName -> Name not found");
+		}
+	}
+
+
+	void Bet::SetPart1(const float& chips)
+	{
+		using std::sort;
+
+		// COVERAGE
+		if (mpSelection->empty())  // it is parent
+		{
+			for (Ushort_t i = 0; i < mpChilds->size(); ++i)
+				for (Ushort_t j = 0; j < mpChilds->at(i).mpSelection->size(); ++j)
+					mpSelection->push_back(mpChilds->at(i).mpSelection->at(j));
+
+			sort(mpSelection->begin(), mpSelection->end());
+		}
+		for (Ushort_t i = 0; i < mpSelection->size() - 1; ++i)
+			if (mpSelection->at(i) != mpSelection->at(i + 1))
+				++mCoverage;
+
+		// CHIPS
+		if (mpChilds)  // it is parent
+		{
+			for (Ushort_t i = 0; i < mpChilds->size(); ++i)
+				mChips += mpChilds->at(i).mChips;
+
+			// RETURN
+			float SUMproduct = 0.f;
+			short SUMcoverage = 0;
+
+			for (Ushort_t i = 0; i < mpChilds->size(); ++i)
+			{
+				SUMproduct += mpChilds->at(i).mCoverage * mpChilds->at(i).mReturn;
+				SUMcoverage += mpChilds->at(i).mCoverage;
+			}
+			mReturn = SUMproduct / SUMcoverage;
+
+			// PAYOUT
+			SUMproduct = 0.f;
+			SUMcoverage = 0;
+			for (Ushort_t i = 0; i < mpChilds->size(); ++i)
+			{
+				SUMproduct += mpChilds->at(i).mCoverage * mpChilds->at(i).mPayout;
+				SUMcoverage += mpChilds->at(i).mCoverage;
+			}
+
+			mPayout = SUMproduct / SUMcoverage;
+			return;
+		}
+
+		// CHIPS
+		switch (mpParent->mId)
+		{
+		case EBet::VoisinsDeZero:
+			switch (mId)
+			{
+			case EBet::Street:
+			case EBet::Corner:
+				mChips = chips * 2;
+				break;
+			default:
+				mChips = chips;
+				break;
+			}
+			break;
+		case EBet::Maximus00:
+		case EBet::Maximus0:
+		case EBet::Maximus13:
+		case EBet::Maximus2:
+		case EBet::Maximus35:
+		case EBet::Maximus3436:
+		case EBet::MaximusColumn2:
+		case EBet::MaximusColumn13:
+			mChips = mCoverage;
+			break;
+		default:
+			mChips = chips;
+		}
+
+		// RETURN
+		switch (mpParent->mId)
+		{
+		case EBet::OrphelinsACheval:
+			if (mpSelection->size() != 1)
+				if ((mpSelection->at(0) == 17) || (mpSelection->at(1) == 17))
+					mReturn = mChips * 3.f / 2;
+				else
+					mReturn = mChips;
+			else
+				mReturn = mChips;
+			break;
+		case EBet::Jeu79:
+			if (mpSelection->size() != 1)
+				if ((mpSelection->at(0) == 8) || (mpSelection->at(1) == 8))
+					mReturn = mChips * 3.f / 2;
+				else mReturn = mChips;
+			else
+				mReturn = mChips;
+			break;
+		case EBet::BlackSplits: // check numbes order and reduce logical check
+			if ((mpSelection->at(0) == 8) || (mpSelection->at(0) == 26) || (mpSelection->at(1) == 13) || (mpSelection->at(1) == 31))
+				mReturn = mChips * 3.f / 2;
+			else if (mpSelection->at(0) != 17)
+				mReturn = mChips * 2.f;
+			else
+				mReturn = mChips;
+			break;
+		case EBet::Maximus00:
+		case EBet::Maximus0:
+		case EBet::Maximus13:
+		case EBet::Maximus2:
+		case EBet::Maximus35:
+		case EBet::Maximus3436:
+		case EBet::MaximusColumn2:
+		case EBet::MaximusColumn13:
+			throw error("Bet -> SetPart1 -> Maximus return not defined");
+			break;
+		default:
+			mReturn = mChips;
+		}
+
+		// PAYOUT
+		mPayout = floor(36.f / mCoverage - 1);
+	}
+
+
+	void Bet::SetPart2(const ETable& table, const short& nums, const float& chips)
+	{
+		using std::floor;
+		using std::pow;
+		using std::sqrt;
+
+		// WIN and RESULT
+		if (!mpChilds) // it is child
+		{
+			float SUMchips = 0.f;
+
+			for (Ushort_t i = 0; i < mpParent->mpChilds->size(); ++i)
+				SUMchips += mpParent->mpChilds->at(i).mChips;
+
+			mWin = mPayout * mChips - (SUMchips - mChips);
+			mResult = mCoverage * mWin;
+		}
+		else // it is parent
+		{
+			for (Ushort_t i = 0; i < mpChilds->size(); ++i)
+				mResult += mpChilds->at(i).mResult;
+
+			mWin = mResult / mCoverage;
+		}
+
+		// LOSE
+		mLose = mChips * (nums - mCoverage);
+
+		// ODDS
+		mOdds = static_cast<float>(nums) / mCoverage - 1;
+
+		// PROBABILITY TO WIN
+		mProbWin = mCoverage / static_cast<float>(nums);
+
+		// PROBABILITY TO PUSH
+		if ((table >= ETable::French) && (mId <= EBet::Low) && (mId >= EBet::Red))
+		{
+			const float zero = 1.f / 37;
+			switch (table)
+			{
+			case ETable::French:
+				mProbPush = zero / 2;
+				break;
+			case ETable::SingleImprisonment:
+				mProbPush = zero * mProbWin;
+				break;
+			case ETable::DoubleImprisonment:
+				mProbPush = zero * mProbWin / (1 - zero * mProbWin);
+				break;
+			case ETable::TripleImprisonment:
+				mProbPush = zero * (1 / (1 - (zero * mProbWin + (zero * zero * (1 / (1 - zero * mProbWin)) * mProbWin * mProbWin)))) * mProbWin;
+				break;
+			case ETable::InfininiteImprisonment:
+				mProbPush = (1 - sqrt(1 - 4 * zero * mProbWin)) / 2;
+			}
+		}
+
+		// PROBABILITY TO LOSE
+		mProbLose = 1 - mProbWin - mProbPush;
+
+		// EXPECTED RETURN AND VALUE
+		if (mpChilds) // it is parent
+		{
+			for (Ushort_t i = 0; i < mpChilds->size(); ++i)
+				mExpectedReturn += mpChilds->at(i).mExpectedReturn;
+
+			mExpectedValue = mExpectedReturn / mChips;
+		}
+		else
+		{
+			mExpectedReturn = mChips * mPayout * mProbWin - mChips * mProbLose;
+
+			if ((mId <= EBet::Low) && (mId >= EBet::Red) && (table >= ETable::French))
+				mExpectedValue = mProbWin - mProbLose;
+			else
+				mExpectedValue = mPayout * mProbWin - mProbLose;
+		}
+
+		// AVERAGE WIN
+		mAverageWin = mWin / mChips;
+
+		// MOMETS
+		mFirstMoment = static_cast<short>(pow(nums - mCoverage, 1) * mCoverage + pow(-mCoverage, 1) * (nums - mCoverage));
+		mSecondMoment = static_cast<short>(pow(nums - mCoverage, 2) * mCoverage + pow(-mCoverage, 2) * (nums - mCoverage));
+		mThirdMoment = static_cast<int>(pow(nums - mCoverage, 3) * mCoverage + pow(-mCoverage, 3) * (nums - mCoverage));
+		mFourthMoment = static_cast<int>(pow(nums - mCoverage, 4) * mCoverage + pow(-mCoverage, 4) * (nums - mCoverage));
+
+		// SKEWNESS AND KURTISIS
+		mSkewness = static_cast<float>(sqrt(nums) * mThirdMoment / pow(mSecondMoment, 3.f / 2));
+		mKurtosis = static_cast<float>(nums * mFourthMoment / pow(mSecondMoment, 2));
+
+		// VARIANCE AND STANDARD DEVIATION
+		mBinomialVariance = pow(sqrt(mProbWin * mProbLose), 2);
+		mBinomialStandardDeviation = sqrt(mProbWin * mProbLose);
+		mVariance = pow(chips * (mPayout + mReturn) * sqrt(mProbWin * mProbLose), 2);
+		mStandardDeviation = chips * (mPayout + mReturn) * sqrt(mProbWin * mProbLose);
+	}
+
+#pragma warning (pop)
+
+#pragma endregion Class methods
+}

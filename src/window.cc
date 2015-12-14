@@ -17,6 +17,16 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
+///<summary>
+//
+//	window.cc
+//
+//	Definition of Window class
+//
+//	TODO: add description
+//
+///</summary>
+
 #include "pch.hh"
 #include "window.hh"
 #include "sets.hh"
@@ -25,6 +35,7 @@ using std::cerr;
 using std::cout;
 using std::endl;
 using std::string;
+using namespace roulette;
 
 Window::Window(const string icon_name) :
 	mHistory(new History),
@@ -85,6 +96,9 @@ Window::Window(const string icon_name) :
 	mChipset.set_border_width(0);
 
 	show_all();
+
+	// temp
+	mTable.PrintProperties();
 
 	// signals
 	mControlset.mBtnClose.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_close));

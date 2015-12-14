@@ -17,53 +17,66 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
+///<summary>
+//
+//	chipset.cc
+//
+//	Definition of Chipset class
+//
+//	TODO: add description
+//
+///</summary>
+
 #include "pch.hh"
 #include "chipset.hh"
 
-using std::string;
-using std::cout;
-using std::endl;
-using std::cerr;
+namespace roulette
+{
+	using std::string;
+	using std::cout;
+	using std::endl;
+	using std::cerr;
 
 #ifdef DEBUG_DND_LOG
-bool Chipset::constructed = false;
+	bool Chipset::constructed = false;
 #endif // DEBUG_DND_LOG
 
-int Chipset::chip_size = 48;
+	int Chipset::chip_size = 48;
 
-Chipset::Chipset() :
-	mChip1(1),
-	mChip5(5),
-	mChip25(25),
-	mChip50(50),
-	mChip100(100)
-{
-	pack_end(mChip1, Gtk::PACK_SHRINK);
-	pack_end(mChip5, Gtk::PACK_SHRINK);
-	pack_end(mChip25, Gtk::PACK_SHRINK);
-	pack_end(mChip50, Gtk::PACK_SHRINK);
-	pack_end(mChip100, Gtk::PACK_SHRINK);
+	Chipset::Chipset() :
+		mChip1(1),
+		mChip5(5),
+		mChip25(25),
+		mChip50(50),
+		mChip100(100)
+	{
+		pack_end(mChip1, Gtk::PACK_SHRINK);
+		pack_end(mChip5, Gtk::PACK_SHRINK);
+		pack_end(mChip25, Gtk::PACK_SHRINK);
+		pack_end(mChip50, Gtk::PACK_SHRINK);
+		pack_end(mChip100, Gtk::PACK_SHRINK);
 
 #ifdef DEBUG_DND_LOG
-	Chipset::constructed = true;
+		Chipset::constructed = true;
 #endif // DEBUG_DND_LOG
-}
+	}
 
-void Chipset::set_chipsize(int size)
-{
-	chip_size = size;
-}
+	void Chipset::set_chipsize(int size)
+	{
+		chip_size = size;
+	}
 
-int Chipset::get_chipsize()
-{
-	return chip_size;
-}
+	int Chipset::get_chipsize()
+	{
+		return chip_size;
+	}
 
 #ifdef DEBUG_DND_LOG
 
-bool Chipset::is_constructed()
-{
-	return constructed;
+	bool Chipset::is_constructed()
+	{
+		return constructed;
+	}
 }
 
 #endif // DEBUG_DND_LOG

@@ -1,3 +1,4 @@
+
 #ifndef CONTROL_HH
 #define CONTROL_HH 1
 
@@ -20,6 +21,16 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
+///<summary>
+//
+//	control.hh
+//
+//	Declaration of Control class
+//
+//	TODO: add description
+//
+///</summary>
+
 #include <string>
 #include <gtkmm/widget.h>
 #include <glibmm/refptr.h>
@@ -31,52 +42,54 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <cairomm/refptr.h>
 #include <cairomm/context.h>
 
-
-class Control final
-	: public Gtk::Widget
+namespace roulette
 {
-public:
-	// constructors
-	Control(const std::string name);
-	
-	// methods
-	static void set_background_color(const Gdk::RGBA& color);
+	class Control final
+		: public Gtk::Widget
+	{
+	public:
+		// constructors
+		Control(const std::string name);
 
-protected:
-	// Overrides
-	Gtk::SizeRequestMode get_request_mode_vfunc() const override;
-	void get_preferred_width_vfunc(int& minimum_width, int& natural_width) const override;
-	void get_preferred_height_for_width_vfunc(int width, int& minimum_height, int& natural_height) const  override;
-	void get_preferred_height_vfunc(int& minimum_height, int& natural_height) const override;
-	void get_preferred_width_for_height_vfunc(int height, int& minimum_width, int& natural_width) const override;
-	void on_size_allocate(Gtk::Allocation& allocation) override;
-	void on_map() override;
-	void on_unmap() override;
-	void on_realize() override;
-	void on_unrealize() override;
-	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+		// methods
+		static void set_background_color(const Gdk::RGBA& color);
 
-	// members
-	Glib::RefPtr<Gdk::Window> refGdkWindow;
+	protected:
+		// Overrides
+		Gtk::SizeRequestMode get_request_mode_vfunc() const override;
+		void get_preferred_width_vfunc(int& minimum_width, int& natural_width) const override;
+		void get_preferred_height_for_width_vfunc(int width, int& minimum_height, int& natural_height) const  override;
+		void get_preferred_height_vfunc(int& minimum_height, int& natural_height) const override;
+		void get_preferred_width_for_height_vfunc(int height, int& minimum_width, int& natural_width) const override;
+		void on_size_allocate(Gtk::Allocation& allocation) override;
+		void on_map() override;
+		void on_unmap() override;
+		void on_realize() override;
+		void on_unrealize() override;
+		bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
-private:
-	// methods
-	void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int control_width, int control_height);
+		// members
+		Glib::RefPtr<Gdk::Window> refGdkWindow;
 
-	// members
-	Pango::FontDescription mFont;
-	static Gdk::RGBA mBackground;
+	private:
+		// methods
+		void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int control_width, int control_height);
 
-	/// begin initializer list
-	std::string mName;
-	Glib::RefPtr<Pango::Layout> mLayout;
-	/// end initializer list
+		// members
+		Pango::FontDescription mFont;
+		static Gdk::RGBA mBackground;
 
-	// deleted
-	Control(const Control&) = delete;
-	Control(const Control&&) = delete;
-	Control& operator=(const Control&) = delete;
-	Control& operator=(const Control&&) = delete;
-};
+		/// begin initializer list
+		std::string mName;
+		Glib::RefPtr<Pango::Layout> mLayout;
+		/// end initializer list
+
+		// deleted
+		Control(const Control&) = delete;
+		Control(const Control&&) = delete;
+		Control& operator=(const Control&) = delete;
+		Control& operator=(const Control&&) = delete;
+	};
+} // namespace roulette
 
 #endif // ! CONTROL_HH

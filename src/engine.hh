@@ -1,3 +1,4 @@
+
 #ifndef ENGINE_HH
 #define ENGINE_HH 1
 
@@ -20,33 +21,46 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
+///<summary>
+//
+//	engine.hh
+//
+//	Declaration of Engine class
+//
+//	TODO: add description
+//
+///</summary>
+
 #include <boost/random/random_device.hpp>
 
-class History;
-enum class ETable;
-
-class Engine final
+namespace roulette
 {
-public:
-	// constructors
-	Engine(History* history);
+	class History;
+	enum class ETable;
 
-	// methods
-	void spin(const ETable table_type) const;
+	class Engine final
+	{
+	public:
+		// constructors
+		Engine(History* history);
 
-private:
-	// members
-	static boost::random::random_device rng;
+		// methods
+		void spin(const ETable table_type) const;
 
-	/// begin initializer list
-	History* pHistory;
-	/// end initializer list
+	private:
+		// members
+		static boost::random::random_device rng;
 
-	// deleted
-	Engine(const Engine&) = delete;
-	Engine(const Engine&&) = delete;
-	Engine& operator=(const Engine&) = delete;
-	Engine& operator=(const Engine&&) = delete;
-};
+		/// begin initializer list
+		History* pHistory;
+		/// end initializer list
+
+		// deleted
+		Engine(const Engine&) = delete;
+		Engine(const Engine&&) = delete;
+		Engine& operator=(const Engine&) = delete;
+		Engine& operator=(const Engine&&) = delete;
+	};
+} // namespace roulette
 
 #endif // !ENGINE_HH

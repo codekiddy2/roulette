@@ -17,18 +17,30 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
+///<summary>
+//
+//	controlset.cc
+//
+//	Definition of Controlset class
+//
+//	TODO: add description
+//
+///</summary>
+
 #include "pch.hh"
 #include "controlset.hh"
 
-
-Controlset::Controlset() :
-	mBtnClose("Close"),
-	mBtnSpin("Spin"),
-	mBtnSpin50("Spin 50x"),
-	mBtnClear("Clear")
+namespace roulette
 {
-	pack_end(mBtnClear, Gtk::PACK_SHRINK);
-	pack_end(mBtnSpin, Gtk::PACK_SHRINK);
-	pack_end(mBtnSpin50, Gtk::PACK_SHRINK);
-	pack_end(mBtnClose, Gtk::PACK_SHRINK);
-}
+	Controlset::Controlset() :
+		mBtnClose("Close"),
+		mBtnSpin("Spin"),
+		mBtnSpin50("Spin 50x"),
+		mBtnClear("Clear")
+	{
+		pack_end(mBtnClear, Gtk::PACK_SHRINK);
+		pack_end(mBtnSpin, Gtk::PACK_SHRINK);
+		pack_end(mBtnSpin50, Gtk::PACK_SHRINK);
+		pack_end(mBtnClose, Gtk::PACK_SHRINK);
+	}
+} // namespace roulette

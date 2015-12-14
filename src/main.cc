@@ -1,7 +1,3 @@
-
-#include "pch.hh"
-#include "window.hh"
-
 /*
 roulette - roulette simulation program
 
@@ -21,13 +17,24 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
+///<summary>
+//
+//	main.cc
+//
+//	Defined the application entry point
+//
+//	TODO: add description
+//
+///</summary>
+
+#include "pch.hh"
+#include "window.hh"
 
 int main(int argc, char* argv[])
 {
-
 	Glib::RefPtr<Gtk::Application> app = Gtk::Application::create( argc, argv, "roulette.exe" );
 
-	Window* p_window = new Window("roulette.ico");
+	roulette::Window* p_window = new roulette::Window("roulette.ico");
 
 	if ( p_window )
 	{

@@ -1,3 +1,4 @@
+
 #ifndef PCH_HH
 #define PCH_HH 1
 
@@ -20,6 +21,13 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
+///<summary>
+//
+//	pch.hh
+//
+// reference any headers which are not frequently modified here
+//
+///</summary>
 
 #ifdef _MSC_VER
 
@@ -29,7 +37,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #pragma warning(disable: 4250) // lvl2 'class1' : inherits 'class2::member' via dominance
 #pragma warning(disable: 4710) // lvl4 the compiler did not perform the inlining.
 #pragma warning(disable: 4996) // lvl3 The compiler encountered a deprecated declaration.
-#pragma warning(push, 0))
+#pragma warning(disable: 4242) // lvl4 The types are different. Type conversion may result in loss of data.
+#pragma warning(push, 0)
 
 // disabled in property sheet for /WAll
 //#pragma warning (disable: 4820) // '4' bytes padding added after data member
@@ -41,6 +50,11 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <string>
 #include <algorithm>	// get_neighbor() and std::for_each
 #include <iostream> // for debugging (cout, cerr, endl)
+#include <exception>
+#include <cmath>	// SetPart2 in bet..
+#include <utility> // for make_pair
+#include <map> // used in Table
+
 
 // gtkmm
 #ifdef GTKMM_ATKMM_ENABLED
@@ -73,8 +87,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 #ifdef _MSC_VER
 // reenable warnings for /W4
-#pragma warning(default: 4309 4505 4250 4710 4996))
-#pragma warning(pop))
+#pragma warning(default: 4309 4505 4250 4710 4996 4242)
+#pragma warning(pop)
 #endif // _MSC_VER
 
 #endif // ! PCH_HH

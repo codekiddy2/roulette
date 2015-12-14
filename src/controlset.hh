@@ -1,3 +1,4 @@
+
 #ifndef CONTROLSET_HH
 #define CONTROLSET_HH 1
 
@@ -20,34 +21,47 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
+///<summary>
+//
+//	controlset.hh
+//
+//	Declaration of Controlset class
+//
+//	TODO: add description
+//
+///</summary>
+
 #include "control.hh"
 
 #include <gdkmm/rgba.h>
 #include <gtkmm/buttonbox.h>
 
-class window;
-
-class Controlset final
-	: public Gtk::ButtonBox
+namespace roulette
 {
-public:
-	// constructors
-	Controlset();
+	class window;
 
-private:
-	friend class Window; // to set signals
-	/// begin initialization list
-	Control mBtnClose;
-	Control mBtnSpin;
-	Control mBtnSpin50;
-	Control mBtnClear;
-	/// end initialization list
+	class Controlset final
+		: public Gtk::ButtonBox
+	{
+	public:
+		// constructors
+		Controlset();
 
-	// deleted
-	Controlset(const Controlset&) = delete;
-	Controlset(const Controlset&&) = delete;
-	Controlset& operator=(const Controlset&) = delete;
-	Controlset& operator=(const Controlset&&) = delete;
-};
+	private:
+		friend class Window; // to set signals
+		/// begin initialization list
+		Control mBtnClose;
+		Control mBtnSpin;
+		Control mBtnSpin50;
+		Control mBtnClear;
+		/// end initialization list
+
+		// deleted
+		Controlset(const Controlset&) = delete;
+		Controlset(const Controlset&&) = delete;
+		Controlset& operator=(const Controlset&) = delete;
+		Controlset& operator=(const Controlset&&) = delete;
+	};
+} // namespace roulette
 
 #endif // ! CONTROLSET_HH

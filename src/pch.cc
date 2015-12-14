@@ -17,10 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
-/*
-stdafx.cc
-compiles PCH file for faster compilation and intellisense
-Reference additional includes in pch.hh and not here
-*/
+///<summary>
+//
+//stdafx.cc
+//
+//compiles PCH file for faster compilation and intellisense
+//Reference additional includes in pch.hh and not here
+//
+///</summary>
 
 #include "pch.hh"

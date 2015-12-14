@@ -1,3 +1,4 @@
+
 #ifndef CHIPSET_HH
 #define CHIPSET_HH 1
 
@@ -20,46 +21,58 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
+///<summary>
+//
+//	chipset.hh
+//
+//	Declaration of Chipset class
+//
+//	TODO: add description
+//
+///</summary>
+
 #include "chip.hh"
 
 #include <gdkmm/rgba.h>
 #include <gtkmm/buttonbox.h>
 
-
-class Chipset final
-	: public Gtk::ButtonBox
+namespace roulette
 {
-public:
-	// constructors
-	Chipset();
+	class Chipset final
+		: public Gtk::ButtonBox
+	{
+	public:
+		// constructors
+		Chipset();
 
-	// methods
-	static void set_chipsize(int size);
-	static int get_chipsize();
+		// methods
+		static void set_chipsize(int size);
+		static int get_chipsize();
 
 #ifdef DEBUG_DND_LOG
-	static bool is_constructed();
+		static bool is_constructed();
 
-private:
-	static bool constructed;
+	private:
+		static bool constructed;
 #endif // DEBUG_DND_LOG
 
-private:
-	static int chip_size;
+	private:
+		static int chip_size;
 
-	/// begin initializer list
-	Chip mChip1;
-	Chip mChip5;
-	Chip mChip25;
-	Chip mChip50;
-	Chip mChip100;
-	/// end initializer list
+		/// begin initializer list
+		Chip mChip1;
+		Chip mChip5;
+		Chip mChip25;
+		Chip mChip50;
+		Chip mChip100;
+		/// end initializer list
 
-	// deleted
-	Chipset(const Chipset&) = delete;
-	Chipset(const Chipset&&) = delete;
-	Chipset& operator=(const Chipset&) = delete;
-	Chipset& operator=(const Chipset&&) = delete;
-};
+		// deleted
+		Chipset(const Chipset&) = delete;
+		Chipset(const Chipset&&) = delete;
+		Chipset& operator=(const Chipset&) = delete;
+		Chipset& operator=(const Chipset&&) = delete;
+	};
+} // namespace roulette
 
 #endif // ! CHIPSET_HH

@@ -1,3 +1,4 @@
+
 #ifndef WINDOW_HH
 #define WINDOW_HH 1
 
@@ -20,6 +21,16 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
+///<summary>
+//
+//	window.hh
+//
+//	Declaration of Window class
+//
+//	TODO: add description
+//
+///</summary>
+
 #include "table.hh"
 #include "history.hh"
 #include "chipset.hh"
@@ -34,46 +45,48 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <gdkmm/event.h>
 #include <glibmm/refptr.h>
 
-
-class Window final :
-	public Gtk::Window
+namespace roulette
 {
-public:
-	// constructors
-	Window(const std::string icon_name);
-	virtual ~Window();
+	class Window final :
+		public Gtk::Window
+	{
+	public:
+		// constructors
+		Window(const std::string icon_name);
+		virtual ~Window();
 
-private:
-	// methods
-	bool on_button_close(GdkEventButton* button_event);
-	bool on_button_spin(GdkEventButton* button_event);
-	bool on_button_spin50(GdkEventButton* button_event);
-	bool on_button_clear(GdkEventButton* button_event);
+	private:
+		// methods
+		bool on_button_close(GdkEventButton* button_event);
+		bool on_button_spin(GdkEventButton* button_event);
+		bool on_button_spin50(GdkEventButton* button_event);
+		bool on_button_clear(GdkEventButton* button_event);
 
-	// members
-	Gtk::HBox mHBoxTop;
-	Gtk::VBox mVBoxArea;
-	Gtk::HBox mHBoxControls;
-	Glib::RefPtr<Gdk::Pixbuf> refIcon;
+		// members
+		Gtk::HBox mHBoxTop;
+		Gtk::VBox mVBoxArea;
+		Gtk::HBox mHBoxControls;
+		Glib::RefPtr<Gdk::Pixbuf> refIcon;
 
-	// Chipset must be constructed before Table because
-	// Chip which initializes Gtk::TargetEntry used by Chip and Field objects
-	Chipset mChipset;
-	Table mTable;
-	Controlset mControlset;
+		// Chipset must be constructed before Table because
+		// Chip which initializes Gtk::TargetEntry used by Chip and Field objects
+		Chipset mChipset;
+		Table mTable;
+		Controlset mControlset;
 
-	/// begin initializer list
-	History* mHistory;
-	Engine mEngine;
-	Gtk::Frame mFrameHistory;
-	Gtk::Frame mFrameBets;
-	/// end of initializer list
+		/// begin initializer list
+		History* mHistory;
+		Engine mEngine;
+		Gtk::Frame mFrameHistory;
+		Gtk::Frame mFrameBets;
+		/// end of initializer list
 
-	// deleted
-	Window(const Window&) = delete;
-	Window(const Window&&) = delete;
-	Window& operator=(const Window&) = delete;
-	Window& operator=(const Window&&) = delete;
-};
+		// deleted
+		Window(const Window&) = delete;
+		Window(const Window&&) = delete;
+		Window& operator=(const Window&) = delete;
+		Window& operator=(const Window&&) = delete;
+	};
+} // namespace roulette
 
 #endif // ! WINDOW_HH
