@@ -278,8 +278,9 @@ namespace roulette
 		const int y
 		)
 	{
+#if 0
 		short temp[6];
-
+#endif
 		switch (mId)
 		{
 		case EBet::StraightUp:	// TODO these bets do not need a child
@@ -329,6 +330,7 @@ namespace roulette
 		case EBet::Odd:
 			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Odd), this, x, y));
 			break;
+#if 0 // TODO: adapt code to use <unordered_set>
 		case EBet::VoisinsDeZero:
 			for (short i = 0; i < 10; i += 2)
 				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(voisinsDeZero + i, voisinsDeZero + (i + 2)), this));
@@ -520,6 +522,7 @@ namespace roulette
 			}
 			break;
 		}
+#endif // 0
 		case EBet::Maximus13:
 			break;
 		case EBet::Maximus2:
@@ -586,11 +589,11 @@ namespace roulette
 			{
 				cout << mpChilds->at(i).mpName << ":" << endl;
 				for (unsigned j = 0; j < mpChilds->at(i).mpSelection->size(); ++j)
-					cout << mpChilds->at(i).mpSelection->at(j) << endl;
+					cout << *mpChilds->at(i).mpSelection->find(j) << endl;
 			}
 
 		else for (unsigned i = 0; i < mpSelection->size(); ++i)
-			cout << mpSelection->at(i) << endl;
+			cout << *mpSelection->find(i) << endl;
 
 		if (childs)	// print child properties
 			for (unsigned i = 0; i < mpChilds->size(); ++i)
@@ -827,12 +830,14 @@ namespace roulette
 		{
 			for (unsigned i = 0; i < mpChilds->size(); ++i)
 				for (unsigned j = 0; j < mpChilds->at(i).mpSelection->size(); ++j)
-					mpSelection->push_back(mpChilds->at(i).mpSelection->at(j));
-
-			sort(mpSelection->begin(), mpSelection->end());
+				{
+					mpSelection->insert(*mpChilds->at(i).mpSelection->find(j));
+				}
+			// TODO: no sorting with unordered_set!
+			//sort(mpSelection->begin(), mpSelection->end());
 		}
 		for (unsigned i = 0; i < mpSelection->size() - 1; ++i)
-			if (mpSelection->at(i) != mpSelection->at(i + 1))
+			if (mpSelection->find(i) != mpSelection->find(i + 1))
 				++mCoverage;
 
 		// CHIPS
@@ -899,29 +904,46 @@ namespace roulette
 		{
 		case EBet::OrphelinsACheval:
 			if (mpSelection->size() != 1)
-				if ((mpSelection->at(0) == 17) || (mpSelection->at(1) == 17))
+			{
+				if ((*mpSelection->find(0) == 17) || (*mpSelection->find(1) == 17))
+				{
 					mReturn = mChips * 3.f / 2;
+				}
 				else
-					mReturn = mChips;
+				{
+					mReturn = static_cast<float>(mChips);
+				}
+			}
 			else
-				mReturn = mChips;
+			{
+				mReturn = static_cast<float>(mChips);
+			}
 			break;
 		case EBet::Jeu79:
 			if (mpSelection->size() != 1)
-				if ((mpSelection->at(0) == 8) || (mpSelection->at(1) == 8))
-					mReturn = mChips * 3.f / 2;
-				else mReturn = mChips;
+				if ((*mpSelection->find(0) == 8) || (*mpSelection->find(1) == 8))
+					mReturn = static_cast<float>(mChips) * 3.f / 2;
+				else mReturn = static_cast<float>(mChips);
 			else
-				mReturn = mChips;
+				mReturn = static_cast<float>(mChips);
 			break;
 		case EBet::BlackSplits: // check numbes order and reduce logical check
-			if ((mpSelection->at(0) == 8) || (mpSelection->at(0) == 26) || (mpSelection->at(1) == 13) || (mpSelection->at(1) == 31))
+			if ((*mpSelection->find(0) == 8) ||
+				(*mpSelection->find(0) == 26) ||
+				(*mpSelection->find(1) == 13) ||
+				(*mpSelection->find(1) == 31))
+			{
 				mReturn = mChips * 3.f / 2;
-			else if (mpSelection->at(0) != 17)
+			}
+			else if (*mpSelection->find(0) != 17)
+			{
 				mReturn = mChips * 2.f;
+			}
 			else
-				mReturn = mChips;
-			break;
+			{
+				mReturn = static_cast<float>(mChips);
+			}
+				break;
 		case EBet::Maximus00:
 		case EBet::Maximus0:
 		case EBet::Maximus13:
@@ -933,7 +955,7 @@ namespace roulette
 			throw error("Bet -> set_part_1 -> Maximus return not defined");
 			break;
 		default:
-			mReturn = mChips;
+			mReturn = static_cast<float>(mChips);
 		}
 
 		// PAYOUT
@@ -967,7 +989,7 @@ namespace roulette
 		}
 
 		// LOSE
-		mLose = mChips * (nums - mCoverage);
+		mLose = static_cast<float>( mChips * (nums - mCoverage) );
 
 		// ODDS
 		mOdds = static_cast<float>(nums) / mCoverage - 1;

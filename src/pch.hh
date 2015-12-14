@@ -54,7 +54,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <cmath>	// SetPart2 in bet..
 #include <utility> // for make_pair
 #include <map> // used in Table
-
+#include <unordered_set> // used for sets (sets.hh)
 
 // gtkmm
 #ifdef GTKMM_ATKMM_ENABLED

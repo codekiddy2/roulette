@@ -77,68 +77,79 @@ namespace roulette
 		return 3;
 	}
 
-	const short basket[] = { 0,37,1,2,3 };
-	const short low[] = { 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18 };
-	const short high[] = { 19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36 };
-	const short red[] = { 1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36 };
-	const short black[] = { 2,4,6,8,10,11,13,15,17,20,22,24,26,28,29,31,33,35 };
-	const short even[] = { 2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36 };
-	const short odd[] = { 1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35 };
-	const short column1[] = { 1,4,7,10,13,16,19,22,25,28,31,34 };
-	const short column2[] = { 2,5,8,11,14,17,20,23,26,29,32,35 };
-	const short column3[] = { 3,6,9,12,15,18,21,24,27,30,33,36 };
-	const short dozen1[] = { 1,2,3,4,5,6,7,8,9,10,11,12 };
-	const short dozen2[] = { 13,14,15,16,17,18,19,20,21,22,23,24 };
-	const short dozen3[] = { 25,26,27,28,29,30,31,32,33,34,35,36 };
-	const short snake[] = { 1,5,9,12,14,16,19,23,27,30,32,34 };
-	const short redSplits[] = { 9,12,16,19,18,21,27,30 };
-	const short blackSplits[] = { 8,11,10,11,10,13,17,20,26,29,28,29,28,31 };
-	const short orphelinsEnPlen[] = { 1,6,9,14,17,20,31,34 };
-	const short triesDuCylindre[] = { 5,8,10,11,13,16,23,24,27,30,33,36 };
-	const short voisinsDeZero[] = { 4,7,12,15,18,21,19,22,32,35,0,2,3,25,26,28,29 };
-	const short orphelinsACheval[] = { 1,6,9,14,17,17,20,31,34 };
-	const short jeu0[] = { 26,0,3,12,15,32,33 };
-	const short jeu79[] = { 19,27,7,8,8,9,17,18,28,29 };
-	const short euroWheel[] = { 0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26 };
-	const short amWheel[] = { 0,28,9,26,30,11,7,20,32,17,5,22,34,15,3,24,36,13,1,37,27,10,25,29,12,8,19,31,18,6,21,33,16,4,23,35,14,2 };
-	const short noZeroWheel[] = { 32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26 };
+#ifdef _MSC_VER
+//symbol will be dynamically initialized (implementation limitation)
+// false positive: http://stackoverflow.com/questions/34013930/error-c4592-symbol-will-be-dynamically-initialized-vs2015-1-static-const-std
+#pragma warning (disable: 4592)
+#endif // _MSC_VER
 
-	set_t Low(low, low + sizeof(low) / sizeof(short));
-	set_t Odd(odd, odd + sizeof(odd) / sizeof(short));
-	set_t Red(red, red + sizeof(red) / sizeof(short));
-	set_t Jeu0(jeu0, jeu0 + sizeof(jeu0) / sizeof(short));
-	set_t High(high, high + sizeof(high) / sizeof(short));
-	set_t Even(even, even + sizeof(even) / sizeof(short));
-	set_t Jeu79(jeu79, jeu79 + sizeof(jeu79) / sizeof(short));
-	set_t Black(black, black + sizeof(black) / sizeof(short));
-	set_t Snake(snake, snake + sizeof(snake) / sizeof(short));
-	set_t Dozen1(dozen1, dozen1 + sizeof(dozen1) / sizeof(short));
-	set_t Dozen2(dozen2, dozen2 + sizeof(dozen2) / sizeof(short));
-	set_t Dozen3(dozen3, dozen3 + sizeof(dozen3) / sizeof(short));
-	set_t Basket(basket, basket + sizeof(basket) / sizeof(short));
-	set_t Column1(column1, column1 + sizeof(column1) / sizeof(short));
-	set_t Column2(column2, column2 + sizeof(column2) / sizeof(short));
-	set_t Column3(column3, column3 + sizeof(column3) / sizeof(short));
-	set_t RedSplits(redSplits, redSplits + sizeof(redSplits) / sizeof(short));
-	set_t BlackSplits(blackSplits, blackSplits + sizeof(blackSplits) / sizeof(short));
-	set_t VoisinsDeZero(voisinsDeZero, voisinsDeZero + sizeof(voisinsDeZero) / sizeof(short));
-	set_t OrphelinsEnPlen(orphelinsEnPlen, orphelinsEnPlen + sizeof(orphelinsEnPlen) / sizeof(short));
-	set_t TriesDuCylindre(triesDuCylindre, triesDuCylindre + sizeof(triesDuCylindre) / sizeof(short));
-	set_t OrphelinsACheval(orphelinsACheval, orphelinsACheval + sizeof(orphelinsACheval) / sizeof(short));
-	set_t EuropeanWheel(euroWheel, euroWheel + sizeof(euroWheel) / sizeof(short));
-	set_t AmericanWheel(amWheel, amWheel + sizeof(amWheel) / sizeof(short));
-	set_t NoZeroWheel(noZeroWheel, noZeroWheel + sizeof(noZeroWheel) / sizeof(short));
+	set_t Basket{ 0,37,1,2,3 };
+	set_t Low{ 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18 };
+	set_t High{ 19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36 };
+	set_t Red{ 1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36 };
+	set_t Black{ 2,4,6,8,10,11,13,15,17,20,22,24,26,28,29,31,33,35 };
+	set_t Even{ 2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36 };
+	set_t Odd{ 1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35 };
+	set_t Column1{ 1,4,7,10,13,16,19,22,25,28,31,34 };
+	set_t Column2{ 2,5,8,11,14,17,20,23,26,29,32,35 };
+	set_t Column3{ 3,6,9,12,15,18,21,24,27,30,33,36 };
+	set_t Dozen1{ 1,2,3,4,5,6,7,8,9,10,11,12 };
+	set_t Dozen2{ 13,14,15,16,17,18,19,20,21,22,23,24 };
+	set_t Dozen3{ 25,26,27,28,29,30,31,32,33,34,35,36 };
+	set_t Snake{ 1,5,9,12,14,16,19,23,27,30,32,34 };
+	set_t RedSplits{ 9,12,16,19,18,21,27,30 };
+	set_t BlackSplits{ 8,11,10,11,10,13,17,20,26,29,28,29,28,31 };
+	set_t OrphelinsEnPlen{ 1,6,9,14,17,20,31,34 };
+	set_t TriesDuCylindre{ 5,8,10,11,13,16,23,24,27,30,33,36 };
+	set_t VoisinsDeZero{ 4,7,12,15,18,21,19,22,32,35,0,2,3,25,26,28,29 };
+	set_t OrphelinsACheval{ 1,6,9,14,17,17,20,31,34 };
+	set_t Jeu0{ 26,0,3,12,15,32,33 };
+	set_t Jeu79{ 19,27,7,8,8,9,17,18,28,29 };
+	set_t EuropeanWheel{ 0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26 };
+	set_t AmericanWheel{ 0,28,9,26,30,11,7,20,32,17,5,22,34,15,3,24,36,13,1,37,27,10,25,29,12,8,19,31,18,6,21,33,16,4,23,35,14,2 };
+	set_t NoZeroWheel{ 32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26 };
+
+#ifdef _MSC_VER
+//symbol will be dynamically initialized (implementation limitation)
+#pragma warning (default: 4592)
+#endif // _MSC_VER
+
+	//set_t Low(low, low + sizeof(low) / sizeof(short));
+	//set_t Odd(odd, odd + sizeof(odd) / sizeof(short));
+	//set_t Red(red, red + sizeof(red) / sizeof(short));
+	//set_t Jeu0(jeu0, jeu0 + sizeof(jeu0) / sizeof(short));
+	//set_t High(high, high + sizeof(high) / sizeof(short));
+	//set_t Even(even, even + sizeof(even) / sizeof(short));
+	//set_t Jeu79(jeu79, jeu79 + sizeof(jeu79) / sizeof(short));
+	//set_t Black(black, black + sizeof(black) / sizeof(short));
+	//set_t Snake(snake, snake + sizeof(snake) / sizeof(short));
+	//set_t Dozen1(dozen1, dozen1 + sizeof(dozen1) / sizeof(short));
+	//set_t Dozen2(dozen2, dozen2 + sizeof(dozen2) / sizeof(short));
+	//set_t Dozen3(dozen3, dozen3 + sizeof(dozen3) / sizeof(short));
+	//set_t Basket(basket, basket + sizeof(basket) / sizeof(short));
+	//set_t Column1(column1, column1 + sizeof(column1) / sizeof(short));
+	//set_t Column2(column2, column2 + sizeof(column2) / sizeof(short));
+	//set_t Column3(column3, column3 + sizeof(column3) / sizeof(short));
+	//set_t RedSplits(redSplits, redSplits + sizeof(redSplits) / sizeof(short));
+	//set_t BlackSplits(blackSplits, blackSplits + sizeof(blackSplits) / sizeof(short));
+	//set_t VoisinsDeZero(voisinsDeZero, voisinsDeZero + sizeof(voisinsDeZero) / sizeof(short));
+	//set_t OrphelinsEnPlen(orphelinsEnPlen, orphelinsEnPlen + sizeof(orphelinsEnPlen) / sizeof(short));
+	//set_t TriesDuCylindre(triesDuCylindre, triesDuCylindre + sizeof(triesDuCylindre) / sizeof(short));
+	//set_t OrphelinsACheval(orphelinsACheval, orphelinsACheval + sizeof(orphelinsACheval) / sizeof(short));
+	//set_t EuropeanWheel(euroWheel, euroWheel + sizeof(euroWheel) / sizeof(short));
+	//set_t AmericanWheel(amWheel, amWheel + sizeof(amWheel) / sizeof(short));
+	//set_t NoZeroWheel(noZeroWheel, noZeroWheel + sizeof(noZeroWheel) / sizeof(short));
 
 
-	short get_neighbor(const ETable table, const short refNum, const short position)
+	unsigned get_neighbor(const ETable table, const unsigned refNum, const unsigned position)
 	{
-		short i = 0;
+		unsigned i = 0;
 		using std::find;
 		static set_t::const_iterator iter;
 
-#ifdef _MSC_VER
-#pragma warning (disable: 4061 4062) // TODO: case statement not handled
-#endif
+//#ifdef _MSC_VER
+//#pragma warning (disable: 4061 4062) // TODO: case statement not handled
+//#endif
 
 		switch (table)
 		{
@@ -185,6 +196,10 @@ namespace roulette
 			break;
 
 		case ETable::French:
+		case ETable::SingleImprisonment:
+		case ETable::InfininiteImprisonment:
+		case ETable::DoubleImprisonment:
+		case ETable::TripleImprisonment:
 		case ETable::European:
 			iter = find(EuropeanWheel.begin(), EuropeanWheel.end(), refNum);
 			while (i != position)
@@ -205,18 +220,11 @@ namespace roulette
 				}
 			}
 			break;
-			// TODO: implement functionality
-
-			//case ETable::SingleImprisonment:
-			//case ETable::InfininiteImprisonment:
-			//case ETable::DoubleImprisonment:
-			//case ETable::TripleImprisonment:
-			//	break;
 		}
 
-#ifdef _MSC_VER
-#pragma warning (default: 4061 4062) // case statement not handled
-#endif // _MSC_VER
+//#ifdef _MSC_VER
+//#pragma warning (default: 4061 4062) // case statement not handled
+//#endif // _MSC_VER
 
 		return *iter;
 	}

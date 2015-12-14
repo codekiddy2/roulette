@@ -37,7 +37,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
-#include <vector>	// set_t
+#include <unordered_set>	// set_t
 
 namespace roulette
 {
@@ -56,10 +56,11 @@ namespace roulette
 	bool is_red(const int number);
 	short which_column(const short number);
 	short which_dozen(const short number);
-	short get_neighbor(const ETable table, const short refNum, const short position);
+	unsigned get_neighbor(const ETable table, const unsigned refNum, const unsigned position);
 
 	// TODO: consider using unordered set to avoid vector messing with numbers
-	typedef const std::vector<unsigned> set_t;
+	typedef const std::unordered_set<unsigned> set_t;
+	typedef std::unordered_set<unsigned> Selection_t;
 
 	extern set_t NoZeroWheel;
 	extern set_t AmericanWheel;
@@ -88,31 +89,31 @@ namespace roulette
 	extern set_t TriesDuCylindre;
 	extern set_t OrphelinsACheval;
 
-	extern const short basket[];
-	extern const short low[];
-	extern const short high[];
-	extern const short red[];
-	extern const short black[];
-	extern const short even[];
-	extern const short odd[];
-	extern const short column1[];
-	extern const short column2[];
-	extern const short column3[];
-	extern const short dozen1[];
-	extern const short dozen2[];
-	extern const short dozen3[];
-	extern const short snake[];
-	extern const short redSplits[];
-	extern const short blackSplits[];
-	extern const short orphelinsEnPlen[];
-	extern const short triesDuCylindre[];
-	extern const short voisinsDeZero[];
-	extern const short orphelinsACheval[];
-	extern const short jeu0[];
-	extern const short jeu79[];
-	extern const short euroWheel[];
-	extern const short amWheel[];
-	extern const short noZeroWheel[];
+	//extern const short basket[];
+	//extern const short low[];
+	//extern const short high[];
+	//extern const short red[];
+	//extern const short black[];
+	//extern const short even[];
+	//extern const short odd[];
+	//extern const short column1[];
+	//extern const short column2[];
+	//extern const short column3[];
+	//extern const short dozen1[];
+	//extern const short dozen2[];
+	//extern const short dozen3[];
+	//extern const short snake[];
+	//extern const short redSplits[];
+	//extern const short blackSplits[];
+	//extern const short orphelinsEnPlen[];
+	//extern const short triesDuCylindre[];
+	//extern const short voisinsDeZero[];
+	//extern const short orphelinsACheval[];
+	//extern const short jeu0[];
+	//extern const short jeu79[];
+	//extern const short euroWheel[];
+	//extern const short amWheel[];
+	//extern const short noZeroWheel[];
 
 	enum class EBet/* : short*/
 	{
