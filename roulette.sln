@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "roulette", "src\roulette.vcxproj", "{7954DF58-9125-433B-9EAE-765C43DF8061}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_bet", "src\test_bet\test_bet.vcxproj", "{69B921D7-20A8-4114-A825-E6C0B73D31F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{7954DF58-9125-433B-9EAE-765C43DF8061}.Release|x64.Build.0 = Release|x64
 		{7954DF58-9125-433B-9EAE-765C43DF8061}.Release|x86.ActiveCfg = Release|Win32
 		{7954DF58-9125-433B-9EAE-765C43DF8061}.Release|x86.Build.0 = Release|Win32
+		{69B921D7-20A8-4114-A825-E6C0B73D31F8}.Debug|x64.ActiveCfg = Debug|x64
+		{69B921D7-20A8-4114-A825-E6C0B73D31F8}.Debug|x64.Build.0 = Debug|x64
+		{69B921D7-20A8-4114-A825-E6C0B73D31F8}.Debug|x86.ActiveCfg = Debug|Win32
+		{69B921D7-20A8-4114-A825-E6C0B73D31F8}.Debug|x86.Build.0 = Debug|Win32
+		{69B921D7-20A8-4114-A825-E6C0B73D31F8}.Release|x64.ActiveCfg = Release|x64
+		{69B921D7-20A8-4114-A825-E6C0B73D31F8}.Release|x64.Build.0 = Release|x64
+		{69B921D7-20A8-4114-A825-E6C0B73D31F8}.Release|x86.ActiveCfg = Release|Win32
+		{69B921D7-20A8-4114-A825-E6C0B73D31F8}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

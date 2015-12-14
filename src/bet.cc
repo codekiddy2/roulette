@@ -831,9 +831,14 @@ namespace roulette
 
 			sort(mpSelection->begin(), mpSelection->end());
 		}
-		for (unsigned i = 0; i < mpSelection->size() - 1; ++i)
-			if (mpSelection->at(i) != mpSelection->at(i + 1))
-				++mCoverage;
+		if (mpSelection->size())
+		{
+			for (unsigned i = 0; i < mpSelection->size() - 1; ++i)
+			{
+				if (mpSelection->at(i) != mpSelection->at(i + 1))
+					++mCoverage;
+			}
+		}
 
 		// CHIPS
 		if (mpChilds)  // it is parent
