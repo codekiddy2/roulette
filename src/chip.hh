@@ -38,7 +38,7 @@ class Chip final
 {
 public:
 	// constructors
-	Chip(const std::string file_name);
+	Chip(const int value);
 
 	// methods
 	static void set_background_color(const Gdk::RGBA& color);
@@ -58,12 +58,10 @@ protected:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
 	// dnd
+	void on_drag_begin(const Glib::RefPtr< Gdk::DragContext >& context) override;
 	void on_drag_data_get(const Glib::RefPtr<Gdk::DragContext>& context,
 		Gtk::SelectionData& selection_data, guint info, guint time) override;
-
 	void on_drag_end(const Glib::RefPtr< Gdk::DragContext >& context) override;
-
-	void on_drag_begin(const Glib::RefPtr< Gdk::DragContext >& context) override;
 
 	// members
 	Glib::RefPtr<Gdk::Window> refGdkWindow;
@@ -72,6 +70,10 @@ private:
 	// members
 	Glib::RefPtr<Gdk::Pixbuf> refIcon;
 	static Gdk::RGBA mBackground;
+
+	/// begin initializer list
+	const int mValue;
+	/// end initializer list
 
 	// deleted
 	Chip(const Chip&) = delete;

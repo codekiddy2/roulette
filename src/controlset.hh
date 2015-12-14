@@ -40,6 +40,7 @@ private:
 	Control mBtnClose;
 	Control mBtnSpin;
 	Control mBtnSpin50;
+	Control mBtnClear;
 	/// end initialization list
 
 	// deleted

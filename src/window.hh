@@ -40,7 +40,7 @@ class Window final :
 {
 public:
 	// constructors
-	Window();
+	Window(const std::string icon_name);
 	virtual ~Window();
 
 private:
@@ -48,15 +48,19 @@ private:
 	bool on_button_close(GdkEventButton* button_event);
 	bool on_button_spin(GdkEventButton* button_event);
 	bool on_button_spin50(GdkEventButton* button_event);
+	bool on_button_clear(GdkEventButton* button_event);
 
 	// members
 	Gtk::HBox mHBoxTop;
 	Gtk::VBox mVBoxArea;
 	Gtk::HBox mHBoxControls;
 	Glib::RefPtr<Gdk::Pixbuf> refIcon;
+
+	// Chipset must be constructed before Table because
+	// Chip which initializes Gtk::TargetEntry used by Chip and Field objects
 	Chipset mChipset;
-	Controlset mControlset;
 	Table mTable;
+	Controlset mControlset;
 
 	/// begin initializer list
 	History* mHistory;

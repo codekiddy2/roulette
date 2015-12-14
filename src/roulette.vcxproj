@@ -68,6 +68,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile />
@@ -79,6 +80,9 @@
     <ClCompile />
     <Link />
     <ClCompile />
+    <ClCompile>
+      <EnablePREfast>false</EnablePREfast>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile />
@@ -118,7 +122,6 @@
     <ClInclude Include="chipset.hh" />
     <ClInclude Include="control.hh" />
     <ClInclude Include="controlset.hh" />
-    <ClInclude Include="dnd.hh" />
     <ClInclude Include="engine.hh" />
     <ClInclude Include="field.hh" />
     <ClInclude Include="history.hh" />

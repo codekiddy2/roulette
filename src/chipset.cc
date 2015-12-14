@@ -20,17 +20,50 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "pch.hh"
 #include "chipset.hh"
 
+using std::string;
+using std::cout;
+using std::endl;
+using std::cerr;
+
+#ifdef DEBUG_DND_LOG
+bool Chipset::constructed = false;
+#endif // DEBUG_DND_LOG
+
+int Chipset::chip_size = 48;
 
 Chipset::Chipset() :
-	mChip1("chip1.ico"),
-	mChip5("chip5.ico"),
-	mChip25("chip25.ico"),
-	mChip50("chip50.ico"),
-	mChip100("chip100.ico")
+	mChip1(1),
+	mChip5(5),
+	mChip25(25),
+	mChip50(50),
+	mChip100(100)
 {
 	pack_end(mChip1, Gtk::PACK_SHRINK);
 	pack_end(mChip5, Gtk::PACK_SHRINK);
 	pack_end(mChip25, Gtk::PACK_SHRINK);
 	pack_end(mChip50, Gtk::PACK_SHRINK);
 	pack_end(mChip100, Gtk::PACK_SHRINK);
+
+#ifdef DEBUG_DND_LOG
+	Chipset::constructed = true;
+#endif // DEBUG_DND_LOG
 }
+
+void Chipset::set_chipsize(int size)
+{
+	chip_size = size;
+}
+
+int Chipset::get_chipsize()
+{
+	return chip_size;
+}
+
+#ifdef DEBUG_DND_LOG
+
+bool Chipset::is_constructed()
+{
+	return constructed;
+}
+
+#endif // DEBUG_DND_LOG

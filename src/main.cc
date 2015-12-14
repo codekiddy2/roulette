@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
 
 	Glib::RefPtr<Gtk::Application> app = Gtk::Application::create( argc, argv, "roulette.exe" );
 
-	Window* p_window = new Window;
+	Window* p_window = new Window("roulette.ico");
 
 	if ( p_window )
 	{

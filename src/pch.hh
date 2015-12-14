@@ -39,8 +39,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 // std
 #include <vector>
 #include <string>
-#include <algorithm>	// used in get_neighbor function
-#include <iostream> // for debugging
+#include <algorithm>	// get_neighbor() and std::for_each
+#include <iostream> // for debugging (cout, cerr, endl)
 
 // gtkmm
 #ifdef GTKMM_ATKMM_ENABLED
@@ -70,7 +70,6 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 #define DEBUG_FILE_LOG
 #define DEBUG_DND_LOG
-//#define DEBUG_DND_VERBOSE
 
 #ifdef _MSC_VER
 // reenable warnings for /W4

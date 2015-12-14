@@ -21,27 +21,31 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "pch.hh"
 #include "field.hh"
 #include "sets.hh"
-#include "dnd.hh"
+#include "chipset.hh"
+#include "table.hh"
 
 using std::cerr;
 using std::endl;
 using std::cout;
+using std::string;
+
+extern std::vector<Gtk::TargetEntry> dnd_targets;
 
 #ifdef _MSC_VER
 #pragma region begin
 #endif // _MSC_VER
 
-Field::Field(const int num) :
-	//The GType name will actually be gtkmm__CustomObject_Field
-	Glib::ObjectBase("Field"),
+Field::Field(const int num, Table* parent) :
+	Glib::ObjectBase("Field"), // The GType name will be gtkmm__CustomObject_Field
 	Gtk::Widget(),
 	mName(std::to_string(num)),
 	mBackground("rgb(0, 102, 0)"), // green
 	mLayout(create_pango_layout(mName.c_str()))
 {
 	set_has_window(true);
+	set_events(Gdk::EventMask::ALL_EVENTS_MASK);
 
-	mFont.set_family("Sans");
+	mFont.set_family("Arial");
 	mLayout->set_font_description(mFont);
 
 	if (is_red(num))
@@ -52,22 +56,23 @@ Field::Field(const int num) :
 	{
 		mBackground.set("Black");
 	}
-	
-	drag_dest_set(listTargets,	Gtk::DestDefaults::DEST_DEFAULT_ALL, Gdk::DragAction::ACTION_COPY);
 
-	//signal_drag_data_received().connect(sigc::mem_fun(*this, &Field::on_drag_data_received));
+	parent->signal_clear.connect(sigc::mem_fun(*this, &Field::clear));
+
+	// Make Field a drop target
+	drag_dest_set(dnd_targets,	Gtk::DestDefaults::DEST_DEFAULT_ALL, Gdk::DragAction::ACTION_COPY);
 }
 
 
-Field::Field(const std::string text) :
-	//The GType name will actually be gtkmm__CustomObject_Field
-	Glib::ObjectBase("Field"),
+Field::Field(const string text, Table* parent) :
+	Glib::ObjectBase("Field"), // The GType name will be gtkmm__CustomObject_Field
 	Gtk::Widget(),
 	mName(text),
 	mBackground("rgb(0, 102, 0)"), // green
 	mLayout(create_pango_layout(text))
 {
 	set_has_window(true);
+	set_events(Gdk::EventMask::ALL_EVENTS_MASK);
 
 	mFont.set_family("Arial");
 	mLayout->set_font_description(mFont);
@@ -80,7 +85,24 @@ Field::Field(const std::string text) :
 	{
 		mBackground.set("Black");
 	}
+
+	parent->signal_clear.connect(sigc::mem_fun(*this, &Field::clear));
+
+	// Make Field a drop target
+	drag_dest_set(dnd_targets, Gtk::DestDefaults::DEST_DEFAULT_ALL, Gdk::DragAction::ACTION_COPY);
 }
+
+
+void Field::clear()
+{
+	mChips.clear();
+	refGdkWindow->invalidate(false);
+
+#ifdef DEBUG_SIGNALS
+	cout << "clear: " << mName << endl;
+#endif // DEBUG_SIGNALS
+}
+
 #ifdef _MSC_VER
 #pragma endregion
 
@@ -109,58 +131,107 @@ drag_leave:
 
 
 #ifdef _MSC_VER
-#pragma warning (disable: 4100) // TODO: unreferenced formal parameter
+// #pragma warning (disable: 4100) // TODO: unreferenced formal parameter
 #endif // _MSC_VER
 
 bool Field::on_drag_motion(const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time)
 {
-	// TODO: implement functionality
-#ifdef DEBUG_DND_VERBOSE
-	cout << "Field: on_drag_motion" << endl;
+#ifdef DEBUG_DND_LOG
+	if (motion_count < 3)
+	{
+		++motion_count;
+		cout << endl;
+		cout << "Field::on_drag_motion()" << endl;
+		cout << "-> INFO: name = " << mName << endl;
+		cout << "-> INFO: x = " << x << endl;
+		cout << "-> INFO: y = " << y << endl;
+		cout << "-> INFO: time = " << time << endl;
+	}
 #endif // DEBUG_DND_VERBOSE
 
-	return Gtk::Widget::on_drag_motion(context, x, y, time);
+	// TODO: implement drag motion functionality
+	context->drag_status(Gdk::DragAction::ACTION_COPY, time);
+
+	return true; // Return whether the cursor position is in a drop zone.
 }
+
 
 bool Field::on_drag_drop(const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time)
 {
-	// TODO: implement functionality
 #ifdef DEBUG_DND_LOG
-	cout << "Field: on_drag_drop" << endl;
+	cout << endl;
+	cout << "Field::on_drag_drop()" << endl;
+	cout << "-> INFO: x = " << x << endl;
+	cout << "-> INFO: y = " << y << endl;
+	cout << "-> INFO: time = " << time << endl;
 #endif // DEBUG_DND_LOG
 
-	return Gtk::Widget::on_drag_drop(context, x, y, time);
+	context->drop_reply(true, time); // accept the drop
+	context->drop_finish(true, time); // end drag operation
+
+	return true; // Return whether the cursor position is in a drop zone.
 }
+
+
+void Field::on_drag_data_received(const Glib::RefPtr<Gdk::DragContext>& context,
+	int x, int y, const Gtk::SelectionData& selection_data, guint info, guint time)
+{
+#ifdef DEBUG_DND_LOG
+	cout << endl;
+	cout << "Field::on_drag_data_received()" << endl;
+	cout << "-> INFO: target = " << selection_data.get_target() << endl;
+	cout << "-> INFO: pointer: " << selection_data.get_data() << endl;
+	cout << "-> INFO: length = " << selection_data.get_length() << endl;
+	cout << "-> INFO: format = " << selection_data.get_format() << endl;
+	cout << "-> INFO: info = " << info << endl;
+	cout << "-> INFO: time = " << time << endl;
+	cout << "-> INFO: x = " << x << endl;
+	cout << "-> INFO: y = " << y << endl;
+#endif // DEBUG_DND_LOG
+
+#ifdef DEBUG_DND_VERBOSE
+
+		Glib::RefPtr<const Gdk::Pixbuf> temp = selection_data.get_pixbuf();
+
+		if (temp)
+		{
+			 cout << "-> INFO: pixbuf size = " << temp->get_byte_length() << endl;
+		}
+		else
+		{
+			cerr << "-> WARNING: get_pixbuf() did not return a pixbuf" << endl;
+			cout << "-> INFO: if targets include image = " << selection_data.targets_include_image(false) << endl;
+		}
+
+#endif // DEBUG_DND_LOG
+
+	static const int format = 8;
+
+	if ((selection_data.get_length() == 0) && (selection_data.get_format() == format))
+	{
+		mChips.push_back(info);
+	}
+
+	context->drag_finish(true, false, time); // drop finished, data no longer required
+}
+
 
 void Field::on_drag_leave(const Glib::RefPtr<Gdk::DragContext>& context, guint time)
 {
-	// TODO: implement functionality
 #ifdef DEBUG_DND_LOG
-	cout << "Field: on_drag_leave" << endl;
+	cout << endl;
+	cout << "Field::on_drag_leave()" << endl;
+	cout << "-> INFO: name = " << mName << endl;
+	cout << "-> INFO: time = " << time << endl;
 #endif // DEBUG_DND_LOG
 
+	// TODO: implement on_drag_leave functionality
 	return Gtk::Widget::on_drag_leave(context, time);
 }
 
-void Field::on_drag_data_received(const Glib::RefPtr<Gdk::DragContext>& context,
-	int /*x*/, int /*y*/, const Gtk::SelectionData& selection_data, guint /*info*/, guint time)
-{
-#ifdef DEBUG_DND_LOG
-	cout << "Field: on_drag_data_received" << endl;
-#endif // DEBUG_DND_LOG
-
-	const int length = selection_data.get_length();
-
-	if ((length >= 0) && (selection_data.get_format() == 8))
-	{
-		selection_data.get_pixbuf();
-	}
-
-	context->drag_finish(false, false, time);
-}
 
 #ifdef _MSC_VER
-#pragma warning (default: 4100) // unreferenced formal parameter
+// #pragma warning (default: 4100) // unreferenced formal parameter
 
 #pragma endregion
 
@@ -170,9 +241,26 @@ void Field::on_drag_data_received(const Glib::RefPtr<Gdk::DragContext>& context,
 // Draw on the supplied Cairo::Context.
 bool Field::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
+	// TODO: load pixbufs and share memory with Chip objects. 
+	typedef Glib::RefPtr<Gdk::Pixbuf> type_chip_icon;
+	const int chip_size = Chipset::get_chipsize();
+
+	// TODO: check file existence
+	static type_chip_icon icon1 = Gdk::Pixbuf::create_from_file("Chip1.ico", chip_size, chip_size);
+	static type_chip_icon icon5 = Gdk::Pixbuf::create_from_file("Chip5.ico", chip_size, chip_size);
+	static type_chip_icon icon25 = Gdk::Pixbuf::create_from_file("Chip25.ico", chip_size, chip_size);
+	static type_chip_icon icon50 = Gdk::Pixbuf::create_from_file("Chip50.ico", chip_size, chip_size);
+	static type_chip_icon icon100 = Gdk::Pixbuf::create_from_file("Chip100.ico", chip_size, chip_size);
+
 	Gtk::Allocation allocation = get_allocation();
+
 	const int field_width = allocation.get_width();
 	const int field_height = allocation.get_height();
+	const int icon_cx = icon1->get_width() / 2;
+	const int icon_cy = icon1->get_height() / 2;
+
+	const double cx = field_width * 0.5;
+	const double cy = field_height * 0.5;
 
 	// paint the background
 	Gdk::Cairo::set_source_rgba(cr, mBackground);
@@ -186,6 +274,31 @@ bool Field::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
 	// show text
 	draw_text(cr, field_width, field_height);
+
+	// draw chips
+	std::for_each(mChips.begin(), mChips.end(), [&](unsigned& value) {
+		switch (value)
+		{
+		case 1:
+			Gdk::Cairo::set_source_pixbuf(cr, icon1, cx - icon_cx, cy - icon_cy);
+			break;
+		case 5:
+			Gdk::Cairo::set_source_pixbuf(cr, icon5, cx - icon_cx, cy - icon_cy);
+			break;
+		case 25:
+			Gdk::Cairo::set_source_pixbuf(cr, icon25, cx - icon_cx, cy - icon_cy);
+			break;
+		case 50:
+			Gdk::Cairo::set_source_pixbuf(cr, icon50, cx - icon_cx, cy - icon_cy);
+			break;
+		case 100:
+			Gdk::Cairo::set_source_pixbuf(cr, icon100, cx - icon_cx, cy - icon_cy);
+			break;
+		//default:
+		//	break;
+		}
+		cr->paint();
+	});
 
 	return true;
 }

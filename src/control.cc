@@ -20,9 +20,11 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "pch.hh"
 #include "control.hh"
 
+using std::string;
+
 Gdk::RGBA Control::mBackground;
 
-Control::Control(const std::string name) :
+Control::Control(const string name) :
 	//The GType name will actually be gtkmm__CustomObject_Control
 	Glib::ObjectBase("Control"),
 	Gtk::Widget(),

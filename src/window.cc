@@ -24,9 +24,9 @@ along with this program. If not, see http://www.gnu.org/licenses.
 using std::cerr;
 using std::cout;
 using std::endl;
+using std::string;
 
-
-Window::Window() :
+Window::Window(const string icon_name) :
 	mHistory(new History),
 	mEngine(mHistory),
 	mFrameHistory("History"),
@@ -40,15 +40,16 @@ Window::Window() :
 	set_size_request(width, height);
 	set_position(Gtk::WIN_POS_CENTER);
 
-	if (boost::filesystem::exists("roulette.ico"))
+	if (boost::filesystem::exists(icon_name))
 	{
-		refIcon = Gdk::Pixbuf::create_from_file("roulette.ico");
+		refIcon = Gdk::Pixbuf::create_from_file(icon_name);
 		set_icon(refIcon);
 	}
 #ifdef DEBUG_FILE_LOG
 	else
 	{
-		cerr << "File Error: " << "roulette.ico" << " not found in Window::Window()" << endl;
+		cout << "Window::Window()" << endl;
+		cerr << "ERROR: " << icon_name << " not found" << endl;
 	}
 #endif // DEBUG_FILE_LOG
 
@@ -89,6 +90,7 @@ Window::Window() :
 	mControlset.mBtnClose.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_close));
 	mControlset.mBtnSpin.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_spin));
 	mControlset.mBtnSpin50.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_spin50));
+	mControlset.mBtnClear.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_clear));
 }
 
 Window::~Window()
@@ -116,5 +118,11 @@ bool Window::on_button_spin50(GdkEventButton* button_event)
 		on_button_spin(button_event);
 	}
 
+	return true;
+}
+
+bool Window::on_button_clear(GdkEventButton* /*button_event*/)
+{
+	mTable.signal_clear.emit();
 	return true;
 }

@@ -21,6 +21,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 */
 
 #include <string>
+#include <vector>
 #include <gtkmm/widget.h>
 #include <gtkmm/selectiondata.h>
 #include <glibmm/refptr.h>
@@ -28,19 +29,20 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <pangomm/fontdescription.h>
 #include <gdkmm/rgba.h>
 #include <gdkmm/dragcontext.h>
-#include <gdkmm/pixbuf.h>
 #include <gdkmm/window.h>
 #include <gdkmm/rectangle.h> // Gtk::Allocation
 #include <cairomm/refptr.h>
 #include <cairomm/context.h>
+//#include <sigc++/signal.h>
 
+class Table;
 
 class Field final
 	: public Gtk::Widget
 {
 public:
-	Field(const int num);
-	Field(const std::string text);
+	Field(const int num, Table* parent);
+	Field(const std::string text, Table* parent);
 
 protected:
 	// overrides:
@@ -68,10 +70,16 @@ protected:
 
 private:
 	// methods
+	void clear();
 	void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int field_width, int field_height);
 
 	// members
 	Pango::FontDescription mFont;
+	std::vector<unsigned int> mChips;
+
+#ifdef DEBUG_DND_LOG
+	int motion_count = 0;
+#endif
 
 	/// begin initializer list
 	std::string mName;

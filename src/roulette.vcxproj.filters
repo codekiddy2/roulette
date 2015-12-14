@@ -47,9 +47,6 @@
     <ClInclude Include="engine.hh">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="dnd.hh">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="table.cc">

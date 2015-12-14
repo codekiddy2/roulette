@@ -20,13 +20,14 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see http://www.gnu.org/licenses.
 */
 
-#include "field.hh"
 #include "sets.hh"
 
 #include <vector>
 #include <gtkmm/grid.h>
 #include <gdkmm/rgba.h>
+#include <sigc++/signal.h>
 
+class Field;
 
 class Table final :
 	public Gtk::Grid
@@ -38,6 +39,9 @@ public:
 
 	// methods
 	ETable get_table_type();
+
+	// signals
+	sigc::signal<void> signal_clear;
 
 private:
 	// members
