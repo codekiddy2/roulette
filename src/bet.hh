@@ -32,55 +32,64 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
-#include <vector>		// due to Selection_t and Childs_t
-
 #include "error.hh"
 #include "sets.hh"
 
+#include <vector>		// due to Selection_t and Childs_t
+
 namespace roulette
 {
-	typedef unsigned short Ushort_t;	// size type of a vector
-	typedef std::vector<short> Selection_t; // numbers selected for the bet
-
+	typedef std::vector<unsigned> Selection_t; // numbers selected for the bet (ALSO DEFINED AS set_t !)
 
 	class Bet final
 	{
 	public:
+		// constructors
 		Bet(const ETable table,
 			const EBet bet,
-			const float chips,
+			const unsigned chips,
 			Selection_t* selection = nullptr,
-			Bet* parent = nullptr);
+			Bet* parent = nullptr,
+			const int x = 0,
+			const int y = 0
+			);
 
 		~Bet();
 		Bet(Bet&& ref);
 		Bet(const Bet& ref);
 		Bet& operator=(Bet&& ref);
+		Bet& operator=(const Bet& ref);
 
-		EBet Id() const; // ID
-		float Chips() const; // amount of chips
-		Ushort_t Childs() const; // amount of childs
-		Ushort_t Numbers() const; // amount of numbers
-		Selection_t GetSelection() const;
-		short Number(const short& index) const; // reference number
+		// methods
+		EBet get_id() const; // ID
+		unsigned get_chips() const; // amount of chips
+		unsigned get_childs() const; // amount of childs
+		unsigned get_numbers() const; // amount of numbers
+		Selection_t get_selection() const;
+		unsigned get_number(const unsigned& index) const; // reference number
+		
+		int get_x() const;
+		int get_y() const;
 
-		EBet ChildId(const short& child) const; // ID of a child 
-		float ChildChips(const short& child) const; // amount of chips of a child
-		Ushort_t ChildNumbers(const short& child) const; // amount of numbers of a child
-		short ChildNumber(const short& child, const short& index) const; // reference number of a child
+		EBet get_child_id(const unsigned& child) const; // ID of a child 
+		unsigned get_child_chip_count(const unsigned& child) const; // amount of chips of a child
+		unsigned get_child_number_count(const unsigned& child) const; // amount of numbers of a child
+		unsigned get_child_number(const unsigned& child, const unsigned& index) const; // reference number of a child
 
-		void PrintProperties(const bool& childs = false) const;
+		void print_properties(const bool& childs = false) const;
 
 	private:
-		typedef std::vector<Bet> Childs_t;			// each bet has at least 1 child
+		// typedefs
+		typedef std::vector<Bet> Childs_t; // each bet has at least 1 child, so this is a "bet container"
 
+		/// begin initilizer list
 		EBet mId;
 		const Bet* mpParent;
 		Childs_t* mpChilds;
 		Selection_t* mpSelection;
 		const char* mpName;
 		short mCoverage;
-		float mChips;
+		unsigned mChips;
 		float mReturn;
 		float mPayout;
 		float mWin;
@@ -103,62 +112,78 @@ namespace roulette
 		float mBinomialVariance;
 		float mStandardDeviation;
 		float mBinomialStandardDeviation;
+		int m_x;
+		int m_y;
+		/// end initilizer list
 
-		void AssignName();
-		void SetPart1(const float& chips);
-		Bet& operator=(const Bet& ref);
-		void SetPart2(const ETable& table, const short& nums, const float& chips);
-		void FillChilds(const ETable& table, const Selection_t* const selection, const float& chips);
+		// methods
+		void assign_name();
+		void set_part_1(const unsigned& chips);
+		void set_part_2(const ETable& table, const short& nums, const int& chips);
+		void fill_childs(const ETable& table, const Selection_t* const selection, const int& chips,
+			const int x = 0,
+			const int y = 0
+			);
 	};
 
 #pragma region Inline
 
-	inline EBet Bet::Id() const
+	inline EBet Bet::get_id() const
 	{
 		return mId;
 	}
 
-	inline EBet Bet::ChildId(const short& child) const
+	inline int Bet::get_x() const
+	{
+		return m_x;
+	}
+
+	inline int Bet::get_y() const
+	{
+		return m_y;
+	}
+
+	inline EBet Bet::get_child_id(const unsigned& child) const
 	{
 		return mpChilds->at(child).mId;
 	}
 
-	inline float Bet::Chips() const
+	inline unsigned Bet::get_chips() const
 	{
 		return mChips;
 	}
 
-	inline Selection_t Bet::GetSelection() const
+	inline Selection_t Bet::get_selection() const
 	{
 		return *mpSelection;
 	}
 
-	inline Ushort_t Bet::Childs() const
+	inline unsigned Bet::get_childs() const
 	{
-		return static_cast<Ushort_t>(mpChilds->size());
+		return static_cast<unsigned>(mpChilds->size());
 	}
 
-	inline Ushort_t Bet::Numbers() const
+	inline unsigned Bet::get_numbers() const
 	{
-		return static_cast<Ushort_t>(mpSelection->size());
+		return static_cast<unsigned>(mpSelection->size());
 	}
 
-	inline short Bet::Number(const short& index) const
+	inline unsigned Bet::get_number(const unsigned& index) const
 	{
 		return mpSelection->at(index);
 	}
 
-	inline float Bet::ChildChips(const short& child) const
+	inline unsigned Bet::get_child_chip_count(const unsigned& child) const
 	{
 		return mpChilds->at(child).mChips;
 	}
 
-	inline Ushort_t Bet::ChildNumbers(const short& child) const
+	inline unsigned Bet::get_child_number_count(const unsigned& child) const
 	{
-		return static_cast<Ushort_t>(mpChilds->at(child).mpSelection->size());
+		return static_cast<unsigned>(mpChilds->at(child).mpSelection->size());
 	}
 
-	inline short Bet::ChildNumber(const short& child, const short& index) const
+	inline unsigned Bet::get_child_number(const unsigned& child, const unsigned& index) const
 	{
 		return mpChilds->at(child).mpSelection->at(index);
 	}

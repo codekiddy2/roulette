@@ -31,6 +31,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
+#include "bet.hh"
+
 #include <string>
 #include <vector>
 #include <gtkmm/widget.h>
@@ -87,7 +89,7 @@ namespace roulette
 
 		// members
 		Pango::FontDescription mFont;
-		std::vector<unsigned int> mChips;
+		std::vector<Bet> m_bets;
 
 #ifdef DEBUG_DND_LOG
 		int motion_count = 0;
@@ -97,6 +99,7 @@ namespace roulette
 		std::string mName;
 		Gdk::RGBA mBackground;
 		Glib::RefPtr<Pango::Layout> mLayout;
+		Table* p_parent;
 		/// end initializer list
 
 		// deleted

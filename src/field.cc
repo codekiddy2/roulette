@@ -51,7 +51,8 @@ namespace roulette
 		Gtk::Widget(),
 		mName(std::to_string(num)),
 		mBackground("rgb(0, 102, 0)"), // green
-		mLayout(create_pango_layout(mName.c_str()))
+		mLayout(create_pango_layout(mName.c_str())),
+		p_parent(parent)
 	{
 		set_has_window(true);
 		set_events(Gdk::EventMask::ALL_EVENTS_MASK);
@@ -80,7 +81,8 @@ namespace roulette
 		Gtk::Widget(),
 		mName(text),
 		mBackground("rgb(0, 102, 0)"), // green
-		mLayout(create_pango_layout(text))
+		mLayout(create_pango_layout(text)),
+		p_parent(parent)
 	{
 		set_has_window(true);
 		set_events(Gdk::EventMask::ALL_EVENTS_MASK);
@@ -106,7 +108,7 @@ namespace roulette
 
 	void Field::clear()
 	{
-		mChips.clear();
+		m_bets.clear();
 		refGdkWindow->invalidate(false);
 
 #ifdef DEBUG_SIGNALS
@@ -176,7 +178,7 @@ namespace roulette
 		cout << "-> INFO: y = " << y << endl;
 		cout << "-> INFO: time = " << time << endl;
 #endif // DEBUG_DND_LOG
-
+		
 		context->drop_reply(true, time); // accept the drop
 		context->drop_finish(true, time); // end drag operation
 
@@ -216,14 +218,76 @@ namespace roulette
 
 #endif // DEBUG_DND_LOG
 
+		//bool left = false;
+		//bool right = false;
+		//bool center = false;
+		//bool top = false;
+		//bool down = false;
+		//x < width / 3 ? left = true : x > width / 3 ? right = true : center = true;
+		//y < height / 3 ? top = true : y > height / 3 ? down = true : center = true;
+
+		Gtk::Allocation alloc = get_allocation();
+		const int left = alloc.get_width() / 3;
+		const int top = alloc.get_height() / 3;
+		const int right = left * 2;
+		const int down = top * 2;
+
 		static const int format = 8;
 
+		// TODO: this code does not work, fix Bet class.
 		if ((selection_data.get_length() == 0) && (selection_data.get_format() == format))
 		{
-			mChips.push_back(info);
+			if (x < left) // left
+			{
+				if (y < top) // top
+				{
+					m_bets.push_back(Bet(p_parent->get_table_type(), EBet::Corner, info, nullptr, nullptr, x, y));
+				}
+				else if (y > down) // down
+				{
+					m_bets.push_back(Bet(p_parent->get_table_type(), EBet::Corner, info, nullptr, nullptr, x, y));
+				}
+				else // left center
+				{
+					m_bets.push_back(Bet(p_parent->get_table_type(), EBet::Split, info, nullptr, nullptr, x, y));
+				}
+			}
+			else if (x > right) // right
+			{
+				if (y < top) // top
+				{
+					m_bets.push_back(Bet(p_parent->get_table_type(), EBet::Corner, info, nullptr, nullptr, x, y));
+				}
+				else if (y > down) // down
+				{
+					m_bets.push_back(Bet(p_parent->get_table_type(), EBet::Corner, info, nullptr, nullptr, x, y));
+				}
+				else // right center
+				{
+					m_bets.push_back(Bet(p_parent->get_table_type(), EBet::Split, info, nullptr, nullptr, x, y));
+				}
+			}
+			else // center
+			{
+				if (y < top) // top
+				{
+					m_bets.push_back(Bet(p_parent->get_table_type(), EBet::Split, info, nullptr, nullptr, x, y));
+				}
+				else if (y > down) // down
+				{
+					m_bets.push_back(Bet(p_parent->get_table_type(), EBet::Split, info, nullptr, nullptr, x, y));
+				}
+				else // pure center
+				{
+					m_bets.push_back(Bet(p_parent->get_table_type(), EBet::StraightUp, info, nullptr, nullptr, x, y));
+				}
+			}
+			context->drag_finish(true, false, time); // drop finished, data no longer required
 		}
-
-		context->drag_finish(true, false, time); // drop finished, data no longer required
+		else
+		{
+			context->drag_finish(false, false, time);
+		}
 	}
 
 
@@ -287,27 +351,29 @@ namespace roulette
 		draw_text(cr, field_width, field_height);
 
 		// draw chips
-		std::for_each(mChips.begin(), mChips.end(), [&](unsigned& value) {
-			switch (value)
-			{
-			case 1:
-				Gdk::Cairo::set_source_pixbuf(cr, icon1, cx - icon_cx, cy - icon_cy);
-				break;
-			case 5:
-				Gdk::Cairo::set_source_pixbuf(cr, icon5, cx - icon_cx, cy - icon_cy);
-				break;
-			case 25:
-				Gdk::Cairo::set_source_pixbuf(cr, icon25, cx - icon_cx, cy - icon_cy);
-				break;
-			case 50:
-				Gdk::Cairo::set_source_pixbuf(cr, icon50, cx - icon_cx, cy - icon_cy);
-				break;
-			case 100:
-				Gdk::Cairo::set_source_pixbuf(cr, icon100, cx - icon_cx, cy - icon_cy);
-				break;
-			}
-			cr->paint();
-		});
+		//std::for_each(m_bets.begin(), m_bets.end(), [&](Bet& value) {
+		//	switch (value.Chips())
+		//	{
+		//	case 1:
+		//		Gdk::Cairo::set_source_pixbuf(cr, icon1, cx - icon_cx, cy - icon_cy);
+		//		break;
+		//	case 5:
+		//		Gdk::Cairo::set_source_pixbuf(cr, icon5, cx - icon_cx, cy - icon_cy);
+		//		break;
+		//	case 25:
+		//		Gdk::Cairo::set_source_pixbuf(cr, icon25, cx - icon_cx, cy - icon_cy);
+		//		break;
+		//	case 50:
+		//		Gdk::Cairo::set_source_pixbuf(cr, icon50, cx - icon_cx, cy - icon_cy);
+		//		break;
+		//	case 100:
+		//		Gdk::Cairo::set_source_pixbuf(cr, icon100, cx - icon_cx, cy - icon_cy);
+		//		break;
+		//	}
+		//	cr->paint();
+		//});
+
+		
 #ifdef DEBUG_DND_LOG
 		cout << endl;
 		cout << "Field::on_draw()" << endl;

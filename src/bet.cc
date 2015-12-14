@@ -35,9 +35,9 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 #include "bet.hh"
 
-#include <cmath>		// due to SetPart2
+#include <cmath>		// due to set_part_2
 #include <iostream>		// due to PrintProperties
-#include <algorithm>	// due to sort in SetPart1
+#include <algorithm>	// due to sort in set_part_1
 
 
 namespace roulette
@@ -45,14 +45,15 @@ namespace roulette
 #pragma region
 
 	// TODO selection as array
-	Bet::Bet(const ETable table, const EBet bet, const float chips, Selection_t* selection, Bet* parent) :
+	Bet::Bet(const ETable table, const EBet bet, const unsigned chips,
+		Selection_t* selection, Bet* parent, const int x, const int y) :
 		mId(bet),
 		mpParent(parent),
 		mpChilds(nullptr),
 		mpSelection(selection),
 		mpName(nullptr),
 		mCoverage(1),
-		mChips(0.f),
+		mChips(0),
 		mReturn(0.f),
 		mPayout(0.f),
 		mWin(0.f),
@@ -74,24 +75,26 @@ namespace roulette
 		mVariance(0.f),
 		mBinomialVariance(0.f),
 		mStandardDeviation(0.f),
-		mBinomialStandardDeviation(0.f)
+		mBinomialStandardDeviation(0.f),
+		m_x(x),
+		m_y(y)
 	{
-		AssignName();
+		assign_name();
 
 		if (parent)
-			SetPart1(chips);
+			set_part_1(chips);
 		else
 		{
 			mpChilds = new Childs_t;
 			mpSelection = new Selection_t;
-			FillChilds(table, selection, chips);
+			fill_childs(table, selection, chips, x, y);
 			short nums = table > ETable::American ? 37 : static_cast<short>(table);
 
-			for (Ushort_t i = 0; i < mpChilds->size(); ++i)
-				mpChilds->at(i).SetPart2(table, nums, chips);
+			for (unsigned i = 0; i < mpChilds->size(); ++i)
+				mpChilds->at(i).set_part_2(table, nums, chips);
 
-			SetPart1(chips);
-			SetPart2(table, nums, chips);
+			set_part_1(chips);
+			set_part_2(table, nums, chips);
 		}
 	}
 
@@ -106,8 +109,8 @@ namespace roulette
 	Bet::Bet(const Bet& ref) :
 		mId(ref.mId),
 		mpParent(ref.mpParent),
-		mpChilds(nullptr),
-		mpSelection(new Selection_t(*ref.mpSelection)),
+		mpChilds(nullptr), // 1a.
+		mpSelection(nullptr), // 2a.
 		mpName(ref.mpName),
 		mCoverage(ref.mCoverage),
 		mChips(ref.mChips),
@@ -132,10 +135,18 @@ namespace roulette
 		mVariance(ref.mVariance),
 		mBinomialVariance(ref.mBinomialVariance),
 		mStandardDeviation(ref.mStandardDeviation),
-		mBinomialStandardDeviation(ref.mBinomialStandardDeviation)
+		mBinomialStandardDeviation(ref.mBinomialStandardDeviation),
+		m_x(ref.m_x),
+		m_y(ref.m_y)
 	{
 		if (ref.mpChilds)
-			mpChilds = new Childs_t(*ref.mpChilds);
+		{
+			mpChilds = new Childs_t(*ref.mpChilds); // 1b.
+		}
+		if (ref.mpSelection)
+		{
+			mpSelection = new Selection_t(*ref.mpSelection); // 2b.
+		}
 	}
 
 
@@ -168,7 +179,9 @@ namespace roulette
 		mVariance(ref.mVariance),
 		mBinomialVariance(ref.mBinomialVariance),
 		mStandardDeviation(ref.mStandardDeviation),
-		mBinomialStandardDeviation(ref.mBinomialStandardDeviation)
+		mBinomialStandardDeviation(ref.mBinomialStandardDeviation),
+		m_x(ref.m_x),
+		m_y(ref.m_y)
 	{
 		ref.mpChilds = nullptr;
 		ref.mpSelection = nullptr;
@@ -212,62 +225,109 @@ namespace roulette
 			mBinomialVariance = ref.mBinomialVariance;
 			mStandardDeviation = ref.mStandardDeviation;
 			mBinomialStandardDeviation = ref.mBinomialStandardDeviation;
+			m_x = ref.m_x;
+			m_y = ref.m_y;
+		}
+		return *this;
+	}
+
+	Bet& Bet::operator=(const Bet& ref)
+	{
+		if (this != &ref)
+		{
+			mId = ref.mId;
+			mpParent = ref.mpParent;
+			delete mpChilds; // 1.
+			mpChilds = new Childs_t(*ref.mpChilds);
+			delete mpSelection; // 2.
+			mpSelection = new Selection_t(*ref.mpSelection);
+			mpName = ref.mpName;
+			mCoverage = ref.mCoverage;
+			mChips = ref.mChips;
+			mReturn = ref.mReturn;
+			mPayout = ref.mPayout;
+			mWin = ref.mWin;
+			mResult = ref.mResult;
+			mLose = ref.mLose;
+			mOdds = ref.mOdds;
+			mProbWin = ref.mProbWin;
+			mProbPush = ref.mProbPush;
+			mProbLose = ref.mProbLose;
+			mExpectedValue = ref.mExpectedValue;
+			mExpectedReturn = ref.mExpectedReturn;
+			mAverageWin = ref.mAverageWin;
+			mFirstMoment = ref.mFirstMoment;
+			mSecondMoment = ref.mSecondMoment;
+			mThirdMoment = ref.mThirdMoment;
+			mFourthMoment = ref.mFourthMoment;
+			mSkewness = ref.mSkewness;
+			mKurtosis = ref.mKurtosis;
+			mVariance = ref.mVariance;
+			mBinomialVariance = ref.mBinomialVariance;
+			mStandardDeviation = ref.mStandardDeviation;
+			mBinomialStandardDeviation = ref.mBinomialStandardDeviation;
+			m_x = ref.m_x;
+			m_y = ref.m_y;
 		}
 		return *this;
 	}
 
 
-	void Bet::FillChilds(const ETable& table, const Selection_t* const selection, const float& chips)
+	void Bet::fill_childs(const ETable& table, const Selection_t* const selection, const int& chips,
+		const int x,
+		const int y
+		)
 	{
 		short temp[6];
 
 		switch (mId)
 		{
-		case EBet::StraightUp:	// TODO these bets do not need a childs
+		case EBet::StraightUp:	// TODO these bets do not need a child
 		case EBet::Split:
 		case EBet::Street:
 		case EBet::Corner:
+			break;
 		case EBet::Line:		// TODO	pass address of set directly
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(*selection), this));
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(*selection), this, x, y));
 			break;
 		case EBet::Basket:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Basket), this));
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Basket), this, x, y));
 			break;
 		case EBet::Column1:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Column1), this));
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Column1), this, x, y));
 			break;
 		case EBet::Column2:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Column2), this));
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Column2), this, x, y));
 			break;
 		case EBet::Column3:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Column3), this));
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Column3), this, x, y));
 			break;
 		case EBet::Dozen1:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Dozen1), this));
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Dozen1), this, x, y));
 			break;
 		case EBet::Dozen2:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Dozen2), this));
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Dozen2), this, x, y));
 			break;
 		case EBet::Dozen3:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Dozen3), this));
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Dozen3), this, x, y));
 			break;
 		case EBet::High:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(High), this));
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(High), this, x, y));
 			break;
 		case EBet::Low:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Low), this));
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Low), this, x, y));
 			break;
 		case EBet::Red:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Red), this));
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Red), this, x, y));
 			break;
 		case EBet::Black:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Black), this));
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Black), this, x, y));
 			break;
 		case EBet::Even:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Even), this));
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Even), this, x, y));
 			break;
 		case EBet::Odd:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Odd), this));
+			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Odd), this, x, y));
 			break;
 		case EBet::VoisinsDeZero:
 			for (short i = 0; i < 10; i += 2)
@@ -482,7 +542,7 @@ namespace roulette
 #pragma region
 
 	// TODO printProperties mozda krivo pise
-	void Bet::PrintProperties(const bool& childs) const
+	void Bet::print_properties(const bool& childs) const
 	{
 		using std::cout;
 		using std::endl;
@@ -522,23 +582,23 @@ namespace roulette
 		cout << "Covered numbers:" << endl;
 
 		if (mpChilds) // it is parent
-			for (Ushort_t i = 0; i < mpChilds->size(); ++i)
+			for (unsigned i = 0; i < mpChilds->size(); ++i)
 			{
 				cout << mpChilds->at(i).mpName << ":" << endl;
-				for (Ushort_t j = 0; j < mpChilds->at(i).mpSelection->size(); ++j)
+				for (unsigned j = 0; j < mpChilds->at(i).mpSelection->size(); ++j)
 					cout << mpChilds->at(i).mpSelection->at(j) << endl;
 			}
 
-		else for (Ushort_t i = 0; i < mpSelection->size(); ++i)
+		else for (unsigned i = 0; i < mpSelection->size(); ++i)
 			cout << mpSelection->at(i) << endl;
 
 		if (childs)	// print child properties
-			for (Ushort_t i = 0; i < mpChilds->size(); ++i)
-				mpChilds->at(i).PrintProperties();
+			for (unsigned i = 0; i < mpChilds->size(); ++i)
+				mpChilds->at(i).print_properties();
 	}
 
 
-	void Bet::AssignName()
+	void Bet::assign_name()
 	{
 		switch (mId)
 		{
@@ -753,39 +813,39 @@ namespace roulette
 			mpName = "Maximus column 13";
 			break;
 		default:
-			throw error("Bet -> AssignName -> Name not found");
+			throw error("Bet -> assign_name -> Name not found");
 		}
 	}
 
 
-	void Bet::SetPart1(const float& chips)
+	void Bet::set_part_1(const unsigned& chips)
 	{
 		using std::sort;
 
 		// COVERAGE
 		if (mpSelection->empty())  // it is parent
 		{
-			for (Ushort_t i = 0; i < mpChilds->size(); ++i)
-				for (Ushort_t j = 0; j < mpChilds->at(i).mpSelection->size(); ++j)
+			for (unsigned i = 0; i < mpChilds->size(); ++i)
+				for (unsigned j = 0; j < mpChilds->at(i).mpSelection->size(); ++j)
 					mpSelection->push_back(mpChilds->at(i).mpSelection->at(j));
 
 			sort(mpSelection->begin(), mpSelection->end());
 		}
-		for (Ushort_t i = 0; i < mpSelection->size() - 1; ++i)
+		for (unsigned i = 0; i < mpSelection->size() - 1; ++i)
 			if (mpSelection->at(i) != mpSelection->at(i + 1))
 				++mCoverage;
 
 		// CHIPS
 		if (mpChilds)  // it is parent
 		{
-			for (Ushort_t i = 0; i < mpChilds->size(); ++i)
+			for (unsigned i = 0; i < mpChilds->size(); ++i)
 				mChips += mpChilds->at(i).mChips;
 
 			// RETURN
 			float SUMproduct = 0.f;
 			short SUMcoverage = 0;
 
-			for (Ushort_t i = 0; i < mpChilds->size(); ++i)
+			for (unsigned i = 0; i < mpChilds->size(); ++i)
 			{
 				SUMproduct += mpChilds->at(i).mCoverage * mpChilds->at(i).mReturn;
 				SUMcoverage += mpChilds->at(i).mCoverage;
@@ -795,7 +855,7 @@ namespace roulette
 			// PAYOUT
 			SUMproduct = 0.f;
 			SUMcoverage = 0;
-			for (Ushort_t i = 0; i < mpChilds->size(); ++i)
+			for (unsigned i = 0; i < mpChilds->size(); ++i)
 			{
 				SUMproduct += mpChilds->at(i).mCoverage * mpChilds->at(i).mPayout;
 				SUMcoverage += mpChilds->at(i).mCoverage;
@@ -870,7 +930,7 @@ namespace roulette
 		case EBet::Maximus3436:
 		case EBet::MaximusColumn2:
 		case EBet::MaximusColumn13:
-			throw error("Bet -> SetPart1 -> Maximus return not defined");
+			throw error("Bet -> set_part_1 -> Maximus return not defined");
 			break;
 		default:
 			mReturn = mChips;
@@ -881,7 +941,7 @@ namespace roulette
 	}
 
 
-	void Bet::SetPart2(const ETable& table, const short& nums, const float& chips)
+	void Bet::set_part_2(const ETable& table, const short& nums, const int& chips)
 	{
 		using std::floor;
 		using std::pow;
@@ -892,7 +952,7 @@ namespace roulette
 		{
 			float SUMchips = 0.f;
 
-			for (Ushort_t i = 0; i < mpParent->mpChilds->size(); ++i)
+			for (unsigned i = 0; i < mpParent->mpChilds->size(); ++i)
 				SUMchips += mpParent->mpChilds->at(i).mChips;
 
 			mWin = mPayout * mChips - (SUMchips - mChips);
@@ -900,7 +960,7 @@ namespace roulette
 		}
 		else // it is parent
 		{
-			for (Ushort_t i = 0; i < mpChilds->size(); ++i)
+			for (unsigned i = 0; i < mpChilds->size(); ++i)
 				mResult += mpChilds->at(i).mResult;
 
 			mWin = mResult / mCoverage;
@@ -944,7 +1004,7 @@ namespace roulette
 		// EXPECTED RETURN AND VALUE
 		if (mpChilds) // it is parent
 		{
-			for (Ushort_t i = 0; i < mpChilds->size(); ++i)
+			for (unsigned i = 0; i < mpChilds->size(); ++i)
 				mExpectedReturn += mpChilds->at(i).mExpectedReturn;
 
 			mExpectedValue = mExpectedReturn / mChips;

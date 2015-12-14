@@ -59,7 +59,7 @@ namespace roulette
 	short get_neighbor(const ETable table, const short refNum, const short position);
 
 	// TODO: consider using unordered set to avoid vector messing with numbers
-	typedef const std::vector<short> set_t;
+	typedef const std::vector<unsigned> set_t;
 
 	extern set_t NoZeroWheel;
 	extern set_t AmericanWheel;
@@ -114,7 +114,7 @@ namespace roulette
 	extern const short amWheel[];
 	extern const short noZeroWheel[];
 
-	enum class EBet
+	enum class EBet/* : short*/
 	{
 		///<needsSelection>
 		StraightUp,
