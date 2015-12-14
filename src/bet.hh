@@ -35,11 +35,11 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "error.hh"
 #include "sets.hh"
 
-#include <vector>		// due to Selection_t and Childs_t
+#include <vector>	// due to and Childs_t
 
 namespace roulette
 {
-	typedef std::vector<unsigned> Selection_t; // numbers selected for the bet (ALSO DEFINED AS set_t !)
+	//typedef std::vector<unsigned> Selection_t; // numbers selected for the bet (ALSO DEFINED AS set_t !)
 
 	class Bet final
 	{
@@ -170,7 +170,7 @@ namespace roulette
 
 	inline unsigned Bet::get_number(const unsigned& index) const
 	{
-		return mpSelection->at(index);
+		return *mpSelection->find(index);
 	}
 
 	inline unsigned Bet::get_child_chip_count(const unsigned& child) const
@@ -185,7 +185,7 @@ namespace roulette
 
 	inline unsigned Bet::get_child_number(const unsigned& child, const unsigned& index) const
 	{
-		return mpChilds->at(child).mpSelection->at(index);
+		return *mpChilds->at(child).mpSelection->find(index);
 	}
 
 #pragma endregion Inline methods
