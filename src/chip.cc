@@ -138,7 +138,7 @@ namespace roulette
 	}
 
 
-	void Chip::on_drag_end(const Glib::RefPtr<Gdk::DragContext>& context)
+	void Chip::on_drag_end(const Glib::RefPtr<Gdk::DragContext>& /*context*/)
 	{
 #ifdef DEBUG_DND_LOG
 		cout << endl;

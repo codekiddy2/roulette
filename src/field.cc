@@ -302,7 +302,7 @@ namespace roulette
 	}
 
 
-	void Field::on_drag_leave(const Glib::RefPtr<Gdk::DragContext>& context, guint time)
+	void Field::on_drag_leave(const Glib::RefPtr<Gdk::DragContext>& /*context*/, guint time)
 	{
 #ifdef DEBUG_DND_LOG
 		cout << endl;
@@ -327,17 +327,6 @@ namespace roulette
 // Draw on the supplied Cairo::Context.
 	bool Field::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	{
-		//// TODO: load pixbufs and share memory with Chip objects. 
-		//typedef Glib::RefPtr<Gdk::Pixbuf> type_chip_icon;
-		//const int chip_size = Chipset::get_chipsize();
-
-		////// TODO: check file existence
-		////static type_chip_icon icon1 = Gdk::Pixbuf::create_from_file("Chip1.ico", chip_size, chip_size);
-		////static type_chip_icon icon5 = Gdk::Pixbuf::create_from_file("Chip5.ico", chip_size, chip_size);
-		////static type_chip_icon icon25 = Gdk::Pixbuf::create_from_file("Chip25.ico", chip_size, chip_size);
-		////static type_chip_icon icon50 = Gdk::Pixbuf::create_from_file("Chip50.ico", chip_size, chip_size);
-		////static type_chip_icon icon100 = Gdk::Pixbuf::create_from_file("Chip100.ico", chip_size, chip_size);
-
 		Gtk::Allocation allocation = get_allocation();
 
 		const int field_width = allocation.get_width();
@@ -371,13 +360,12 @@ namespace roulette
 			cr->paint();
 		});
 
-		
+		return true;
+
 //#ifdef DEBUG_DND_LOG
 //		cout << endl;
 //		cout << "Field::on_draw()" << endl;
 //#endif // DEBUG_DND_LOG
-
-		return true;
 	}
 
 	void Field::draw_text(const Cairo::RefPtr<Cairo::Context>& cr,

@@ -58,7 +58,6 @@ namespace roulette
 			const int y = 0
 			);
 
-		~Bet();
 		Bet(Bet&& ref);
 		Bet(const Bet& ref);
 		Bet& operator=(Bet&& ref);
@@ -92,7 +91,7 @@ namespace roulette
 		std::shared_ptr<Childs_t> mpChilds;
 		std::shared_ptr<Selection_t> mpSelection;
 		const char* mpName;
-		short mCoverage;
+		signed mCoverage;
 		unsigned mChips;
 		float mReturn;
 		float mPayout;
@@ -123,7 +122,7 @@ namespace roulette
 		// methods
 		void assign_name();
 		void set_part_1(const unsigned& chips);
-		void set_part_2(const ETable& table, const short& nums, const int& chips);
+		void set_part_2(const ETable& table, const unsigned& nums, const unsigned& chips);
 		void fill_childs(const ETable& table, const std::shared_ptr<Selection_t> selection, const int& chips,
 			const int x = 0,
 			const int y = 0
@@ -212,7 +211,7 @@ namespace roulette
 		else
 		{
 			std::cout << "WARNING: get_number() -> no number at: " << index << std::endl;
-			return -1;
+			return 0;
 		}
 	}
 

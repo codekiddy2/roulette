@@ -44,40 +44,47 @@ namespace roulette
 		: public std::exception
 	{
 	public:
-		error(const char* description, short code = -1) throw() :
-			description(description), code(code) { }
+		// constructors
+		error(const char* description, short code = 0) throw() :
+			m_description(description), m_code(code) { }
 
-		const char* what() const throw() override
-		{
-			return description;
-		}
-
-		short Code() const throw()
-		{
-			return code;
-		}
+		error(const error& ref)
+			: m_description(ref.m_description), m_code(ref.m_code) { }
 
 		error(error&& ref)
-			: description(ref.description), code(ref.code) { }
+			: m_description(ref.m_description), m_code(ref.m_code) { }
+
+		error& operator=(const error& rhs)
+		{
+			if (this != &rhs)
+			{
+				return *this;
+			}
+		}
 
 		error& operator=(error&&)
 		{
 			return *this;
 		}
 
-		error(const error& ref)
-			: description(ref.description), code(ref.code) { }
+		// methods
+		const char* what() const throw() override
+		{
+			return m_description;
+		}
+
+		short code() const throw()
+		{
+			return m_code;
+		}
 
 	private:
-		const short code;
-		const char* description;
-		error& operator=(const error &)
-		{
-			// TODO: check
-			return *this;
-		}
+		// members
+		const short m_code;
+		const char* m_description;
 	};
 
+	// error handler interface
 	class IErrorHandler
 	{
 	protected:

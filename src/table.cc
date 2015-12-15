@@ -33,7 +33,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "chipset.hh"
 #include "field.hh"
 
-#pragma warning(push, 3)
+#pragma warning(push, 4)
 
 #include "table.hh"
 #include "error.hh"

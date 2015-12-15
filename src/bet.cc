@@ -32,7 +32,10 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "sets.hh"
 #include "chip.hh"
 
-#pragma warning(push, 3)
+#ifdef _MSC_VER
+#pragma warning(disable: 4061 4062) // case statements not handled
+#pragma warning(push, 4)
+#endif // _MSC_VER
 
 #include "bet.hh"
 
@@ -94,7 +97,7 @@ namespace roulette
 			mpChilds = make_shared<Childs_t>();
 			mpSelection = make_shared<Selection_t>();
 			fill_childs(table, selection, mChips, x, y);
-			short nums = table > ETable::American ? 37 : static_cast<unsigned>(table);
+			unsigned nums = table > ETable::American ? 37 : static_cast<unsigned>(table);
 
 			for (unsigned i = 0; i < mpChilds->size(); ++i)
 				mpChilds->at(i)->set_part_2(table, nums, mChips);
@@ -102,11 +105,6 @@ namespace roulette
 			set_part_1(mChips);
 			set_part_2(table, nums, mChips);
 		}
-	}
-
-
-	Bet::~Bet()
-	{
 	}
 
 	Bet::Bet(const Bet& ref) :
@@ -334,45 +332,45 @@ namespace roulette
 			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Odd), this, x, y));
 			break;
 		case EBet::VoisinsDeZero:
-			for (short i = 0; i < 10; i += 2)
+			for (unsigned i = 0; i < 10; i += 2)
 				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(VoisinsDeZero.find(i), VoisinsDeZero.find(i + 2)), this));
 			mpChilds->push_back(make_shared<Bet>(table, EBet::Street, chips, make_shared<Selection_t>(VoisinsDeZero.find(10), VoisinsDeZero.find(13)), this));
 			mpChilds->push_back(make_shared<Bet>(table, EBet::Corner, chips, make_shared<Selection_t>(VoisinsDeZero.find(13), VoisinsDeZero.find(17)), this));
 			break;
 		case EBet::TriesDuCylindre:
-			for (short i = 0; i < 12; i += 2)
+			for (unsigned i = 0; i < 12; i += 2)
 				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(TriesDuCylindre.find(i), TriesDuCylindre.find(i + 2)), this));
 			break;
 		case EBet::OrphelinsEnPlen:
-			for (short i = 0; i < 8; ++i)
+			for (unsigned i = 0; i < 8; ++i)
 				mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(OrphelinsEnPlen.find(1), OrphelinsEnPlen.find(i)), this));
 			break;
 		case EBet::OrphelinsACheval:
 			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(OrphelinsACheval.find(1), OrphelinsACheval.find(1)), this));
-			for (short i = 1; i < 8; i += 2)
+			for (unsigned i = 1; i < 8; i += 2)
 				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(OrphelinsACheval.find(i), OrphelinsACheval.find(i + 2)), this));
 			break;
 		case EBet::Jeu0:
 			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(Jeu0.find(1), Jeu0.find(26)), this));
-			for (short i = 1; i < 6; i += 2)
+			for (unsigned i = 1; i < 6; i += 2)
 				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(Jeu0.find(i), Jeu0.find(i + 2)), this));
 			break;
 		case EBet::Jeu79:
 			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(Jeu79.find(1), Jeu79.find(19)), this));
 			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(Jeu79.find(1), Jeu79.find(27)), this));
-			for (short i = 2; i < 9; i += 2)
+			for (unsigned i = 2; i < 9; i += 2)
 				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(Jeu79.find(i), Jeu79.find(i + 2)), this));
 			break;
 		case EBet::RedSplits:
-			for (short i = 0; i < 4; i += 2)
+			for (unsigned i = 0; i < 4; i += 2)
 				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(RedSplits.begin(), RedSplits.find(i + 2)), this));
 			break;
 		case EBet::BlackSplits:
-			for (short i = 0; i < 14; i += 2)
+			for (unsigned i = 0; i < 14; i += 2)
 				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(BlackSplits.begin(), BlackSplits.find(i + 2)), this));
 			break;
 		case EBet::Snake:
-			for (short i = 0; i < 12; ++i)
+			for (unsigned i = 0; i < 12; ++i)
 				mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(Snake.begin(), Snake.find(i)), this));
 			break;
 #if 0 // TODO: fix code
@@ -832,7 +830,7 @@ namespace roulette
 
 		 //TODO: THIS FUNCTION THROWS, fix it.
 #if 0
-		 COVERAGE
+		 //COVERAGE
 		if (mpSelection->empty())  // it is parent
 		{
 			for (unsigned i = 0; i < mpChilds->size(); ++i)
@@ -862,7 +860,7 @@ namespace roulette
 
 			// RETURN
 			float SUMproduct = 0.f;
-			short SUMcoverage = 0;
+			unsigned SUMcoverage = 0;
 
 			for (unsigned i = 0; i < mpChilds->size(); ++i)
 			{
@@ -977,7 +975,7 @@ namespace roulette
 	}
 
 
-	void Bet::set_part_2(const ETable& table, const short& nums, const int& chips)
+	void Bet::set_part_2(const ETable& table, const unsigned& nums, const unsigned& chips)
 	{
 		using std::floor;
 		using std::pow;
@@ -1075,7 +1073,9 @@ namespace roulette
 		mStandardDeviation = chips * (mPayout + mReturn) * sqrt(mProbWin * mProbLose);
 	}
 
+#ifdef _MSC_VER
+#pragma warning(default: 4061 4062)
 #pragma warning (pop)
-
 #pragma endregion Class methods
-}
+#endif // _MSC_VER
+} // namespace

@@ -42,7 +42,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 // disabled in property sheet for /WAll
 //#pragma warning (disable: 4820) // '4' bytes padding added after data member
-
+//#pragma warning (disable: 4514) // 'function' : unreferenced inline function has been removed
 #endif // _MSC_VER
 
 // std

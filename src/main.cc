@@ -157,6 +157,7 @@ namespace roulette
 		case roulette::EChip::Chip50:
 			return icon50;
 		case roulette::EChip::Chip100:
+		default:
 			return icon100;
 		}
 	}
