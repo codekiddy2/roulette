@@ -29,6 +29,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 #include "pch.hh"
 #include "chipset.hh"
+#include "main.hh"
 
 namespace roulette
 {
@@ -41,14 +42,12 @@ namespace roulette
 	bool Chipset::constructed = false;
 #endif // DEBUG_DND_LOG
 
-	int Chipset::chip_size = 48;
-
 	Chipset::Chipset() :
-		mChip1(1),
-		mChip5(5),
-		mChip25(25),
-		mChip50(50),
-		mChip100(100)
+		mChip1(EChip::Chip1),
+		mChip5(EChip::Chip5),
+		mChip25(EChip::Chip25),
+		mChip50(EChip::Chip50),
+		mChip100(EChip::Chip100)
 	{
 		pack_end(mChip1, Gtk::PACK_SHRINK);
 		pack_end(mChip5, Gtk::PACK_SHRINK);
@@ -61,15 +60,15 @@ namespace roulette
 #endif // DEBUG_DND_LOG
 	}
 
-	void Chipset::set_chipsize(int size)
-	{
-		chip_size = size;
-	}
+	//void Chipset::set_chipsize(int size)
+	//{
+	//	chip_size = size;
+	//}
 
-	int Chipset::get_chipsize()
-	{
-		return chip_size;
-	}
+	//int Chipset::get_chipsize()
+	//{
+	//	return chip_size;
+	//}
 
 #ifdef DEBUG_DND_LOG
 

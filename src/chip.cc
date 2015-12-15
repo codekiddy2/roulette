@@ -30,6 +30,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "pch.hh"
 #include "chip.hh"
 #include "chipset.hh"
+#include "main.hh"
 
 namespace roulette
 {
@@ -43,38 +44,19 @@ namespace roulette
 #endif // _MSC_VER
 
 	Gdk::RGBA Chip::mBackground;
-	std::vector<Gtk::TargetEntry> dnd_targets;
 
-	Chip::Chip(const int chip_value) :
+	Chip::Chip(const EChip chip_value) :
 		Glib::ObjectBase("Chip"), // The GType name will be gtkmm__CustomObject_Chip
 		Gtk::Widget(),
-		mValue(chip_value)
+		mValue(static_cast<unsigned>(chip_value)),
+		refIcon(get_pixbuf(chip_value))
 	{
 		set_has_window(true);
 		set_events(Gdk::EventMask::BUTTON_PRESS_MASK); // TODO: implement chip behaviour for other masks
 
-		// set up chip icon
-
-		string chip_name = "Chip" + std::to_string(chip_value);
-		string file_name = chip_name + ".ico";
-
-
-		if (boost::filesystem::exists(file_name))
-		{
-			int chip_size = Chipset::get_chipsize();
-			refIcon = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size); // load size x size version from ico file
-		}
-#ifdef DEBUG_FILE_LOG
-		else
-		{
-			cout << "Chip::Chip(const int value)" << endl;
-			cerr << "-> ERROR: " << file_name << " not found" << endl;
-		}
-#endif // DEBUG_FILE_LOG
-
 		// Make this Chip a drag source
 		std::vector<Gtk::TargetEntry> this_source;
-		Gtk::TargetEntry entry(chip_name, Gtk::TargetFlags::TARGET_OTHER_WIDGET, static_cast<guint>(chip_value));
+		Gtk::TargetEntry entry(std::to_string(mValue), Gtk::TargetFlags::TARGET_OTHER_WIDGET, static_cast<guint>(chip_value));
 
 		dnd_targets.push_back(entry);
 		this_source.push_back(entry);

@@ -53,6 +53,9 @@
     <ClInclude Include="bet.hh">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="main.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="table.cc">

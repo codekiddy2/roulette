@@ -37,6 +37,9 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 #include <iostream>
 #include <vector>	// due to and Childs_t
+#include <gdkmm/pixbuf.h>
+#include <glibmm/refptr.h>
+#include <memory>
 
 namespace roulette
 {
@@ -48,7 +51,7 @@ namespace roulette
 		// constructors
 		Bet(const ETable table,
 			const EBet bet,
-			const unsigned chips,
+			unsigned chip_info,
 			std::shared_ptr<Selection_t> selection = nullptr,
 			Bet* parent = nullptr,
 			const int x = 0,
@@ -63,7 +66,7 @@ namespace roulette
 
 		// methods
 		EBet get_id() const; // ID
-		unsigned get_chips() const; // amount of chips
+		EChip get_chips() const; // amount of chips
 		unsigned get_childs() const; // amount of childs
 		unsigned get_numbers() const; // amount of numbers
 		Selection_t get_selection() const;
@@ -116,7 +119,7 @@ namespace roulette
 		int m_x;
 		int m_y;
 		/// end initilizer list
-
+		
 		// methods
 		void assign_name();
 		void set_part_1(const unsigned& chips);
@@ -157,9 +160,9 @@ namespace roulette
 		}
 	}
 
-	inline unsigned Bet::get_chips() const
+	inline EChip Bet::get_chips() const
 	{
-		return mChips;
+		return static_cast<EChip>( mChips );
 	}
 
 	inline Selection_t Bet::get_selection() const

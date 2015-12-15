@@ -46,8 +46,9 @@ namespace roulette
 		Chipset();
 
 		// methods
-		static void set_chipsize(int size);
-		static int get_chipsize();
+		// TODO: if table resizes it should change chip sizes, this belongs to Table class.
+		//static void set_chipsize(int size);
+		//static int get_chipsize();
 
 #ifdef DEBUG_DND_LOG
 		static bool is_constructed();
@@ -57,7 +58,7 @@ namespace roulette
 #endif // DEBUG_DND_LOG
 
 	private:
-		static int chip_size;
+		//static int chip_size;
 
 		/// begin initializer list
 		Chip mChip1;

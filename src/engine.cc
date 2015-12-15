@@ -29,7 +29,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 #include "pch.hh"
 #include "engine.hh"
-
+#include "main.hh"
 #include "history.hh" // forward declared class
 #include "sets.hh" // forward declared enum
 

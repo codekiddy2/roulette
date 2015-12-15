@@ -30,6 +30,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 #include "pch.hh"
 #include "sets.hh"
+#include "chip.hh"
 
 #pragma warning(push, 3)
 
@@ -45,11 +46,12 @@ namespace roulette
 	using std::make_shared;
 	using std::make_shared;
 	using std::move;
+	using std::to_string;
 
 #pragma region
 
 	// TODO selection as array
-	Bet::Bet(const ETable table, const EBet bet, const unsigned chips,
+	Bet::Bet(const ETable table, const EBet bet, unsigned chip_info,
 		std::shared_ptr<Selection_t> selection, Bet* parent, const int x, const int y) :
 		mId(bet),
 		mpParent(parent),
@@ -57,7 +59,7 @@ namespace roulette
 		mpSelection(selection),
 		mpName(nullptr),
 		mCoverage(1),
-		mChips(0),
+		mChips(static_cast<unsigned>(chip_info)),
 		mReturn(0.f),
 		mPayout(0.f),
 		mWin(0.f),
@@ -86,19 +88,19 @@ namespace roulette
 		assign_name();
 
 		if (parent)
-			set_part_1(chips);
+			set_part_1(mChips);
 		else
 		{
 			mpChilds = make_shared<Childs_t>();
 			mpSelection = make_shared<Selection_t>();
-			fill_childs(table, selection, chips, x, y);
-			short nums = table > ETable::American ? 37 : static_cast<short>(table);
+			fill_childs(table, selection, mChips, x, y);
+			short nums = table > ETable::American ? 37 : static_cast<unsigned>(table);
 
 			for (unsigned i = 0; i < mpChilds->size(); ++i)
-				mpChilds->at(i)->set_part_2(table, nums, chips);
+				mpChilds->at(i)->set_part_2(table, nums, mChips);
 
-			set_part_1(chips);
-			set_part_2(table, nums, chips);
+			set_part_1(mChips);
+			set_part_2(table, nums, mChips);
 		}
 	}
 

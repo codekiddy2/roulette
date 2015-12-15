@@ -31,6 +31,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
+#include "sets.hh"
+
 #include <string>
 #include <gtkmm/widget.h>
 #include <gtkmm/selectiondata.h>
@@ -50,7 +52,7 @@ namespace roulette
 	{
 	public:
 		// constructors
-		Chip(const int value);
+		Chip(const EChip chip_value);
 
 		// methods
 		static void set_background_color(const Gdk::RGBA& color);
@@ -80,11 +82,11 @@ namespace roulette
 
 	private:
 		// members
-		Glib::RefPtr<Gdk::Pixbuf> refIcon;
 		static Gdk::RGBA mBackground;
 
 		/// begin initializer list
-		const int mValue;
+		const unsigned mValue;
+		Glib::RefPtr<Gdk::Pixbuf> refIcon;
 		/// end initializer list
 
 		// deleted
@@ -93,6 +95,7 @@ namespace roulette
 		Chip& operator=(const Chip&) = delete;
 		Chip& operator=(const Chip&&) = delete;
 	};
+
 } // namespace roulette
 
 #endif // ! CHIP_HH

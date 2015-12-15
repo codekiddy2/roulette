@@ -1,6 +1,6 @@
 
-#ifndef ENGINE_HH
-#define ENGINE_HH 1
+#ifndef MAIN_HH
+#define MAIN_HH 1
 
 /*
 roulette - roulette simulation program
@@ -23,44 +23,35 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 ///<summary>
 //
-//	engine.hh
+//	main.hh
 //
-//	Declaration of Engine class
+//	Contains shared functions and data declarations
 //
 //	TODO: add description
 //
 ///</summary>
 
-#include <boost/random/random_device.hpp>
+#include <glibmm/refptr.h>
+#include <gdkmm/pixbuf.h>
 
 namespace roulette
 {
-	class History;
 	enum class ETable: unsigned;
+	enum class EChip: unsigned;
 
-	class Engine final
-	{
-	public:
-		// constructors
-		Engine(History* history);
+	extern std::vector<Gtk::TargetEntry> dnd_targets;
+	typedef Glib::RefPtr<Gdk::Pixbuf> type_chip_icon;
 
-		// methods
-		void spin(const ETable table_type) const;
+	type_chip_icon get_pixbuf(EChip ref);
 
-	private:
-		// members
-		static boost::random::random_device rng;
+	bool is_red(const int number);
+	short which_column(const short number);
+	short which_dozen(const short number);
+	unsigned get_neighbor(const ETable table, const unsigned refNum, const unsigned position);
 
-		/// begin initializer list
-		History* pHistory;
-		/// end initializer list
+	void set_chipsize(const int size);
+	int get_chipsize();
 
-		// deleted
-		Engine(const Engine&) = delete;
-		Engine(const Engine&&) = delete;
-		Engine& operator=(const Engine&) = delete;
-		Engine& operator=(const Engine&&) = delete;
-	};
-} // namespace roulette
+} // namespace
 
-#endif // !ENGINE_HH
+#endif // ! MAIN_HH

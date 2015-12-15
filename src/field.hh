@@ -35,6 +35,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 #include <string>
 #include <vector>
+#include <memory>
 #include <gtkmm/widget.h>
 #include <gtkmm/selectiondata.h>
 #include <glibmm/refptr.h>
@@ -89,7 +90,7 @@ namespace roulette
 
 		// members
 		Pango::FontDescription mFont;
-		std::vector<Bet> m_bets;
+		std::vector<std::shared_ptr<Bet>> m_bets;
 
 #ifdef DEBUG_DND_LOG
 		int motion_count = 0;

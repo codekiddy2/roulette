@@ -37,7 +37,7 @@ using std::endl;
 using std::string;
 using namespace roulette;
 
-Window::Window(const string icon_name) :
+Window::Window(Glib::RefPtr<Gdk::Pixbuf> refIcon) :
 	mHistory(new History),
 	mEngine(mHistory),
 	mFrameHistory("History"),
@@ -50,19 +50,7 @@ Window::Window(const string icon_name) :
 	set_title("roulette");
 	set_size_request(width, height);
 	set_position(Gtk::WIN_POS_CENTER);
-
-	if (boost::filesystem::exists(icon_name))
-	{
-		refIcon = Gdk::Pixbuf::create_from_file(icon_name);
-		set_icon(refIcon);
-	}
-#ifdef DEBUG_FILE_LOG
-	else
-	{
-		cout << "Window::Window()" << endl;
-		cerr << "ERROR: " << icon_name << " not found" << endl;
-	}
-#endif // DEBUG_FILE_LOG
+	set_icon(refIcon);
 
 	// begin packing
 	add(mHBoxTop);

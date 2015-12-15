@@ -52,7 +52,7 @@ namespace roulette
 	{
 	public:
 		// constructors
-		Window(const std::string icon_name);
+		Window(Glib::RefPtr<Gdk::Pixbuf> refIcon);
 		virtual ~Window();
 
 	private:
@@ -66,7 +66,6 @@ namespace roulette
 		Gtk::HBox mHBoxTop;
 		Gtk::VBox mVBoxArea;
 		Gtk::HBox mHBoxControls;
-		Glib::RefPtr<Gdk::Pixbuf> refIcon;
 
 		// Chipset must be constructed before Table because
 		// Chip which initializes Gtk::TargetEntry used by Chip and Field objects

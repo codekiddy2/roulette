@@ -32,6 +32,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "sets.hh"
 #include "chipset.hh"
 #include "table.hh"
+#include "main.hh"
 
 namespace roulette
 {
@@ -39,6 +40,8 @@ namespace roulette
 	using std::endl;
 	using std::cout;
 	using std::string;
+	using std::make_shared;
+	using std::shared_ptr;
 
 	extern std::vector<Gtk::TargetEntry> dnd_targets;
 
@@ -227,6 +230,13 @@ namespace roulette
 		//y < height / 3 ? top = true : y > height / 3 ? down = true : center = true;
 
 		Gtk::Allocation alloc = get_allocation();
+
+		const int width = alloc.get_width(); // right
+		const int height = alloc.get_height(); // down
+
+		const int cx = width / 2;
+		const int cy = height / 2;
+
 		const int left = alloc.get_width() / 3;
 		const int top = alloc.get_height() / 3;
 		const int right = left * 2;
@@ -241,45 +251,46 @@ namespace roulette
 			{
 				if (y < top) // top
 				{
-					m_bets.push_back(Bet(p_parent->get_table_type(), EBet::Corner, info, nullptr, nullptr, x, y));
+					m_bets.push_back(make_shared<Bet>(p_parent->get_table_type(), EBet::Corner, info, nullptr, nullptr, 0, 0));
 				}
 				else if (y > down) // down
 				{
-					m_bets.push_back(Bet(p_parent->get_table_type(), EBet::Corner, info, nullptr, nullptr, x, y));
+					m_bets.push_back(make_shared<Bet>(p_parent->get_table_type(), EBet::Corner, info, nullptr, nullptr, 0, height));
 				}
 				else // left center
 				{
-					m_bets.push_back(Bet(p_parent->get_table_type(), EBet::Split, info, nullptr, nullptr, x, y));
+					m_bets.push_back(make_shared<Bet>(p_parent->get_table_type(), EBet::Split, info, nullptr, nullptr, 0, cy));
 				}
 			}
 			else if (x > right) // right
 			{
 				if (y < top) // top
 				{
-					m_bets.push_back(Bet(p_parent->get_table_type(), EBet::Corner, info, nullptr, nullptr, x, y));
+					m_bets.push_back(make_shared<Bet>(p_parent->get_table_type(), EBet::Corner, info, nullptr, nullptr, width, 0));
 				}
 				else if (y > down) // down
 				{
-					m_bets.push_back(Bet(p_parent->get_table_type(), EBet::Corner, info, nullptr, nullptr, x, y));
+					m_bets.push_back(make_shared<Bet>(p_parent->get_table_type(), EBet::Corner, info, nullptr, nullptr, width, height));
 				}
 				else // right center
 				{
-					m_bets.push_back(Bet(p_parent->get_table_type(), EBet::Split, info, nullptr, nullptr, x, y));
+					m_bets.push_back(make_shared<Bet>(p_parent->get_table_type(), EBet::Split, info, nullptr, nullptr, width, cy));
 				}
 			}
 			else // center
 			{
 				if (y < top) // top
 				{
-					m_bets.push_back(Bet(p_parent->get_table_type(), EBet::Split, info, nullptr, nullptr, x, y));
+					m_bets.push_back(make_shared<Bet>(p_parent->get_table_type(), EBet::Split, info, nullptr, nullptr, cx, 0));
 				}
 				else if (y > down) // down
 				{
-					m_bets.push_back(Bet(p_parent->get_table_type(), EBet::Split, info, nullptr, nullptr, x, y));
+					m_bets.push_back(make_shared<Bet>(p_parent->get_table_type(), EBet::Split, info, nullptr, nullptr, cx, height));
 				}
 				else // pure center
 				{
-					m_bets.push_back(Bet(p_parent->get_table_type(), EBet::StraightUp, info, nullptr, nullptr, x, y));
+					cout << "pure center: x = " << cx << " y = " << cy << endl;
+					m_bets.push_back(make_shared<Bet>(p_parent->get_table_type(), EBet::StraightUp, info, nullptr, nullptr, cx, cy));
 				}
 			}
 			context->drag_finish(true, false, time); // drop finished, data no longer required
@@ -316,26 +327,21 @@ namespace roulette
 // Draw on the supplied Cairo::Context.
 	bool Field::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	{
-		// TODO: load pixbufs and share memory with Chip objects. 
-		typedef Glib::RefPtr<Gdk::Pixbuf> type_chip_icon;
-		const int chip_size = Chipset::get_chipsize();
+		//// TODO: load pixbufs and share memory with Chip objects. 
+		//typedef Glib::RefPtr<Gdk::Pixbuf> type_chip_icon;
+		//const int chip_size = Chipset::get_chipsize();
 
-		// TODO: check file existence
-		static type_chip_icon icon1 = Gdk::Pixbuf::create_from_file("Chip1.ico", chip_size, chip_size);
-		static type_chip_icon icon5 = Gdk::Pixbuf::create_from_file("Chip5.ico", chip_size, chip_size);
-		static type_chip_icon icon25 = Gdk::Pixbuf::create_from_file("Chip25.ico", chip_size, chip_size);
-		static type_chip_icon icon50 = Gdk::Pixbuf::create_from_file("Chip50.ico", chip_size, chip_size);
-		static type_chip_icon icon100 = Gdk::Pixbuf::create_from_file("Chip100.ico", chip_size, chip_size);
+		////// TODO: check file existence
+		////static type_chip_icon icon1 = Gdk::Pixbuf::create_from_file("Chip1.ico", chip_size, chip_size);
+		////static type_chip_icon icon5 = Gdk::Pixbuf::create_from_file("Chip5.ico", chip_size, chip_size);
+		////static type_chip_icon icon25 = Gdk::Pixbuf::create_from_file("Chip25.ico", chip_size, chip_size);
+		////static type_chip_icon icon50 = Gdk::Pixbuf::create_from_file("Chip50.ico", chip_size, chip_size);
+		////static type_chip_icon icon100 = Gdk::Pixbuf::create_from_file("Chip100.ico", chip_size, chip_size);
 
 		Gtk::Allocation allocation = get_allocation();
 
 		const int field_width = allocation.get_width();
 		const int field_height = allocation.get_height();
-		const int icon_cx = icon1->get_width() / 2;
-		const int icon_cy = icon1->get_height() / 2;
-
-		const double cx = field_width * 0.5;
-		const double cy = field_height * 0.5;
 
 		// paint the background
 		Gdk::Cairo::set_source_rgba(cr, mBackground);
@@ -351,33 +357,25 @@ namespace roulette
 		draw_text(cr, field_width, field_height);
 
 		// draw chips
-		//std::for_each(m_bets.begin(), m_bets.end(), [&](Bet& value) {
-		//	switch (value.Chips())
-		//	{
-		//	case 1:
-		//		Gdk::Cairo::set_source_pixbuf(cr, icon1, cx - icon_cx, cy - icon_cy);
-		//		break;
-		//	case 5:
-		//		Gdk::Cairo::set_source_pixbuf(cr, icon5, cx - icon_cx, cy - icon_cy);
-		//		break;
-		//	case 25:
-		//		Gdk::Cairo::set_source_pixbuf(cr, icon25, cx - icon_cx, cy - icon_cy);
-		//		break;
-		//	case 50:
-		//		Gdk::Cairo::set_source_pixbuf(cr, icon50, cx - icon_cx, cy - icon_cy);
-		//		break;
-		//	case 100:
-		//		Gdk::Cairo::set_source_pixbuf(cr, icon100, cx - icon_cx, cy - icon_cy);
-		//		break;
-		//	}
-		//	cr->paint();
-		//});
+		std::for_each(m_bets.begin(), m_bets.end(), [&](shared_ptr<Bet>& bet) {
+
+			Glib::RefPtr<Gdk::Pixbuf> pixbuf = get_pixbuf(bet->get_chips());
+
+			const int x = bet->get_x();
+			const int y = bet->get_y();
+
+			const int pixbuf_x = pixbuf->get_width() / 2;
+			const int pixbuf_y = pixbuf->get_height() / 2;
+
+			Gdk::Cairo::set_source_pixbuf(cr, pixbuf, x - pixbuf_x, y - pixbuf_y);
+			cr->paint();
+		});
 
 		
-#ifdef DEBUG_DND_LOG
-		cout << endl;
-		cout << "Field::on_draw()" << endl;
-#endif // DEBUG_DND_LOG
+//#ifdef DEBUG_DND_LOG
+//		cout << endl;
+//		cout << "Field::on_draw()" << endl;
+//#endif // DEBUG_DND_LOG
 
 		return true;
 	}
