@@ -42,11 +42,15 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 namespace roulette
 {
+	using std::make_shared;
+	using std::make_shared;
+	using std::move;
+
 #pragma region
 
 	// TODO selection as array
 	Bet::Bet(const ETable table, const EBet bet, const unsigned chips,
-		Selection_t* selection, Bet* parent, const int x, const int y) :
+		std::shared_ptr<Selection_t> selection, Bet* parent, const int x, const int y) :
 		mId(bet),
 		mpParent(parent),
 		mpChilds(nullptr),
@@ -85,13 +89,13 @@ namespace roulette
 			set_part_1(chips);
 		else
 		{
-			mpChilds = new Childs_t;
-			mpSelection = new Selection_t;
+			mpChilds = make_shared<Childs_t>();
+			mpSelection = make_shared<Selection_t>();
 			fill_childs(table, selection, chips, x, y);
 			short nums = table > ETable::American ? 37 : static_cast<short>(table);
 
 			for (unsigned i = 0; i < mpChilds->size(); ++i)
-				mpChilds->at(i).set_part_2(table, nums, chips);
+				mpChilds->at(i)->set_part_2(table, nums, chips);
 
 			set_part_1(chips);
 			set_part_2(table, nums, chips);
@@ -101,10 +105,7 @@ namespace roulette
 
 	Bet::~Bet()
 	{
-		delete mpChilds;
-		delete mpSelection;
 	}
-
 
 	Bet::Bet(const Bet& ref) :
 		mId(ref.mId),
@@ -141,11 +142,11 @@ namespace roulette
 	{
 		if (ref.mpChilds)
 		{
-			mpChilds = new Childs_t(*ref.mpChilds); // 1b.
+			mpChilds = make_shared<Childs_t>(*ref.mpChilds); // 1b.
 		}
 		if (ref.mpSelection)
 		{
-			mpSelection = new Selection_t(*ref.mpSelection); // 2b.
+			mpSelection = make_shared<Selection_t>(*ref.mpSelection); // 2b.
 		}
 	}
 
@@ -153,8 +154,8 @@ namespace roulette
 	Bet::Bet(Bet&& ref) :
 		mId(ref.mId),
 		mpParent(ref.mpParent),
-		mpChilds(ref.mpChilds),
-		mpSelection(ref.mpSelection),
+		mpChilds(move(ref.mpChilds)),
+		mpSelection(move(ref.mpSelection)),
 		mpName(ref.mpName),
 		mCoverage(ref.mCoverage),
 		mChips(ref.mChips),
@@ -183,8 +184,8 @@ namespace roulette
 		m_x(ref.m_x),
 		m_y(ref.m_y)
 	{
-		ref.mpChilds = nullptr;
-		ref.mpSelection = nullptr;
+		//ref.mpChilds = nullptr;
+		//ref.mpSelection = nullptr;
 	}
 
 
@@ -194,12 +195,12 @@ namespace roulette
 		{
 			mId = ref.mId;
 			mpParent = ref.mpParent;
-			delete mpChilds; // 1.
-			mpChilds = ref.mpChilds;
-			ref.mpChilds = nullptr;
-			delete mpSelection; // 2.
-			mpSelection = ref.mpSelection;
-			ref.mpSelection = nullptr;
+			//delete mpChilds; // 1.
+			mpChilds = std::move(ref.mpChilds);
+			//ref.mpChilds = nullptr;
+			//delete mpSelection; // 2.
+			mpSelection = std::move(ref.mpSelection);
+			//ref.mpSelection = nullptr;
 			mpName = ref.mpName;
 			mCoverage = ref.mCoverage;
 			mChips = ref.mChips;
@@ -237,10 +238,10 @@ namespace roulette
 		{
 			mId = ref.mId;
 			mpParent = ref.mpParent;
-			delete mpChilds; // 1.
-			mpChilds = new Childs_t(*ref.mpChilds);
-			delete mpSelection; // 2.
-			mpSelection = new Selection_t(*ref.mpSelection);
+			//delete mpChilds; // 1.
+			mpChilds = make_shared<Childs_t>(*ref.mpChilds);
+			//delete mpSelection; // 2.
+			mpSelection = make_shared<Selection_t>(*ref.mpSelection);
 			mpName = ref.mpName;
 			mCoverage = ref.mCoverage;
 			mChips = ref.mChips;
@@ -273,7 +274,7 @@ namespace roulette
 	}
 
 
-	void Bet::fill_childs(const ETable& table, const Selection_t* const selection, const int& chips,
+	void Bet::fill_childs(const ETable& table, const std::shared_ptr<Selection_t> selection, const int& chips,
 		const int x,
 		const int y
 		)
@@ -288,98 +289,98 @@ namespace roulette
 		case EBet::Street:
 		case EBet::Corner:
 			break;
-		case EBet::Line:		// TODO	pass address of set directly
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(*selection), this, x, y));
+		case EBet::Line:
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(*selection), this, x, y));
 			break;
 		case EBet::Basket:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Basket), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Basket), this, x, y));
 			break;
 		case EBet::Column1:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Column1), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Column1), this, x, y));
 			break;
 		case EBet::Column2:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Column2), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Column2), this, x, y));
 			break;
 		case EBet::Column3:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Column3), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Column3), this, x, y));
 			break;
 		case EBet::Dozen1:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Dozen1), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Dozen1), this, x, y));
 			break;
 		case EBet::Dozen2:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Dozen2), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Dozen2), this, x, y));
 			break;
 		case EBet::Dozen3:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Dozen3), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Dozen3), this, x, y));
 			break;
 		case EBet::High:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(High), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(High), this, x, y));
 			break;
 		case EBet::Low:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Low), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Low), this, x, y));
 			break;
 		case EBet::Red:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Red), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Red), this, x, y));
 			break;
 		case EBet::Black:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Black), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Black), this, x, y));
 			break;
 		case EBet::Even:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Even), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Even), this, x, y));
 			break;
 		case EBet::Odd:
-			mpChilds->push_back(Bet(table, mId, chips, new Selection_t(Odd), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Odd), this, x, y));
 			break;
-#if 0 // TODO: adapt code to use <unordered_set>
 		case EBet::VoisinsDeZero:
 			for (short i = 0; i < 10; i += 2)
-				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(voisinsDeZero + i, voisinsDeZero + (i + 2)), this));
-			mpChilds->push_back(Bet(table, EBet::Street, chips, new Selection_t(voisinsDeZero + 10, voisinsDeZero + 13), this));
-			mpChilds->push_back(Bet(table, EBet::Corner, chips, new Selection_t(voisinsDeZero + 13, voisinsDeZero + 17), this));
+				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(VoisinsDeZero.find(i), VoisinsDeZero.find(i + 2)), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::Street, chips, make_shared<Selection_t>(VoisinsDeZero.find(10), VoisinsDeZero.find(13)), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::Corner, chips, make_shared<Selection_t>(VoisinsDeZero.find(13), VoisinsDeZero.find(17)), this));
 			break;
 		case EBet::TriesDuCylindre:
 			for (short i = 0; i < 12; i += 2)
-				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(triesDuCylindre + i, triesDuCylindre + (i + 2)), this));
+				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(TriesDuCylindre.find(i), TriesDuCylindre.find(i + 2)), this));
 			break;
 		case EBet::OrphelinsEnPlen:
 			for (short i = 0; i < 8; ++i)
-				mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, orphelinsEnPlen[i]), this));
+				mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(OrphelinsEnPlen.find(1), OrphelinsEnPlen.find(i)), this));
 			break;
 		case EBet::OrphelinsACheval:
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 1), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(OrphelinsACheval.find(1), OrphelinsACheval.find(1)), this));
 			for (short i = 1; i < 8; i += 2)
-				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(orphelinsACheval + i, orphelinsACheval + (i + 2)), this));
+				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(OrphelinsACheval.find(i), OrphelinsACheval.find(i + 2)), this));
 			break;
 		case EBet::Jeu0:
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 26), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(Jeu0.find(1), Jeu0.find(26)), this));
 			for (short i = 1; i < 6; i += 2)
-				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(jeu0 + i, jeu0 + (i + 2)), this));
+				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(Jeu0.find(i), Jeu0.find(i + 2)), this));
 			break;
 		case EBet::Jeu79:
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 19), this));
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 27), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(Jeu79.find(1), Jeu79.find(19)), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(Jeu79.find(1), Jeu79.find(27)), this));
 			for (short i = 2; i < 9; i += 2)
-				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(jeu79 + i, jeu79 + (i + 2)), this));
+				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(Jeu79.find(i), Jeu79.find(i + 2)), this));
 			break;
 		case EBet::RedSplits:
 			for (short i = 0; i < 4; i += 2)
-				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(redSplits, redSplits + (i + 2)), this));
+				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(RedSplits.begin(), RedSplits.find(i + 2)), this));
 			break;
 		case EBet::BlackSplits:
 			for (short i = 0; i < 14; i += 2)
-				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(blackSplits, blackSplits + (i + 2)), this));
+				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(BlackSplits.begin(), BlackSplits.find(i + 2)), this));
 			break;
 		case EBet::Snake:
 			for (short i = 0; i < 12; ++i)
-				mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, Snake[i]), this));
+				mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(Snake.begin(), Snake.find(i)), this));
 			break;
+#if 0 // TODO: fix code
 		case EBet::Neighbor1:
 		case EBet::Neighbor2:
 		case EBet::Neighbor3:
 		case EBet::Neighbor4:
 		case EBet::Neighbor5:
 			for (short i = -(static_cast<short>(mId) - 4); i <= (static_cast<short>(mId) - 4); ++i)
-				mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, get_neighbor(table, selection->at(0), i)), this));
+				mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, get_neighbor(table, *selection->begin(), i)), this));
 			break;
 		case EBet::FinalesEnPlen0:
 		case EBet::FinalesEnPlen1:
@@ -389,86 +390,86 @@ namespace roulette
 		case EBet::FinalesEnPlen5:
 		case EBet::FinalesEnPlen6:
 			for (short i = static_cast<short>(mId) - 64; i <= static_cast<short>(mId) - 34; i += 10)
-				mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, i), this));
+				mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, i), this));
 			break;
 		case EBet::FinalesEnPlen7:
 		case EBet::FinalesEnPlen8:
 		case EBet::FinalesEnPlen9:
 			for (short i = static_cast<short>(mId) - 64; i <= static_cast<short>(mId) - 44; i += 10)
-				mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, i), this));
+				mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, i), this));
 			break;
 		case EBet::FinalesACheval01:
 			for (temp[0] = 0, temp[1] = 1; temp[0] <= 20; temp[0] += 10, temp[1] += 10)
-				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 30), this));
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 31), this));
+				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(temp, temp + 2), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, 30), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, 31), this));
 			break;
 		case EBet::FinalesACheval12:
 			temp[0] = 31; temp[1] = 32;
-			mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(temp, temp + 2), this));
 			for (temp[0] = 1, temp[1] = 2; temp[0] <= 11; temp[0] += 10, temp[1] + 10)
-				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 21), this));
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 22), this));
+				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(temp, temp + 2), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, 21), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, 22), this));
 			break;
 		case EBet::FinalesACheval23:
 			temp[0] = 2; temp[1] = 3;
-			mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(temp, temp + 2), this));
 			for (temp[0] = 22, temp[1] = 23; temp[0] <= 32; temp[0] += 10, temp[1] + 10)
-				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 12), this));
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 13), this));
+				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(temp, temp + 2), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, 12), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, 13), this));
 			break;
 		case EBet::FinalesACheval34:
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 3), this));
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 4), this));
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 33), this));
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 34), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, 3), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, 4), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, 33), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, 34), this));
 			for (temp[0] = 13, temp[1] = 14; temp[0] <= 23; temp[0] += 10, temp[1] + 10)
-				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(temp, temp + 2), this));
 			break;
 		case EBet::FinalesACheval45:
 			temp[0] = 34; temp[1] = 35;
-			mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(temp, temp + 2), this));
 			for (temp[0] = 4, temp[1] = 5; temp[0] <= 14; temp[0] += 10, temp[1] + 10)
-				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 24), this));
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 25), this));
+				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(temp, temp + 2), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, 24), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, 25), this));
 			break;
 		case EBet::FinalesACheval56:
 			temp[0] = 5; temp[1] = 6;
-			mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(temp, temp + 2), this));
 			for (temp[0] = 25, temp[1] = 26; temp[0] <= 35; temp[0] += 10, temp[1] += 10)
-				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 15), this));
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 16), this));
+				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(temp, temp + 2), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, 15), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, 16), this));
 			break;
 		case EBet::FinalesACheval67:
 			for (temp[0] = 16, temp[1] = 17; temp[0] <= 26; temp[0] += 10, temp[1] + 10)
-				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 6), this));
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 7), this));
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 36), this));
+				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(temp, temp + 2), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, 6), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, 7), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, 36), this));
 			break;
 		case EBet::FinalesACheval78:
 			for (temp[0] = 7, temp[1] = 8; temp[0] <= 17; temp[0] += 10, temp[1] + 10)
-				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 27), this));
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 28), this));
+				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(temp, temp + 2), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, 27), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, 28), this));
 			break;
 		case EBet::FinalesACheval89:
 			temp[0] = 8; temp[1] = 9;
-			mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(temp, temp + 2), this));
 			temp[0] = 28; temp[1] = 29;
-			mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 18), this));
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 19), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(temp, temp + 2), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, 18), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, 19), this));
 			break;
 		case EBet::FinalesACheval910:
 			for (temp[0] = 19, temp[1] = 20; temp[0] <= 29; temp[0] += 10, temp[1] + 10)
-				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 9), this));
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(1, 10), this));
+				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(temp, temp + 2), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, 9), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(1, 10), this));
 			break;
 
 		case EBet::FinalesACheval03:
@@ -476,7 +477,7 @@ namespace roulette
 		case EBet::FinalesACheval25:
 		case EBet::FinalesACheval36:
 			for (temp[0] = static_cast<short>(mId) - 84, temp[1] = static_cast<short>(mId) - 81; temp[0] <= static_cast<short>(mId) - 54; temp[0] += 10, temp[1] += 10)
-				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(temp, temp + 2), this));
 			break;
 		case EBet::FinalesACheval47:
 		case EBet::FinalesACheval58:
@@ -485,7 +486,7 @@ namespace roulette
 		case EBet::FinalesACheval811:
 		case EBet::FinalesACheval912:
 			for (temp[0] = static_cast<short>(mId) - 84, temp[1] = static_cast<short>(mId) - 81; temp[0] <= static_cast<short>(mId) - 64; temp[0] += 10, temp[1] += 10)
-				mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp, temp + 2), this));
+				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(temp, temp + 2), this));
 			break;
 		case EBet::Maximus00:
 			//	TODO Solve maximus bets
@@ -493,34 +494,36 @@ namespace roulette
 		case EBet::Maximus0:
 		{
 			Selection_t temp(1, 0); // 0
-			mpChilds->push_back(Bet(table, EBet::StraightUp, chips, new Selection_t(temp), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(temp), this));
 			temp.push_back(1); // 0, 1
-			mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(temp), this));
 			temp.at(1) = 3; // 0, 3
-			mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(temp), this));
 			temp.at(1) = 2; // 0, 2
-			mpChilds->push_back(Bet(table, EBet::Split, chips, new Selection_t(temp), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(temp), this));
 			temp.push_back(1); // 0, 2, 1
-			mpChilds->push_back(Bet(table, EBet::Street, chips, new Selection_t(temp), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::Street, chips, make_shared<Selection_t>(temp), this));
 			temp.at(2) = 3; // 0, 2, 3
-			mpChilds->push_back(Bet(table, EBet::Street, chips, new Selection_t(temp), this));
+			mpChilds->push_back(make_shared<Bet>(table, EBet::Street, chips, make_shared<Selection_t>(temp), this));
 			switch (table)
 			{
 			case ETable::American:
-				mpChilds->at(2).mpSelection->at(1) = 37; // 0, 3 ---> 0, 37
-				mpChilds->at(5).mpSelection->at(2) = 37; // 0,2,3 ---> 0, 2, 37
-				temp.push_back(1); // 0, 2, 3, 1
-				temp.push_back(37);	// 0, 2, 3, 1, 37
-				mpChilds->push_back(Bet(table, EBet::Basket, chips, new Selection_t(temp), this));
+				mpChilds->at(2)->mpSelection->at(1) = 37; // 0, 3 ---> 0, 37
+				mpChilds->at(5)->mpSelection->at(2) = 37; // 0,2,3 ---> 0, 2, 37
+				temp->push_back(1); // 0, 2, 3, 1
+				temp->push_back(37);	// 0, 2, 3, 1, 37
+				mpChilds->push_back(make_shared<Bet>(table, EBet::Basket, chips, make_shared<Selection_t>(temp), this));
 				break;
 			case ETable::NoZero:
 				break;
 			default:
 				temp.erase(temp.begin() + 4); // 0, 2, 3, 1
-				mpChilds->push_back(Bet(table, EBet::Corner, chips, new Selection_t(temp), this));
+				mpChilds->push_back(Bet(table, EBet::Corner, chips, make_shared<Selection_t>(temp), this));
 				break;
+
 			}
 			break;
+
 		}
 #endif // 0
 		case EBet::Maximus13:
@@ -544,7 +547,7 @@ namespace roulette
 	// TODO implement map of strings with names 
 #pragma region
 
-	// TODO printProperties mozda krivo pise
+	// TODO printProperties output migh be wrong
 	void Bet::print_properties(const bool& childs) const
 	{
 		using std::cout;
@@ -587,9 +590,9 @@ namespace roulette
 		if (mpChilds) // it is parent
 			for (unsigned i = 0; i < mpChilds->size(); ++i)
 			{
-				cout << mpChilds->at(i).mpName << ":" << endl;
-				for (unsigned j = 0; j < mpChilds->at(i).mpSelection->size(); ++j)
-					cout << *mpChilds->at(i).mpSelection->find(j) << endl;
+				cout << mpChilds->at(i)->mpName << ":" << endl;
+				for (unsigned j = 0; j < mpChilds->at(i)->mpSelection->size(); ++j)
+					cout << *mpChilds->at(i)->mpSelection->find(j) << endl;
 			}
 
 		else for (unsigned i = 0; i < mpSelection->size(); ++i)
@@ -597,7 +600,7 @@ namespace roulette
 
 		if (childs)	// print child properties
 			for (unsigned i = 0; i < mpChilds->size(); ++i)
-				mpChilds->at(i).print_properties();
+				mpChilds->at(i)->print_properties();
 	}
 
 
@@ -825,37 +828,35 @@ namespace roulette
 	{
 		using std::sort;
 
-		// COVERAGE
+		 //TODO: THIS FUNCTION THROWS, fix it.
+#if 0
+		 COVERAGE
 		if (mpSelection->empty())  // it is parent
 		{
 			for (unsigned i = 0; i < mpChilds->size(); ++i)
-				for (unsigned j = 0; j < mpChilds->at(i).mpSelection->size(); ++j)
+				for (unsigned j = 0; j < mpChilds->at(i)->mpSelection->size(); ++j)
 				{
-					mpSelection->insert(*mpChilds->at(i).mpSelection->find(j));
+					mpSelection->insert(*mpChilds->at(i)->mpSelection->find(j));
 				}
 			// TODO: no sorting with unordered_set!
 			//sort(mpSelection->begin(), mpSelection->end());
 		}
-<<<<<<< HEAD
+
 		if (mpSelection->size())
 		{
 			for (unsigned i = 0; i < mpSelection->size() - 1; ++i)
 			{
-				if (mpSelection->at(i) != mpSelection->at(i + 1))
+				if (mpSelection->find(i) != mpSelection->find(i + 1))
 					++mCoverage;
 			}
 		}
-=======
-		for (unsigned i = 0; i < mpSelection->size() - 1; ++i)
-			if (mpSelection->find(i) != mpSelection->find(i + 1))
-				++mCoverage;
->>>>>>> sets
+#endif
 
 		// CHIPS
 		if (mpChilds)  // it is parent
 		{
 			for (unsigned i = 0; i < mpChilds->size(); ++i)
-				mChips += mpChilds->at(i).mChips;
+				mChips += mpChilds->at(i)->mChips;
 
 			// RETURN
 			float SUMproduct = 0.f;
@@ -863,8 +864,8 @@ namespace roulette
 
 			for (unsigned i = 0; i < mpChilds->size(); ++i)
 			{
-				SUMproduct += mpChilds->at(i).mCoverage * mpChilds->at(i).mReturn;
-				SUMcoverage += mpChilds->at(i).mCoverage;
+				SUMproduct += mpChilds->at(i)->mCoverage * mpChilds->at(i)->mReturn;
+				SUMcoverage += mpChilds->at(i)->mCoverage;
 			}
 			mReturn = SUMproduct / SUMcoverage;
 
@@ -873,8 +874,8 @@ namespace roulette
 			SUMcoverage = 0;
 			for (unsigned i = 0; i < mpChilds->size(); ++i)
 			{
-				SUMproduct += mpChilds->at(i).mCoverage * mpChilds->at(i).mPayout;
-				SUMcoverage += mpChilds->at(i).mCoverage;
+				SUMproduct += mpChilds->at(i)->mCoverage * mpChilds->at(i)->mPayout;
+				SUMcoverage += mpChilds->at(i)->mCoverage;
 			}
 
 			mPayout = SUMproduct / SUMcoverage;
@@ -986,7 +987,7 @@ namespace roulette
 			float SUMchips = 0.f;
 
 			for (unsigned i = 0; i < mpParent->mpChilds->size(); ++i)
-				SUMchips += mpParent->mpChilds->at(i).mChips;
+				SUMchips += mpParent->mpChilds->at(i)->mChips;
 
 			mWin = mPayout * mChips - (SUMchips - mChips);
 			mResult = mCoverage * mWin;
@@ -994,7 +995,7 @@ namespace roulette
 		else // it is parent
 		{
 			for (unsigned i = 0; i < mpChilds->size(); ++i)
-				mResult += mpChilds->at(i).mResult;
+				mResult += mpChilds->at(i)->mResult;
 
 			mWin = mResult / mCoverage;
 		}
@@ -1038,7 +1039,7 @@ namespace roulette
 		if (mpChilds) // it is parent
 		{
 			for (unsigned i = 0; i < mpChilds->size(); ++i)
-				mExpectedReturn += mpChilds->at(i).mExpectedReturn;
+				mExpectedReturn += mpChilds->at(i)->mExpectedReturn;
 
 			mExpectedValue = mExpectedReturn / mChips;
 		}

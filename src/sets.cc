@@ -114,42 +114,11 @@ namespace roulette
 #pragma warning (default: 4592)
 #endif // _MSC_VER
 
-	//set_t Low(low, low + sizeof(low) / sizeof(short));
-	//set_t Odd(odd, odd + sizeof(odd) / sizeof(short));
-	//set_t Red(red, red + sizeof(red) / sizeof(short));
-	//set_t Jeu0(jeu0, jeu0 + sizeof(jeu0) / sizeof(short));
-	//set_t High(high, high + sizeof(high) / sizeof(short));
-	//set_t Even(even, even + sizeof(even) / sizeof(short));
-	//set_t Jeu79(jeu79, jeu79 + sizeof(jeu79) / sizeof(short));
-	//set_t Black(black, black + sizeof(black) / sizeof(short));
-	//set_t Snake(snake, snake + sizeof(snake) / sizeof(short));
-	//set_t Dozen1(dozen1, dozen1 + sizeof(dozen1) / sizeof(short));
-	//set_t Dozen2(dozen2, dozen2 + sizeof(dozen2) / sizeof(short));
-	//set_t Dozen3(dozen3, dozen3 + sizeof(dozen3) / sizeof(short));
-	//set_t Basket(basket, basket + sizeof(basket) / sizeof(short));
-	//set_t Column1(column1, column1 + sizeof(column1) / sizeof(short));
-	//set_t Column2(column2, column2 + sizeof(column2) / sizeof(short));
-	//set_t Column3(column3, column3 + sizeof(column3) / sizeof(short));
-	//set_t RedSplits(redSplits, redSplits + sizeof(redSplits) / sizeof(short));
-	//set_t BlackSplits(blackSplits, blackSplits + sizeof(blackSplits) / sizeof(short));
-	//set_t VoisinsDeZero(voisinsDeZero, voisinsDeZero + sizeof(voisinsDeZero) / sizeof(short));
-	//set_t OrphelinsEnPlen(orphelinsEnPlen, orphelinsEnPlen + sizeof(orphelinsEnPlen) / sizeof(short));
-	//set_t TriesDuCylindre(triesDuCylindre, triesDuCylindre + sizeof(triesDuCylindre) / sizeof(short));
-	//set_t OrphelinsACheval(orphelinsACheval, orphelinsACheval + sizeof(orphelinsACheval) / sizeof(short));
-	//set_t EuropeanWheel(euroWheel, euroWheel + sizeof(euroWheel) / sizeof(short));
-	//set_t AmericanWheel(amWheel, amWheel + sizeof(amWheel) / sizeof(short));
-	//set_t NoZeroWheel(noZeroWheel, noZeroWheel + sizeof(noZeroWheel) / sizeof(short));
-
-
 	unsigned get_neighbor(const ETable table, const unsigned refNum, const unsigned position)
 	{
 		unsigned i = 0;
 		using std::find;
 		static set_t::const_iterator iter;
-
-//#ifdef _MSC_VER
-//#pragma warning (disable: 4061 4062) // TODO: case statement not handled
-//#endif
 
 		switch (table)
 		{
@@ -221,11 +190,6 @@ namespace roulette
 			}
 			break;
 		}
-
-//#ifdef _MSC_VER
-//#pragma warning (default: 4061 4062) // case statement not handled
-//#endif // _MSC_VER
-
 		return *iter;
 	}
 } // namespace roulette

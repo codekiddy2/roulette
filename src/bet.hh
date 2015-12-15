@@ -35,6 +35,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "error.hh"
 #include "sets.hh"
 
+#include <iostream>
 #include <vector>	// due to and Childs_t
 
 namespace roulette
@@ -48,7 +49,7 @@ namespace roulette
 		Bet(const ETable table,
 			const EBet bet,
 			const unsigned chips,
-			Selection_t* selection = nullptr,
+			std::shared_ptr<Selection_t> selection = nullptr,
 			Bet* parent = nullptr,
 			const int x = 0,
 			const int y = 0
@@ -80,13 +81,13 @@ namespace roulette
 
 	private:
 		// typedefs
-		typedef std::vector<Bet> Childs_t; // each bet has at least 1 child, so this is a "bet container"
+		typedef std::vector<std::shared_ptr<Bet>> Childs_t; // each bet has at least 1 child, so this is a "bet container"
 
 		/// begin initilizer list
 		EBet mId;
 		const Bet* mpParent;
-		Childs_t* mpChilds;
-		Selection_t* mpSelection;
+		std::shared_ptr<Childs_t> mpChilds;
+		std::shared_ptr<Selection_t> mpSelection;
 		const char* mpName;
 		short mCoverage;
 		unsigned mChips;
@@ -120,7 +121,7 @@ namespace roulette
 		void assign_name();
 		void set_part_1(const unsigned& chips);
 		void set_part_2(const ETable& table, const short& nums, const int& chips);
-		void fill_childs(const ETable& table, const Selection_t* const selection, const int& chips,
+		void fill_childs(const ETable& table, const std::shared_ptr<Selection_t> selection, const int& chips,
 			const int x = 0,
 			const int y = 0
 			);
@@ -145,7 +146,15 @@ namespace roulette
 
 	inline EBet Bet::get_child_id(const unsigned& child) const
 	{
-		return mpChilds->at(child).mId;
+		if (mpChilds)
+		{
+			return mpChilds->at(child)->mId;
+		}
+		else
+		{
+			std::cout << "WARNING: get_child_id() -> child does not exist, returning 'UNDEFINED' id " << std::endl;
+			return EBet::UNDEFINED;
+		}
 	}
 
 	inline unsigned Bet::get_chips() const
@@ -155,37 +164,101 @@ namespace roulette
 
 	inline Selection_t Bet::get_selection() const
 	{
-		return *mpSelection;
+		if (mpSelection)
+		{
+			return *mpSelection;
+		}
+		else
+		{
+			std::cout << "WARNING: get_selection() -> pointer is null, returning empty Selection_t " << std::endl;
+
+			return Selection_t();
+		}
 	}
 
 	inline unsigned Bet::get_childs() const
 	{
-		return static_cast<unsigned>(mpChilds->size());
+		if (mpChilds)
+		{
+			return static_cast<unsigned>(mpChilds->size());
+		}
+		else
+		{
+			return 0;
+		}
 	}
 
 	inline unsigned Bet::get_numbers() const
 	{
-		return static_cast<unsigned>(mpSelection->size());
+		if (mpSelection)
+		{
+			return static_cast<unsigned>(mpSelection->size());
+		}
+		else
+		{
+			return 0;
+		}
 	}
 
 	inline unsigned Bet::get_number(const unsigned& index) const
 	{
-		return *mpSelection->find(index);
+		if (mpSelection)
+		{
+			return *mpSelection->find(index);
+		}
+		else
+		{
+			std::cout << "WARNING: get_number() -> no number at: " << index << std::endl;
+			return -1;
+		}
 	}
 
 	inline unsigned Bet::get_child_chip_count(const unsigned& child) const
 	{
-		return mpChilds->at(child).mChips;
+		if (mpChilds)
+		{
+			return mpChilds->at(child)->mChips;
+		}
+		else
+		{
+			return 0;
+		}
 	}
 
 	inline unsigned Bet::get_child_number_count(const unsigned& child) const
 	{
-		return static_cast<unsigned>(mpChilds->at(child).mpSelection->size());
+		if (mpChilds)
+		{
+			if (mpChilds->at(child))
+			{
+				if (mpChilds->at(child)->mpSelection)
+				{
+					return static_cast<unsigned>(mpChilds->at(child)->mpSelection->size());
+				}
+			}
+		}
+		else
+		{
+			return 0;
+		}
 	}
 
 	inline unsigned Bet::get_child_number(const unsigned& child, const unsigned& index) const
 	{
-		return *mpChilds->at(child).mpSelection->find(index);
+		if (mpChilds)
+		{
+			if (mpChilds->at(child))
+			{
+				if (mpChilds->at(child)->mpSelection)
+				{
+					return *mpChilds->at(child)->mpSelection->find(index);
+				}
+			}
+		}
+		else
+		{
+			return 0;
+		}
 	}
 
 #pragma endregion Inline methods

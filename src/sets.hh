@@ -89,36 +89,11 @@ namespace roulette
 	extern set_t TriesDuCylindre;
 	extern set_t OrphelinsACheval;
 
-	//extern const short basket[];
-	//extern const short low[];
-	//extern const short high[];
-	//extern const short red[];
-	//extern const short black[];
-	//extern const short even[];
-	//extern const short odd[];
-	//extern const short column1[];
-	//extern const short column2[];
-	//extern const short column3[];
-	//extern const short dozen1[];
-	//extern const short dozen2[];
-	//extern const short dozen3[];
-	//extern const short snake[];
-	//extern const short redSplits[];
-	//extern const short blackSplits[];
-	//extern const short orphelinsEnPlen[];
-	//extern const short triesDuCylindre[];
-	//extern const short voisinsDeZero[];
-	//extern const short orphelinsACheval[];
-	//extern const short jeu0[];
-	//extern const short jeu79[];
-	//extern const short euroWheel[];
-	//extern const short amWheel[];
-	//extern const short noZeroWheel[];
-
 	enum class EBet/* : short*/
 	{
+		UNDEFINED = 0,
 		///<needsSelection>
-		StraightUp,
+		StraightUp = 1,
 		Split,
 		Street,
 		Corner,
