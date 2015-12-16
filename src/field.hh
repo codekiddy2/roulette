@@ -32,10 +32,12 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 #include "bet.hh"
+#include "sets.hh"
 
 #include <string>
 #include <vector>
 #include <memory>
+
 #include <gtkmm/widget.h>
 #include <gtkmm/selectiondata.h>
 #include <glibmm/refptr.h>
@@ -47,6 +49,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <gdkmm/rectangle.h> // Gtk::Allocation
 #include <cairomm/refptr.h>
 #include <cairomm/context.h>
+#include <sigc++/sigc++.h>
+#include <gdkmm/event.h> // GdkEventButton
 
 namespace roulette
 {
@@ -56,9 +60,17 @@ namespace roulette
 		: public Gtk::Widget
 	{
 	public:
-		Field(const int num, Table* parent);
-		Field(const std::string text, Table* parent);
+		// constructors
+		Field(EField field_index, Table* parent);
+		//Field(const std::string text, Table* parent);
 
+		// signals
+		typedef sigc::signal<void> signal;
+		signal on_bet_top;
+		signal on_bet_bottom;
+		signal on_bet_left;
+		signal on_bet_right;
+		
 	protected:
 		// overrides:
 		Gtk::SizeRequestMode get_request_mode_vfunc() const override;
@@ -86,6 +98,9 @@ namespace roulette
 	private:
 		// methods
 		void clear();
+		EBet calculate_points(Gdk::Point& point);
+		bool on_clicked(GdkEventButton* button_event);
+		void assign_apperance(EField index);
 		void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int field_width, int field_height);
 
 		// members
@@ -97,10 +112,11 @@ namespace roulette
 #endif
 
 		/// begin initializer list
-		std::string mName;
+		//std::string mName;
 		Gdk::RGBA mBackground;
 		Glib::RefPtr<Pango::Layout> mLayout;
 		Table* p_parent;
+		EField m_index;
 		/// end initializer list
 
 		// deleted

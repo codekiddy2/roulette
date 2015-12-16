@@ -41,7 +41,7 @@ namespace roulette
 	using boost::filesystem::exists;
 
 	// load size x size version from the ico file
-	int chip_size = 48;
+	int chip_size = 32;
 
 	type_chip_icon icon1;
 	type_chip_icon icon5;
@@ -125,12 +125,27 @@ namespace roulette
 		}
 	}
 
+	bool is_black(const int number)
+	{
+		if (is_green(number) || is_red(number))
+			return false;
+		else if(number && number < 37)
+			return true;
+	}
+
+	bool is_green(const int number)
+	{
+		if (number == 0 || number == 37)
+			return true;
+		else return false;
+	}
+
 
 	short which_column(const short number)
 	{
 		if (number % 3 == 0)
 			return 3;
-		return number % 3;
+		else return number % 3;
 	}
 
 
@@ -140,7 +155,7 @@ namespace roulette
 			return 1;
 		else if (number < 25)
 			return 2;
-		return 3;
+		else return 3;
 	}
 
 

@@ -37,9 +37,11 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 #include <iostream>
 #include <vector>	// due to and Childs_t
+#include <memory>
+
+#include <gdkmm/types.h> // Gdk::Point
 #include <gdkmm/pixbuf.h>
 #include <glibmm/refptr.h>
-#include <memory>
 
 namespace roulette
 {
@@ -52,10 +54,9 @@ namespace roulette
 		Bet(const ETable table,
 			const EBet bet,
 			unsigned chip_info,
+			Gdk::Point& point,
 			std::shared_ptr<Selection_t> selection = nullptr,
-			Bet* parent = nullptr,
-			const int x = 0,
-			const int y = 0
+			Bet* parent = nullptr
 			);
 
 		Bet(Bet&& ref);
@@ -71,8 +72,8 @@ namespace roulette
 		Selection_t get_selection() const;
 		unsigned get_number(const unsigned& index) const; // reference number
 		
-		int get_x() const;
-		int get_y() const;
+		void set_points(Gdk::Point& point);
+		Gdk::Point get_points() const;
 
 		EBet get_child_id(const unsigned& child) const; // ID of a child 
 		unsigned get_child_chip_count(const unsigned& child) const; // amount of chips of a child
@@ -115,18 +116,14 @@ namespace roulette
 		float mBinomialVariance;
 		float mStandardDeviation;
 		float mBinomialStandardDeviation;
-		int m_x;
-		int m_y;
+		Gdk::Point m_point;
 		/// end initilizer list
 		
 		// methods
 		void assign_name();
 		void set_part_1(const unsigned& chips);
 		void set_part_2(const ETable& table, const unsigned& nums, const unsigned& chips);
-		void fill_childs(const ETable& table, const std::shared_ptr<Selection_t> selection, const int& chips,
-			const int x = 0,
-			const int y = 0
-			);
+		void fill_childs(const ETable& table, const std::shared_ptr<Selection_t> selection, const int& chips, Gdk::Point point);
 	};
 
 #pragma region Inline
@@ -136,14 +133,14 @@ namespace roulette
 		return mId;
 	}
 
-	inline int Bet::get_x() const
+	inline void Bet::set_points(Gdk::Point& point)
 	{
-		return m_x;
+		m_point = point;
 	}
 
-	inline int Bet::get_y() const
+	inline Gdk::Point Bet::get_points() const
 	{
-		return m_y;
+		return m_point;
 	}
 
 	inline EBet Bet::get_child_id(const unsigned& child) const

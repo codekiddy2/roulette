@@ -17,7 +17,7 @@
   <ItemDefinitionGroup>
     <Link>
       <AdditionalDependencies>gtkmm.dll.lib;gdkmm.dll.lib;glibmm.dll.lib;giomm.dll.lib;cairomm.dll.lib;pangomm.dll.lib;sigc++.dll.lib;boost_system.lib;boost_random.lib;boost_filesystem.lib;gtk.dll.lib;gdk.dll.lib;glib.dll.lib;gio.dll.lib;cairo.dll.lib;pango.dll.lib</AdditionalDependencies>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>$(LIB_DIR)</AdditionalLibraryDirectories>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>

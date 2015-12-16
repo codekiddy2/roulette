@@ -54,8 +54,8 @@ namespace roulette
 #pragma region
 
 	// TODO selection as array
-	Bet::Bet(const ETable table, const EBet bet, unsigned chip_info,
-		std::shared_ptr<Selection_t> selection, Bet* parent, const int x, const int y) :
+	Bet::Bet(const ETable table, const EBet bet, unsigned chip_info, Gdk::Point& point,
+		std::shared_ptr<Selection_t> selection, Bet* parent) :
 		mId(bet),
 		mpParent(parent),
 		mpChilds(nullptr),
@@ -85,8 +85,7 @@ namespace roulette
 		mBinomialVariance(0.f),
 		mStandardDeviation(0.f),
 		mBinomialStandardDeviation(0.f),
-		m_x(x),
-		m_y(y)
+		m_point(point)
 	{
 		assign_name();
 
@@ -96,7 +95,7 @@ namespace roulette
 		{
 			mpChilds = make_shared<Childs_t>();
 			mpSelection = make_shared<Selection_t>();
-			fill_childs(table, selection, mChips, x, y);
+			fill_childs(table, selection, mChips, m_point);
 			unsigned nums = table > ETable::American ? 37 : static_cast<unsigned>(table);
 
 			for (unsigned i = 0; i < mpChilds->size(); ++i)
@@ -137,8 +136,7 @@ namespace roulette
 		mBinomialVariance(ref.mBinomialVariance),
 		mStandardDeviation(ref.mStandardDeviation),
 		mBinomialStandardDeviation(ref.mBinomialStandardDeviation),
-		m_x(ref.m_x),
-		m_y(ref.m_y)
+		m_point(ref.m_point)
 	{
 		if (ref.mpChilds)
 		{
@@ -181,8 +179,7 @@ namespace roulette
 		mBinomialVariance(ref.mBinomialVariance),
 		mStandardDeviation(ref.mStandardDeviation),
 		mBinomialStandardDeviation(ref.mBinomialStandardDeviation),
-		m_x(ref.m_x),
-		m_y(ref.m_y)
+		m_point(ref.m_point)
 	{
 		//ref.mpChilds = nullptr;
 		//ref.mpSelection = nullptr;
@@ -226,8 +223,7 @@ namespace roulette
 			mBinomialVariance = ref.mBinomialVariance;
 			mStandardDeviation = ref.mStandardDeviation;
 			mBinomialStandardDeviation = ref.mBinomialStandardDeviation;
-			m_x = ref.m_x;
-			m_y = ref.m_y;
+			m_point = ref.m_point;
 		}
 		return *this;
 	}
@@ -267,17 +263,14 @@ namespace roulette
 			mBinomialVariance = ref.mBinomialVariance;
 			mStandardDeviation = ref.mStandardDeviation;
 			mBinomialStandardDeviation = ref.mBinomialStandardDeviation;
-			m_x = ref.m_x;
-			m_y = ref.m_y;
+			m_point = ref.m_point;
 		}
 		return *this;
 	}
 
 
-	void Bet::fill_childs(const ETable& table, const std::shared_ptr<Selection_t> selection, const int& chips,
-		const int x,
-		const int y
-		)
+	void Bet::fill_childs(
+		const ETable& table, const std::shared_ptr<Selection_t> selection, const int& chips, Gdk::Point point)
 	{
 #if 0
 		short temp[6];
@@ -290,47 +283,49 @@ namespace roulette
 		case EBet::Corner:
 			break;
 		case EBet::Line:
-			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(*selection), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, point, make_shared<Selection_t>(*selection), this));
 			break;
 		case EBet::Basket:
-			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Basket), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, point, make_shared<Selection_t>(Basket), this));
 			break;
 		case EBet::Column1:
-			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Column1), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, point, make_shared<Selection_t>(Column1), this));
 			break;
 		case EBet::Column2:
-			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Column2), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, point, make_shared<Selection_t>(Column2), this));
 			break;
 		case EBet::Column3:
-			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Column3), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, point, make_shared<Selection_t>(Column3), this));
 			break;
 		case EBet::Dozen1:
-			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Dozen1), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, point, make_shared<Selection_t>(Dozen1), this));
 			break;
 		case EBet::Dozen2:
-			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Dozen2), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, point, make_shared<Selection_t>(Dozen2), this));
 			break;
 		case EBet::Dozen3:
-			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Dozen3), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, point, make_shared<Selection_t>(Dozen3), this));
 			break;
 		case EBet::High:
-			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(High), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, point, make_shared<Selection_t>(High), this));
 			break;
 		case EBet::Low:
-			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Low), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, point, make_shared<Selection_t>(Low), this));
 			break;
 		case EBet::Red:
-			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Red), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, point, make_shared<Selection_t>(Red), this));
 			break;
 		case EBet::Black:
-			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Black), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, point, make_shared<Selection_t>(Black), this));
 			break;
 		case EBet::Even:
-			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Even), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, point, make_shared<Selection_t>(Even), this));
 			break;
 		case EBet::Odd:
-			mpChilds->push_back(make_shared<Bet>(table, mId, chips, make_shared<Selection_t>(Odd), this, x, y));
+			mpChilds->push_back(make_shared<Bet>(table, mId, chips, point, make_shared<Selection_t>(Odd), this));
 			break;
+
+#if 0 // TODO: fix code
 		case EBet::VoisinsDeZero:
 			for (unsigned i = 0; i < 10; i += 2)
 				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<Selection_t>(VoisinsDeZero.find(i), VoisinsDeZero.find(i + 2)), this));
@@ -373,7 +368,6 @@ namespace roulette
 			for (unsigned i = 0; i < 12; ++i)
 				mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<Selection_t>(Snake.begin(), Snake.find(i)), this));
 			break;
-#if 0 // TODO: fix code
 		case EBet::Neighbor1:
 		case EBet::Neighbor2:
 		case EBet::Neighbor3:

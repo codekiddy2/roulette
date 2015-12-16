@@ -191,7 +191,7 @@ namespace roulette
 		Number34,
 		Number35,
 		Number36,
-		Number37,
+		Number00,
 		Column1,
 		Column2,
 		Column3,
@@ -204,6 +204,9 @@ namespace roulette
 		Odd,
 		High,
 		Low,
+		Dummy1,
+		Dummy2,
+		Dummy3,
 	};
 
 	typedef const std::unordered_set<unsigned> set_t;

@@ -37,11 +37,13 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "sets.hh"
 #include "error.hh"
 
+#include <map>
+#include <unordered_map>
 #include <vector>
+
 #include <gtkmm/grid.h>
 #include <gdkmm/rgba.h>
 #include <sigc++/signal.h>
-#include <map>
 
 namespace roulette
 {
@@ -52,7 +54,7 @@ namespace roulette
 
 	class Table final :
 		public Gtk::Grid,
-		public roulette::IErrorHandler
+		public IErrorHandler
 	{
 	public:
 		// constructors
@@ -77,9 +79,10 @@ namespace roulette
 		typedef std::vector<EBet> BetList;
 		typedef std::map<EBet, int> MaxContainer;
 		typedef std::map<EMinimum, short> MinContainer;
+		typedef std::unordered_map<EField, Field*> type_fields;
 
 		// members
-		std::vector<Field*> mFields;
+		type_fields mFields;
 
 		int mTableMax;
 		float mResult;

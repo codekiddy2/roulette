@@ -52,6 +52,7 @@ namespace roulette
 		Control(const std::string name);
 
 		// methods
+		// TODO: consider global background setup
 		static void set_background_color(const Gdk::RGBA& color);
 
 	protected:

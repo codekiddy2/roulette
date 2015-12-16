@@ -31,6 +31,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
+#include "sets.hh"
+
 #include <glibmm/refptr.h>
 #include <gdkmm/pixbuf.h>
 
@@ -45,6 +47,9 @@ namespace roulette
 	type_chip_icon get_pixbuf(EChip ref);
 
 	bool is_red(const int number);
+	bool is_black(const int number);
+	bool is_green(const int number);
+
 	short which_column(const short number);
 	short which_dozen(const short number);
 	unsigned get_neighbor(const ETable table, const unsigned refNum, const unsigned position);

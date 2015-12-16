@@ -43,6 +43,7 @@ namespace roulette
 	using std::cerr;
 	using std::endl;
 	using std::cout;
+	using std::make_pair;
 	using roulette::error;
 
 
@@ -63,80 +64,49 @@ namespace roulette
 		}
 #endif // DEBUG_DND_LOG
 
+		// create fields
+		EField temp;
+		for (size_t i = 0; i < static_cast<size_t>(EField::Dummy3); i++)
+		{
+			temp = static_cast<EField>(i);
+			mFields.insert(make_pair(temp, new Field(temp, this)));
+		}
+
 		// zero
-		mFields.push_back(new Field(0, this));
-		attach(*mFields.back(), 0, 0, 1, 3);
+		attach(*mFields.find(EField::Number0)->second, 0, 0, 1, 3);
 
-		// dummy
-		mFields.push_back(new Field("", this));
-		attach(*mFields.back(), 0, 3, 1, 2);
+		// dummy1
+		attach(*mFields.find(EField::Dummy1)->second, 0, 3, 1, 2);
 
-		// column 3
-		for (int i = 3, col = 1; i <= 36; i += 3, ++col)
+		// numbers by column: 1, 2 and 3
+		for (int col1 = 1, col2 = 2, col3 = 3, col = 1; col3 <= 36; col1 += 3, col2 += 3, col3 += 3, ++col)
 		{
-			mFields.push_back(new Field(i, this));
-			attach(*mFields.back(), col, 0, 1, 1);
+			attach(*mFields.find(static_cast<EField>(col3))->second, col, 0, 1, 1);
+			attach(*mFields.find(static_cast<EField>(col2))->second, col, 1, 1, 1);
+			attach(*mFields.find(static_cast<EField>(col1))->second, col, 2, 1, 1);
 		}
-
-		mFields.push_back(new Field("2 to 1", this));
-		attach(*mFields.back(), 13, 0, 1, 1);
-
-		// column 2
-		for (int i = 2, col = 1; i <= 35; i += 3, ++col)
-		{
-			mFields.push_back(new Field(i, this));
-			attach(*mFields.back(), col, 1, 1, 1);
-		}
-
-		mFields.push_back(new Field("2 to 1", this));
-		attach(*mFields.back(), 13, 1, 1, 1);
-
-		// column 1
-		for (int i = 1, col = 1; i <= 34; i += 3, ++col)
-		{
-			mFields.push_back(new Field(i, this));
-			attach(*mFields.back(), col, 2, 1, 1);
-		}
-
-		mFields.push_back(new Field("2 to 1", this));
-		attach(*mFields.back(), 13, 2, 1, 1);
+		// columns
+		attach(*mFields.find(EField::Column3)->second, 13, 0, 1, 1);
+		attach(*mFields.find(EField::Column2)->second, 13, 1, 1, 1);
+		attach(*mFields.find(EField::Column1)->second, 13, 2, 1, 1);
 
 		// dozens
-		mFields.push_back(new Field("1st 12", this));
-		attach(*mFields.back(), 1, 3, 4, 1);
+		attach(*mFields.find(EField::Dozen1)->second, 1, 3, 4, 1);
+		attach(*mFields.find(EField::Dozen2)->second, 5, 3, 4, 1);
+		attach(*mFields.find(EField::Dozen3)->second, 9, 3, 4, 1);
 
-		mFields.push_back(new Field("2nd 12", this));
-		attach(*mFields.back(), 5, 3, 4, 1);
-
-		mFields.push_back(new Field("3rd 12", this));
-		attach(*mFields.back(), 9, 3, 4, 1);
-
-		// dummy
-		mFields.push_back(new Field("", this));
-		attach(*mFields.back(), 13, 3, 1, 2);
-
+		// dummy2
+		attach(*mFields.find(EField::Dummy2)->second, 13, 3, 1, 2);
 
 		// low/high red/black high/low
-		mFields.push_back(new Field("1 to 18", this));
-		attach(*mFields.back(), 1, 4, 2, 1);
-
-		mFields.push_back(new Field("EVEN", this));
-		attach(*mFields.back(), 3, 4, 2, 1);
-
-		mFields.push_back(new Field("RED", this));
-		attach(*mFields.back(), 5, 4, 2, 1);
-
-		mFields.push_back(new Field("BLACK", this));
-		attach(*mFields.back(), 7, 4, 2, 1);
-
-		mFields.push_back(new Field("ODD", this));
-		attach(*mFields.back(), 9, 4, 2, 1);
-
-		mFields.push_back(new Field("19 to 36", this));
-		attach(*mFields.back(), 11, 4, 2, 1);
+		attach(*mFields.find(EField::Low)->second, 1, 4, 2, 1);
+		attach(*mFields.find(EField::Even)->second, 3, 4, 2, 1);
+		attach(*mFields.find(EField::Red)->second, 5, 4, 2, 1);
+		attach(*mFields.find(EField::Black)->second, 7, 4, 2, 1);
+		attach(*mFields.find(EField::Odd)->second, 9, 4, 2, 1);
+		attach(*mFields.find(EField::High)->second, 11, 4, 2, 1);
 
 		// set up table limits
-		using std::make_pair;
 
 		// single zero layout
 		mMaxBets.insert(make_pair(EBet::StraightUp, 37));
@@ -202,7 +172,12 @@ namespace roulette
 			mBlacklist.push_back(EBet::FinalesEnPlen0);
 			mBlacklist.push_back(EBet::FinalesACheval01);
 			break;
-
+		case ETable::European:
+		case ETable::French:
+		case ETable::SingleImprisonment:
+		case ETable::DoubleImprisonment:
+		case ETable::TripleImprisonment:
+		case ETable::InfininiteImprisonment:
 		default: // single zero table
 			mBlacklist.push_back(EBet::Basket);
 			mBlacklist.push_back(EBet::Maximus00);
@@ -245,7 +220,7 @@ namespace roulette
 	{
 		for (size_t i = 0; i <= mFields.size(); i++)
 		{
-			delete mFields.at(i);
+			delete mFields.at(static_cast<EField>(i));
 		}
 	}
 
