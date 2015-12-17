@@ -31,12 +31,6 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "pch.hh"
 #include "sets.hh"
 #include "chip.hh"
-
-#ifdef _MSC_VER
-#pragma warning(disable: 4061 4062) // case statements not handled
-#pragma warning(push, 4)
-#endif // _MSC_VER
-
 #include "bet.hh"
 
 #include <cmath>		// due to set_part_2
@@ -46,12 +40,15 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 namespace roulette
 {
+
+#ifdef _MSC_VER
+#pragma region
+#endif // _MSC_VER
+
 	using std::make_shared;
 	using std::make_shared;
 	using std::move;
 	using std::to_string;
-
-#pragma region
 
 	// TODO selection as array
 	Bet::Bet(const ETable table, const EBet bet, unsigned chip_info, Gdk::Point& point,
@@ -268,7 +265,15 @@ namespace roulette
 		return *this;
 	}
 
+#ifdef _MSC_VER
+#pragma endregion contructors
+#endif // _MSC_VER
 
+#ifdef _MSC_VER
+#pragma region
+#endif // _MSC_VER
+
+	// TODO implement map of strings with names 
 	void Bet::fill_childs(
 		const ETable& table, const std::shared_ptr<Selection_t> selection, const int& chips, Gdk::Point point)
 	{
@@ -535,12 +540,6 @@ namespace roulette
 		}
 	}
 
-#pragma endregion Construction and destruction
-
-
-	// TODO implement map of strings with names 
-#pragma region
-
 	// TODO printProperties output migh be wrong
 	void Bet::print_properties(const bool& childs) const
 	{
@@ -596,8 +595,7 @@ namespace roulette
 			for (unsigned i = 0; i < mpChilds->size(); ++i)
 				mpChilds->at(i)->print_properties();
 	}
-
-
+	
 	void Bet::assign_name()
 	{
 		switch (mId)
@@ -816,8 +814,7 @@ namespace roulette
 			throw error("Bet -> assign_name -> Name not found");
 		}
 	}
-
-
+	
 	void Bet::set_part_1(const unsigned& chips)
 	{
 		using std::sort;
@@ -967,8 +964,7 @@ namespace roulette
 		// PAYOUT
 		mPayout = floor(36.f / mCoverage - 1);
 	}
-
-
+	
 	void Bet::set_part_2(const ETable& table, const unsigned& nums, const unsigned& chips)
 	{
 		using std::floor;
@@ -1068,8 +1064,7 @@ namespace roulette
 	}
 
 #ifdef _MSC_VER
-#pragma warning(default: 4061 4062)
-#pragma warning (pop)
-#pragma endregion Class methods
+#pragma endregion methods
 #endif // _MSC_VER
+
 } // namespace

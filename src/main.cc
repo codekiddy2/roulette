@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
 
 namespace roulette
 {
-	bool is_red(const int number)
+	bool is_red(const unsigned number)
 	{
 		switch (number)
 		{
@@ -125,15 +125,14 @@ namespace roulette
 		}
 	}
 
-	bool is_black(const int number)
+	bool is_black(const unsigned number)
 	{
 		if (is_green(number) || is_red(number))
 			return false;
-		else if(number && number < 37)
-			return true;
+		else return(number && (number < 37));
 	}
 
-	bool is_green(const int number)
+	bool is_green(const unsigned number)
 	{
 		if (number == 0 || number == 37)
 			return true;
@@ -141,7 +140,7 @@ namespace roulette
 	}
 
 
-	short which_column(const short number)
+	short which_column(const unsigned number)
 	{
 		if (number % 3 == 0)
 			return 3;
@@ -149,7 +148,7 @@ namespace roulette
 	}
 
 
-	short which_dozen(const short number)
+	short which_dozen(const unsigned number)
 	{
 		if (number < 13)
 			return 1;

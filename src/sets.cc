@@ -34,7 +34,7 @@ namespace roulette
 {
 
 #ifdef _MSC_VER
-//symbol will be dynamically initialized (implementation limitation)
+// W4 symbol will be dynamically initialized (implementation limitation)
 // false positive: http://stackoverflow.com/questions/34013930/error-c4592-symbol-will-be-dynamically-initialized-vs2015-1-static-const-std
 #pragma warning (disable: 4592)
 #endif // _MSC_VER

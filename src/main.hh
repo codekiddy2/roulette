@@ -46,12 +46,12 @@ namespace roulette
 
 	type_chip_icon get_pixbuf(EChip ref);
 
-	bool is_red(const int number);
-	bool is_black(const int number);
-	bool is_green(const int number);
+	bool is_red(const unsigned number);
+	bool is_black(const unsigned number);
+	bool is_green(const unsigned number);
 
-	short which_column(const short number);
-	short which_dozen(const short number);
+	short which_column(const unsigned number);
+	short which_dozen(const unsigned number);
 	unsigned get_neighbor(const ETable table, const unsigned refNum, const unsigned position);
 
 	void set_chipsize(const int size);

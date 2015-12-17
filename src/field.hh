@@ -37,6 +37,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <string>
 #include <vector>
 #include <memory>
+#include <utility>
 
 #include <gtkmm/widget.h>
 #include <gtkmm/selectiondata.h>
@@ -62,15 +63,50 @@ namespace roulette
 	public:
 		// constructors
 		Field(EField field_index, Table* parent);
-		//Field(const std::string text, Table* parent);
 
-		// signals
-		typedef sigc::signal<void> signal;
-		signal on_bet_top;
-		signal on_bet_bottom;
-		signal on_bet_left;
-		signal on_bet_right;
+		typedef sigc::signal<void, const EField&, EChip> signal;
+		// signals emited by number fields only
+		signal signal_bet_top;
+		signal signal_bet_bottom;
+		signal signal_bet_left;
+		signal signal_bet_right;
+		signal signal_bet_top_right;
+		signal signal_bet_top_left;
+		signal signal_bet_bottom_right;
+		signal signal_bet_bottom_left;
+
+		// sinals emited by zero and dozens to number fields
+		signal signal_bet_split1;
+		signal signal_bet_split2;
+		signal signal_bet_split3;
+
+		signal signal_bet_street1; // used by dozens and zero only
+		signal signal_bet_street2; // used by dozens and zero only
+		signal signal_bet_street3; // used by dozens only
+		signal signal_bet_street4; // used by dozens only
+
+		signal signal_bet_basket; // used by zero and dozen1 only
 		
+		// signals used by dozens only
+		signal signal_bet_line1; // used by dozen2 and dozen 3 only
+		signal signal_bet_line2;
+		signal signal_bet_line3;
+		signal signal_bet_line4;
+		signal signal_bet_line5; // not used by dozen1 and dozen2 only
+
+		// signal handlers
+		void on_signal_bet_bottom(const EField& sender, EChip index);
+		void on_signal_bet_top(const EField& sender, EChip index);
+		void on_signal_bet_left(const EField& sender, EChip index);
+		void on_signal_bet_right(const EField& sender, EChip index);
+		void on_signal_bet_top_right(const EField& sender, EChip index);
+		void on_signal_bet_top_left(const EField& sender, EChip index);
+		void on_signal_bet_bottom_right(const EField& sender, EChip index);
+		void on_signal_bet_bottom_left(const EField& sender, EChip index);
+
+		// methods
+		inline const EField& get_index() const;
+
 	protected:
 		// overrides:
 		Gtk::SizeRequestMode get_request_mode_vfunc() const override;
@@ -98,7 +134,7 @@ namespace roulette
 	private:
 		// methods
 		void clear();
-		EBet calculate_points(Gdk::Point& point);
+		EBet calculate_points(EChip chip, Gdk::Point& point);
 		bool on_clicked(GdkEventButton* button_event);
 		void assign_apperance(EField index);
 		void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int field_width, int field_height);
@@ -106,6 +142,9 @@ namespace roulette
 		// members
 		Pango::FontDescription mFont;
 		std::vector<std::shared_ptr<Bet>> m_bets;
+
+		typedef std::vector<std::pair<EChip, Gdk::Point>> type_chips;
+		type_chips m_chips;
 
 #ifdef DEBUG_DND_LOG
 		int motion_count = 0;
@@ -125,6 +164,20 @@ namespace roulette
 		Field& operator=(const Field&) = delete;
 		Field& operator=(const Field&&) = delete;
 	};
+
+#ifdef _MSC_VER
+#pragma region
+#endif // _MSC_VER
+
+	const EField& Field::get_index() const
+	{
+		return m_index;
+	}
+
+#ifdef _MSC_VER
+#pragma endregion inlines
+#endif // _MSC_VER
+
 } // namespace roulette
 
 #endif // ! FIELD_HH

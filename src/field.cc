@@ -36,6 +36,11 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 namespace roulette
 {
+
+#ifdef _MSC_VER
+#pragma region
+#endif // _MSC_VER
+
 	using std::cerr;
 	using std::endl;
 	using std::cout;
@@ -44,13 +49,10 @@ namespace roulette
 	using std::make_shared;
 	using std::shared_ptr;
 	using std::for_each;
+	using std::make_pair;
 
 	extern std::vector<Gtk::TargetEntry> dnd_targets;
-
-#ifdef _MSC_VER
-#pragma region begin
-#endif // _MSC_VER
-
+	
 	Field::Field(EField field_index, Table* parent) :
 		Glib::ObjectBase("Field"), // The GType name will be gtkmm__CustomObject_Field
 		Gtk::Widget(),
@@ -86,65 +88,125 @@ namespace roulette
 #endif // DEBUG_SIGNALS
 	}
 
-	EBet Field::calculate_points(Gdk::Point& point)
+#ifdef _MSC_VER
+#pragma endregion begin
+
+#pragma region
+#endif // _MSC_VER
+
+	EBet Field::calculate_points(EChip chip, Gdk::Point& point)
 	{
 		Gtk::Allocation alloc = get_allocation();
 
-		int x = point.get_x();
-		int y = point.get_y();
+		const int x = point.get_x();
+		const int y = point.get_y();
 
 		const int width = alloc.get_width(); // right
 		const int height = alloc.get_height(); // down
 
-		const double cx = width * .5;
-		const double cy = height * .5;
+		const int cx = width / 2; // was * .5
+		const int cy = height / 2; // was * .5
 
-		const double left = width * .333;
-		const double top = height * .333;
-		const double right = left * 2;
-		const double down = top * 2;
+		const int left = width / 3; // was * .333
+		const int top = height / 3; // was * .333
+		const int right = left * 2;
+		const int down = top * 2;
 
 		static const int format = 8;
 
-		EBet bet = EBet::Corner;
-		if ((x < left || x > right) && (y < top || y > down))
-			bet = EBet::Split;
-		else if ((cx == point.get_x()) && (cy == point.get_y()))
-			bet = EBet::StraightUp;
+		//(x < left) && (y == 0) ? signal_bet_left.emit(chip) :
+		//	
+		//	(x > right) && (y == 0) ? signal_bet_right.emit(chip) :
+		//	y < top ? signal_bet_top.emit(chip) :
+		//	y > down ? signal_bet_bottom.emit(chip) :
+		//	NULL;
 
 		switch (m_index)
 		{
 		case roulette::EField::Number0:
 		{
-			const double split1 = height	* .166;
-			const double street1 = height * .33;
-			const double split2 = height	* .5;
-			const double street2 = height * .66;
-			const double split3 = height	* .833;
-			const double basket = height * 1;
+			// TODO: move to global scope, used in signal handlers too (check ??)
+			// also round up 3rd decimal to avoid data loss
+			// also use operator / (preffered, to avoid static_cast)
+			const int split1	= static_cast<int>(height * .167); // NOTE: rounded up
+			const int street1 = static_cast<int>(height * .334);
+			const int split2	= static_cast<int>(height * .5);
+			const int street2 = static_cast<int>(height * .667);
+			const int split3	= static_cast<int>(height * .834);
+			const int basket	= static_cast<int>(height * 1);
 
-			const double check = width	* .125;
+			const int check= static_cast<int>(width	* .125); // NOTE: not rounded up
 
-			const double check_split1 = split1 - check;
-			const double check_street1 = street1 - check;
-			const double check_split2 = split2 - check;
-			const double check_street2 = street2 - check;
-			const double check_split3 = split3 - check;
-			const double check_basket = basket - check;
+			const int check_split1 = split1 - check;
+			const int check_street1 = street1 - check;
+			const int check_split2 = split2 - check;
+			const int check_street2 = street2 - check;
+			const int check_split3 = split3 - check;
+			const int check_basket = basket - check;
 
-			x > right ? point.set_x(width) : point.set_x(cx);
+			//x > right ? point.set_x(width) : point.set_x(cx);
 
+			//else // x > right
+			//{
+			//	y < check_split1 ? point.set_y(split1) :
+			//		y < check_street1 ? point.set_y(split1) :
+			//		y < check_split2 ? point.set_y(street1) :
+			//		y < check_street2 ? point.set_y(split2) :
+			//		y < check_split3 ? point.set_y(street2) :
+			//		y < check_basket ? point.set_y(split3) :
+			//		point.set_y(basket);
+			//}
+			point.set_x(cx);
 			if (x < right)
-				point.set_y(cy);
-			else
 			{
-				y < check_split1 ? point.set_y(split1) :
-					y < check_street1 ? point.set_y(split1) :
-					y < check_split2 ? point.set_y(street1) :
-					y < check_street2 ? point.set_y(split2) :
-					y < check_split3 ? point.set_y(street2) :
-					y < check_basket ? point.set_y(split3) :
+				point.set_y(cy);
+				// no signal
+			}
+			else // x > right
+			{
+				point.set_x(width); // TODO: this is same as below to prevent top_right
+				if (y < check_split1)
+				{
+					point.set_y(split1);
+					signal_bet_split1.emit(m_index, chip);
+					break;
+				}
+				if (y < check_street1)
+				{
+					point.set_y(split1);
+					signal_bet_split1.emit(m_index, chip);
+					break;
+				}
+				if (y < check_split2)
+				{
+					point.set_y(street1);
+					signal_bet_street1.emit(m_index, chip);
+					break;
+				}
+				if (y < check_street2)
+				{
+					point.set_y(split2);
+					signal_bet_split2.emit(m_index, chip);
+					break;
+				}
+				if (y < check_split3)
+				{
+					point.set_y(street2);
+					signal_bet_street2.emit(m_index, chip);
+					break;
+				}
+				if (y < check_basket)
+				{
+					point.set_y(split3);
+					signal_bet_split3.emit(m_index, chip);
+					break;
+				}
+				else
+				{
 					point.set_y(basket);
+					signal_bet_basket.emit(m_index, chip);
+					break;
+				}
 			}
 		}
 		break;
@@ -152,67 +214,189 @@ namespace roulette
 		case roulette::EField::Number2:
 			goto set_default;
 		case roulette::EField::Number3:
-			x < left ? point.set_x(0) : x > right ? point.set_x(width) : point.set_x(cx);
-			y > down ? point.set_y(height) : point.set_y(cy);
+			//x < left ? point.set_x(0) : x > right ? point.set_x(width) : point.set_x(cx);
+			//y > down ? point.set_y(height) : point.set_y(cy);
+
+			if (x < left)
+			{
+				point.set_x(0);
+				if (y > down)
+				{
+					point.set_y(height);
+					signal_bet_bottom_left.emit(m_index, chip);
+				}
+				else
+				{
+					point.set_y(cy);
+					signal_bet_left.emit(m_index, chip);
+				}
+			}
+			else if (x > right)
+			{
+				point.set_x(width);
+				if (y > down)
+				{
+					point.set_y(height);
+					signal_bet_bottom_right.emit(m_index, chip);
+				}
+				else
+				{
+					point.set_y(cy);
+					signal_bet_right.emit(m_index, chip);
+				}
+			}
+			else // x == cx
+			{
+				point.set_x(cx);
+				if (y > down)
+				{
+					point.set_y(height);
+					signal_bet_bottom.emit(m_index, chip);
+				}
+				else // y == cy
+				{
+					point.set_y(cy);
+					// cx, cy -> no signal
+				}
+			}
+
 			break;
 		case roulette::EField::Number4:
 		case roulette::EField::Number5:
 			goto set_default;
 		case roulette::EField::Number6:
+			goto set_default;
 			goto set_column3;
 		case roulette::EField::Number7:
 		case roulette::EField::Number8:
 			goto set_default;
 		case roulette::EField::Number9:
+			goto set_default;
 			goto set_column3;
 		case roulette::EField::Number10:
 		case roulette::EField::Number11:
 			goto set_default;
 		case roulette::EField::Number12:
+			goto set_default;
 			goto set_column3;
 		case roulette::EField::Number13:
 		case roulette::EField::Number14:
 			goto set_default;
 		case roulette::EField::Number15:
+			goto set_default;
 			goto set_column3;
 		case roulette::EField::Number16:
 		case roulette::EField::Number17:
 			goto set_default;
 		case roulette::EField::Number18:
+			goto set_default;
 			goto set_column3;
 		case roulette::EField::Number19:
 		case roulette::EField::Number20:
 			goto set_default;
 		case roulette::EField::Number21:
+			goto set_default;
 			goto set_column3;
 		case roulette::EField::Number22:
 		case roulette::EField::Number23:
 			goto set_default;
 		case roulette::EField::Number24:
+			goto set_default;
 			goto set_column3;
 		case roulette::EField::Number25:
 		case roulette::EField::Number26:
 			goto set_default;
 		case roulette::EField::Number27:
+			goto set_default;
 			goto set_column3;
 		case roulette::EField::Number28:
 		case roulette::EField::Number29:
 			goto set_default;
 		case roulette::EField::Number30:
+			goto set_default;
 			goto set_column3;
 		case roulette::EField::Number31:
 		case roulette::EField::Number32:
 			goto set_default;
 		case roulette::EField::Number33:
+			goto set_default;
 			goto set_column3;
 		case roulette::EField::Number34:
 		case roulette::EField::Number35:
-			x < left ? point.set_x(0) : point.set_x(cx);
-			y < top ? point.set_y(0) : y > down ? point.set_y(height) : point.set_y(cy);
+			//x < left ? point.set_x(0) : point.set_x(cx);
+			//y < top ? point.set_y(0) : y > down ? point.set_y(height) : point.set_y(cy);
+
+			if (x < left)
+			{
+				point.set_x(0);
+				if (y < top)
+				{
+					point.set_y(0);
+					signal_bet_top_left.emit(m_index, chip);
+				}
+				else if (y > down)
+				{
+					point.set_y(height);
+					signal_bet_bottom_left.emit(m_index, chip);
+				}
+				else
+				{
+					point.set_y(cy);
+					signal_bet_left.emit(m_index, chip);
+				}
+			}
+			else // x == cx
+			{
+				point.set_x(cx);
+				if (y < top)
+				{
+					point.set_y(0);
+					signal_bet_top.emit(m_index, chip);
+				}
+				else if (y > down)
+				{
+					point.set_y(height);
+					signal_bet_bottom.emit(m_index, chip);
+				}
+				else // y == cy
+				{
+					point.set_y(cy);
+					// cx, cy -> no signal
+				}
+			}
 			break;
 		case roulette::EField::Number36:
-			x < left ? point.set_x(0) : point.set_x(cx);
-			y > down ? point.set_y(height) : point.set_y(cy);
+			//x < left ? point.set_x(0) : point.set_x(cx);
+			//y > down ? point.set_y(height) : point.set_y(cy);
+
+			if (x < left)
+			{
+				point.set_x(0);
+				if (y > down)
+				{
+					point.set_y(height);
+					signal_bet_bottom_left.emit(m_index, chip);
+				}
+				else
+				{
+					point.set_y(cy);
+					signal_bet_left.emit(m_index, chip);
+				}
+			}
+			else // x == cx
+			{
+				point.set_x(cx);
+				if (y > down)
+				{
+					point.set_y(height);
+					signal_bet_bottom.emit(m_index, chip);
+				}
+				else // y == cy
+				{
+					point.set_y(cy);
+					// cx, cy -> no signal
+				}
+			}
 			break;
 		case roulette::EField::Number00:
 			break;
@@ -225,46 +409,104 @@ namespace roulette
 		case roulette::EField::Dozen1:
 		case roulette::EField::Dozen2:
 		case roulette::EField::Dozen3:
+		{
+			//if (y < top)
+			//{
+			//	x < basket ? point.set_x(basket) : // basket
+			//		x < check_street1 ? point.set_x(basket) : // street
+			//		x < check_line1 ? point.set_x(street1) : // line
+			//		x < check_street2 ? point.set_x(line1) : // street
+			//		x < check_line2 ? point.set_x(street2) : // line
+			//		x < check_street3 ? point.set_x(line2) : // street
+			//		x < check_line3 ? point.set_x(street3) : // line
+			//		x < check_street4 ? point.set_x(line3) : // street
+			//		x < check_line4 ? point.set_x(street4) : // line
+			//		point.set_x(line4); // line
+			//	point.set_y(0);
+			//}
+			//else
+			//{
+			//	point.set_x(cx);
+			//	point.set_y(cy);
+			//}
+
+			const int line1 = width * 0;
+			const int street1 = static_cast<int>(width * .126); // rounded up
+			const int line2 = width / 4; // was * .25
+			const int street2 = static_cast<int>(width * .376); // rounded up
+			const int line3 = width / 2; // was * .5
+			const int street3 = static_cast<int>(width * .626); // rouended up
+			const int line4 = line2 * 3; // was * .75
+			const int street4 = static_cast<int>(width * .876); // rounded up
+			const int line5 = width * 1;
+
+			//const int basket = width * 0;
+			const int check = static_cast<int>(width	* .0625);
+
+			const int check_street1 = street1 - check;
+			const int check_line2 = line2 - check;
+			const int check_street2 = street2 - check;
+			const int check_line3 = line3 - check;
+			const int check_street3 = street3 - check;
+			const int check_line4 = line4 - check;
+			const int check_street4 = street4 - check;
+			const int check_line5 = line5 - check;
+
 			if (y < top)
 			{
-				const double basket = width * 0;
-				const double street1 = width	* .125;
-				const double line1 = width		* .25;
-				const double street2 = width	* .375;
-				const double line2 = width		* .5;
-				const double street3 = width	* .625;
-				const double line3 = width		* .75;
-				const double street4 = width	* .875;
-				const double line4 = width * 1;
-
-				const double check = width	* .0625;
-
-				const double check_street1 = street1 - check;
-				const double check_line1 = line1 - check;
-				const double check_street2 = street2 - check;
-				const double check_line2 = line2 - check;
-				const double check_street3 = street3 - check;
-				const double check_line3 = line3 - check;
-				const double check_street4 = street4 - check;
-				const double check_line4 = line4 - check;
-
-				x < basket ? point.set_x(basket) : // basket
-					x < check_street1 ? point.set_x(basket) : // street
-					x < check_line1 ? point.set_x(street1) : // line
-					x < check_street2 ? point.set_x(line1) : // street
-					x < check_line2 ? point.set_x(street2) : // line
-					x < check_street3 ? point.set_x(line2) : // street
-					x < check_line3 ? point.set_x(street3) : // line
-					x < check_street4 ? point.set_x(line3) : // street
-					x < check_line4 ? point.set_x(street4) : // line
-					point.set_x(line4); // line
 				point.set_y(0);
+				if (x < check_street1)
+				{
+					point.set_x(line1);
+					signal_bet_line1.emit(m_index, chip);
+				}
+				else if (x < check_line2)
+				{
+					point.set_x(street1);
+					signal_bet_street1.emit(m_index, chip);
+				}
+				else if (x < check_street2)
+				{
+					point.set_x(line2);
+					signal_bet_line2.emit(m_index, chip);
+				}
+				else if (x < check_line3)
+				{
+					point.set_x(street2);
+					signal_bet_street2.emit(m_index, chip);
+				}
+				else if (x < check_street3)
+				{
+					point.set_x(line3);
+					signal_bet_line3.emit(m_index, chip);
+				}
+				else if (x < check_line4)
+				{
+					point.set_x(street3);
+					signal_bet_street3.emit(m_index, chip);
+				}
+				else if (x < check_street4)
+				{
+					point.set_x(line4);
+					signal_bet_line4.emit(m_index, chip);
+				}
+				else if (x < check_line5 || m_index == EField::Dozen3)  // skip line5 for dozen3
+				{
+					point.set_x(street4);
+					signal_bet_street4.emit(m_index, chip);
+				}
+				else // x > check_line5
+				{
+					point.set_x(line5);
+					signal_bet_line5.emit(m_index, chip);
+				}
 			}
-			else
+			else // y > top
 			{
 				point.set_x(cx);
 				point.set_y(cy);
-			}
+			} // if
+		} // case
 			break;
 		case roulette::EField::Red:
 		case roulette::EField::Black:
@@ -276,6 +518,13 @@ namespace roulette
 			point.set_y(cy);
 			break;
 		case roulette::EField::Dummy1:
+			if (x > right && y < top / 2)
+			{
+				point.set_x(width);
+				point.set_y(0);
+				signal_bet_basket.emit(EField::Dummy1, chip);
+			}
+			break;
 		case roulette::EField::Dummy2:
 		case roulette::EField::Dummy3:
 			break;
@@ -285,10 +534,76 @@ namespace roulette
 				y > down ? point.set_y(height) : point.set_y(cy);
 				break;
 			set_default:
-				x < left ? point.set_x(0) : x > right ? point.set_x(width) : point.set_x(cx);
-				y < top ? point.set_y(0) : y > down ? point.set_y(height) : point.set_y(cy);
+				//x < left ? point.set_x(0) : x > right ? point.set_x(width) : point.set_x(cx);
+				//y < top ? point.set_y(0) : y > down ? point.set_y(height) : point.set_y(cy);
+
+				if (x < left)
+				{
+					point.set_x(0);
+					if (y < top)
+					{
+						point.set_y(0);
+						signal_bet_top_left.emit(m_index, chip);
+					}
+					else if (y > down)
+					{
+						point.set_y(height);
+						signal_bet_bottom_left.emit(m_index, chip);
+					}
+					else
+					{
+						point.set_y(cy);
+						signal_bet_left.emit(m_index, chip);
+					}
+				}
+				else if (x > right)
+				{
+					point.set_x(width);
+					if (y < top)
+					{
+						point.set_y(0);
+						signal_bet_top_right.emit(m_index, chip);
+					}
+					else if (y > down)
+					{
+						point.set_y(height);
+						signal_bet_bottom_right.emit(m_index, chip);
+					}
+					else
+					{
+						point.set_y(cy);
+						signal_bet_right.emit(m_index, chip);
+					}
+				}
+				else // x == cx
+				{
+					point.set_x(cx);
+					if (y < top)
+					{
+						point.set_y(0);
+						signal_bet_top.emit(m_index, chip);
+					}
+					else if (y > down)
+					{
+						point.set_y(height);
+						signal_bet_bottom.emit(m_index, chip);
+					}
+					else // y == cy
+					{
+						point.set_y(cy);
+						// cx, cy -> no signal
+					}
+				}
 				break;
 		} // switch
+
+		  // TODO: bets are currently not used, only chip drawing
+		EBet bet = EBet::Corner;
+		if ((x < left || x > right) && (y < top || y > down))
+			bet = EBet::Split;
+		else if ((cx == point.get_x()) && (cy == point.get_y()))
+			bet = EBet::StraightUp;
+
 		return bet;
 	}
 
@@ -406,10 +721,11 @@ namespace roulette
 	}
 
 #ifdef _MSC_VER
-#pragma endregion
+#pragma endregion methods
 
-#pragma region dnd
+#pragma region
 #endif //_MSC_VER
+
 	/*
 	The destination widget will emit these signals, in this order:
 
@@ -429,12 +745,6 @@ namespace roulette
 
 	drag_leave:
 	*/
-
-
-
-#ifdef _MSC_VER
-	// #pragma warning (disable: 4100) // TODO: unreferenced formal parameter
-#endif // _MSC_VER
 
 	bool Field::on_drag_motion(const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time)
 	{
@@ -456,7 +766,6 @@ namespace roulette
 		return true; // Return whether the cursor position is in a drop zone.
 	}
 
-
 	bool Field::on_drag_drop(const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time)
 	{
 #ifdef DEBUG_DND_LOG
@@ -472,8 +781,7 @@ namespace roulette
 
 		return true; // Return whether the cursor position is in a drop zone.
 	}
-
-
+	
 	void Field::on_drag_data_received(const Glib::RefPtr<Gdk::DragContext>& context,
 		int x, int y, const Gtk::SelectionData& selection_data, guint info, guint time)
 	{
@@ -507,7 +815,7 @@ namespace roulette
 #endif // DEBUG_DND_LOG
 
 
-		if (m_index == EField::Dummy1 || m_index == EField::Dummy2 || m_index == EField::Dummy3)
+		if (m_index == EField::Dummy2 || m_index == EField::Dummy3)
 		{
 			// not drawing on dummies
 			context->drag_finish(true, false, time);
@@ -515,13 +823,20 @@ namespace roulette
 		else
 		{
 			Gdk::Point point(x, y);
-			EBet bet = calculate_points(point);
-			m_bets.push_back(make_shared<Bet>(p_parent->get_table_type(), bet, info, point));
+			// TODO: where to store bets ?
+			/*EBet bet = */calculate_points(static_cast<EChip>(info), point);
 
+			// if dummy's y isn't zero chips won't be drawn on it.
+			if (m_index == EField::Dummy1 && point.get_y())
+			{
+				context->drag_finish(true, false, time);
+				return;
+			}
+			//m_bets.push_back(make_shared<Bet>(p_parent->get_table_type(), bet, info, point));
+			m_chips.push_back(make_pair(static_cast<EChip>(info), point));
 			context->drag_finish(false, false, time);
 		}
 		
-
 #if 0
 		// TODO: this is redundant, make use of selection data
 		static const int format = 8;
@@ -531,7 +846,6 @@ namespace roulette
 		}
 #endif
 	}
-
 
 	void Field::on_drag_leave(const Glib::RefPtr<Gdk::DragContext>& /*context*/, guint time)
 	{
@@ -545,16 +859,13 @@ namespace roulette
 		// return Gtk::Widget::on_drag_leave(context, time);
 	}
 
-
 #ifdef _MSC_VER
-	// #pragma warning (default: 4100) // unreferenced formal parameter
+#pragma endregion drag and drop
 
-#pragma endregion
-
-#pragma region drawing
+#pragma region
 #endif // _MSC_VER
 
-// Draw on the supplied Cairo::Context.
+	// Draw on the supplied Cairo::Context.
 	bool Field::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	{
 		Gtk::Allocation allocation = get_allocation();
@@ -575,11 +886,12 @@ namespace roulette
 		// show text
 		draw_text(cr, field_width, field_height);
 
-		// draw chips
-		for_each(m_bets.begin(), m_bets.end(), [&](shared_ptr<Bet>& bet) {
 
-			Glib::RefPtr<Gdk::Pixbuf> pixbuf = get_pixbuf(bet->get_chips());
-			Gdk::Point point = bet->get_points();
+		// draw neighboring chips
+		for (size_t i = 0; i < m_chips.size(); i++)
+		{
+			Glib::RefPtr<Gdk::Pixbuf> pixbuf = get_pixbuf(m_chips.at(i).first);
+			Gdk::Point point = m_chips.at(i).second;
 
 			const int x = point.get_x();
 			const int y = point.get_y();
@@ -589,7 +901,23 @@ namespace roulette
 
 			Gdk::Cairo::set_source_pixbuf(cr, pixbuf, x - pixbuf_x, y - pixbuf_y);
 			cr->paint();
-		});
+		}
+
+		// draw chips
+		//for_each(m_bets.begin(), m_bets.end(), [&](shared_ptr<Bet>& bet) {
+
+		//	Glib::RefPtr<Gdk::Pixbuf> pixbuf = get_pixbuf(bet->get_chips());
+		//	Gdk::Point point = bet->get_points();
+
+		//	const int x = point.get_x();
+		//	const int y = point.get_y();
+
+		//	const int pixbuf_x = pixbuf->get_width() / 2;
+		//	const int pixbuf_y = pixbuf->get_height() / 2;
+
+		//	Gdk::Cairo::set_source_pixbuf(cr, pixbuf, x - pixbuf_x, y - pixbuf_y);
+		//	cr->paint();
+		//});
 
 		return true;
 
@@ -613,10 +941,301 @@ namespace roulette
 
 		mLayout->show_in_cairo_context(cr);
 	}
-#ifdef _MSC_VER
-#pragma endregion
 
-#pragma region widget
+#ifdef _MSC_VER
+#pragma endregion drawing
+
+#pragma region
+#endif // _MSC_VER
+
+	void Field::on_signal_bet_bottom(const EField& /*sender*/, EChip index)
+	{
+		Gtk::Allocation alloc = get_allocation();
+		const int x = alloc.get_width() / 2;
+		int y = alloc.get_height();
+
+		m_chips.push_back(make_pair(index, Gdk::Point(x, y)));
+
+		// TODO: check why need to check for gdkwindow, why throws
+		if(refGdkWindow)
+			refGdkWindow->invalidate(false);
+	}
+
+	void Field::on_signal_bet_top(const EField& sender, EChip index)
+	{
+		Gtk::Allocation alloc = get_allocation();
+		const int width = alloc.get_width();
+		int x = alloc.get_width() / 2;
+		int y = 0;
+
+		const int line1 = width * 0;
+		const int street1 = static_cast<int>(width * .126); // rounded up
+		const int line2 = width / 4; // was * .25
+		const int street2 = static_cast<int>(width * .376); // rounded up
+		const int line3 = width / 2; // was * .5
+		const int street3 = static_cast<int>(width * .626); // rouended up
+		const int line4 = line2 * 3; // was * .75
+		const int street4 = static_cast<int>(width * .876); // rounded up
+		const int line5 = width * 1;
+
+		if (m_index == EField::Dozen1 || m_index == EField::Dozen2 || m_index == EField::Dozen3)
+		{
+			y = 0;
+			switch (sender)
+			{
+			case EField::Number1:
+			case EField::Number13:
+			case EField::Number25:
+				x = street1;
+				break;
+			case EField::Number4:
+			case EField::Number16:
+			case EField::Number28:
+				x = street2;
+				break;
+			case EField::Number7:
+			case EField::Number19:
+			case EField::Number31:
+				x = street3;
+				break;
+			case EField::Number10:
+			case EField::Number22:
+			case EField::Number34:
+				x = street4;
+			default:
+				break;
+			}
+		}
+
+		m_chips.push_back(make_pair(index, Gdk::Point(x, y)));
+
+		if (refGdkWindow)
+			refGdkWindow->invalidate(false);
+	}
+
+	void Field::on_signal_bet_left(const EField& /*sender*/, EChip index)
+	{
+		Gtk::Allocation alloc = get_allocation();
+		const int x = 0;
+		const int y = alloc.get_height() / 2;
+
+		m_chips.push_back(make_pair(index, Gdk::Point(x, y)));
+
+		if (refGdkWindow)
+			refGdkWindow->invalidate(false);
+	}
+
+	void Field::on_signal_bet_right(const EField& sender, EChip index)
+	{
+		Gtk::Allocation alloc = get_allocation();
+		const int x = alloc.get_width();
+		int y = alloc.get_height() / 2;
+
+		if (m_index == EField::Number0)
+		{
+			switch (sender)
+			{
+			case EField::Number1:
+				y = static_cast<int>(alloc.get_height() * .834); // was .833
+				break;
+			case EField::Number3:
+				y = alloc.get_height() / 6; // * .166
+				break;
+			default:
+				break;
+			}
+		}
+
+		m_chips.push_back(make_pair(index, Gdk::Point(x, y)));
+
+		if (refGdkWindow)
+			refGdkWindow->invalidate(false);
+	}
+
+	void Field::on_signal_bet_top_right(const EField& sender, EChip index)
+	{
+		Gtk::Allocation alloc = get_allocation();
+		const int width = alloc.get_width();
+		int x = width;
+		int y = 0;
+
+		const int line1 = width * 0;
+		const int street1 = static_cast<int>(width * .126); // rounded up
+		const int line2 = width / 4; // was * .25
+		const int street2 = static_cast<int>(width * .376); // rounded up
+		const int line3 = width / 2; // was * .5
+		const int street3 = static_cast<int>(width * .626); // rouended up
+		const int line4 = line2 * 3; // was * .75
+		const int street4 = static_cast<int>(width * .876); // rounded up
+		const int line5 = width * 1;
+
+		if (m_index == EField::Number0)
+		{
+			switch (sender)
+			{
+			case EField::Number1:
+				// TODO: round up all other constants (ex: .666 to .667) or use operator / (preffered to avoid static_cast)
+				y = static_cast<int>(alloc.get_height() * .667); // was .666
+				break;
+			case EField::Number2:
+				y = alloc.get_height() / 3; // * .333
+				break;
+			default:
+				break;
+			}
+		}
+		else if (m_index == EField::Dozen1 || m_index == EField::Dozen2 || m_index == EField::Dozen3)
+		{
+			y = 0;
+			switch (sender)
+			{
+			case EField::Number25: // has 2 neighboring dozens
+				if (m_index == EField::Dozen2)
+					x = line5;
+				else // m_index == EField::Dozen3
+					x = line2;
+				break;
+			case EField::Number1:
+				x = line2;
+				break;
+			case EField::Number4:
+			case EField::Number16:
+			case EField::Number28:
+				x = line3;
+				break;
+			case EField::Number7:
+			case EField::Number19:
+			case EField::Number31:
+				x = line4;
+				break;
+			case EField::Number10:
+			case EField::Number22:
+			case EField::Number34:
+				x = line5;
+				break;
+			case EField::Number13: // has 2 neighboring dozens (1 and 2)
+				if (m_index == EField::Dozen1)
+					x = line5;
+				else // m_index == EField::Dozen2
+					x = line1;
+				break;
+			default:
+				break;
+			}
+		}
+
+		m_chips.push_back(make_pair(index, Gdk::Point(x, y)));
+
+		if (refGdkWindow)
+			refGdkWindow->invalidate(false);
+	}
+
+	void Field::on_signal_bet_top_left(const EField & sender, EChip index)
+	{
+		Gtk::Allocation alloc = get_allocation();
+		const int width = alloc.get_width();
+		int x = 0;
+		int y = 0;
+
+		const int line1 = width * 0;
+		const int street1 = static_cast<int>(width * .126); // rounded up
+		const int line2 = width / 4; // was * .25
+		const int street2 = static_cast<int>(width * .376); // rounded up
+		const int line3 = width / 2; // was * .5
+		const int street3 = static_cast<int>(width * .626); // rouended up
+		const int line4 = line2 * 3; // was * .75
+		const int street4 = static_cast<int>(width * .876); // rounded up
+		const int line5 = width * 1;
+
+		if (m_index == EField::Dozen1 || m_index == EField::Dozen2 || m_index == EField::Dozen3)
+		{
+			y = 0;
+			switch (sender)
+			{
+			case EField::Number1:
+			case EField::Number13:
+			case EField::Number25:
+				x = line1;
+				break;
+			case EField::Number4:
+			case EField::Number16:
+			case EField::Number28:
+				x = line2;
+				break;
+			case EField::Number7:
+			case EField::Number19:
+			case EField::Number31:
+				x = line3;
+				break;
+			case EField::Number22: // has 2 neighboring dozens
+				if (m_index == EField::Dozen3)
+					x = line1;
+				else  // m_index == EField::Dozen2
+					x = line4;
+					break;
+			case EField::Number34:
+				x = line4;
+				break;
+			case EField::Number10: // has 2 neighboring dozens (1 and 2)
+				if (m_index == EField::Dozen2)
+					x = line1;
+				else // m_index == EField::Dozen2
+					x = line4;
+				break;
+			default:
+				break;
+			}
+		}
+
+		m_chips.push_back(make_pair(index, Gdk::Point(x, y)));
+
+		if (refGdkWindow)
+			refGdkWindow->invalidate(false);
+	}
+
+	void Field::on_signal_bet_bottom_right(const EField& sender, EChip index)
+	{
+		Gtk::Allocation alloc = get_allocation();
+		const int x = alloc.get_width();
+		int y = alloc.get_height();
+
+		if (m_index == EField::Number0)
+		{
+			switch (sender)
+			{
+			case EField::Number2:
+				y = static_cast<int>(alloc.get_height() * .667); // was .666
+				break;
+			case EField::Number3:
+				y = alloc.get_height() / 3; // *.333;
+				break;
+			default:
+				break;
+			}
+		}
+
+		m_chips.push_back(make_pair(index, Gdk::Point(x, y)));
+
+		if (refGdkWindow)
+			refGdkWindow->invalidate(false);
+	}
+
+	void Field::on_signal_bet_bottom_left(const EField& /*sender*/, EChip index)
+	{
+		Gtk::Allocation alloc = get_allocation();
+		const int x = 0;
+		const int y = alloc.get_height();
+
+		m_chips.push_back(make_pair(index, Gdk::Point(x, y)));
+
+		if (refGdkWindow)
+			refGdkWindow->invalidate(false);
+	}
+
+#ifdef _MSC_VER
+#pragma endregion signal handlers
+
+#pragma region
 #endif // _MSC_VER
 
 	// (optional) Return what Gtk::SizeRequestMode is preferred by the widget.
@@ -632,8 +1251,7 @@ namespace roulette
 		minimum_width = 60;
 		natural_width = 60;
 	}
-
-
+	
 	// Calculate the minimum and natural height of the widget.
 	void Field::get_preferred_height_vfunc(int& minimum_height, int& natural_height) const
 	{
@@ -677,11 +1295,11 @@ namespace roulette
 
 			// recalculate chip points
 			// TODO: going to full screen or resizing a window fast will not update points properly
-			for_each(m_bets.begin(), m_bets.end(), [this](shared_ptr<Bet>& bet) {
-				Gdk::Point point = bet->get_points();
-				calculate_points(point);
-				bet->set_points(point);
-			});
+			//for_each(m_bets.begin(), m_bets.end(), [this](shared_ptr<Bet>& bet) {
+			//	Gdk::Point point = bet->get_points();
+			//	calculate_points(point);
+			//	bet->set_points(point);
+			//});
 
 		}
 	}
@@ -746,7 +1364,31 @@ namespace roulette
 	}
 
 #ifdef _MSC_VER
-#pragma endregion
+#pragma endregion widget
 #endif // _MSC_VER
 
 } // namespace roulette
+
+///<summary>
+//
+//
+// DRAG AND DROP CALL STACK
+//
+// on_drag_data_received
+// 
+// calculate_points
+//
+// signal.emit
+//
+// m_chips.push_back
+//
+// refGdkWindow->invalidate
+//
+// on_draw
+//
+// for_each cr->paint();
+//
+// draw neighboring chips
+//
+//
+///<summary>

@@ -126,7 +126,9 @@ namespace roulette
 		void fill_childs(const ETable& table, const std::shared_ptr<Selection_t> selection, const int& chips, Gdk::Point point);
 	};
 
-#pragma region Inline
+#ifdef _MSC_VER
+#pragma region
+#endif // _MSC_VER
 
 	inline EBet Bet::get_id() const
 	{
@@ -260,7 +262,10 @@ namespace roulette
 		}
 	}
 
-#pragma endregion Inline methods
+#ifdef _MSC_VER
+#pragma endregion inlines
+#endif // _MSC_VER
+
 } // namespace roulette
 
 ///<summary>

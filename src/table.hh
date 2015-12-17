@@ -110,6 +110,10 @@ namespace roulette
 		Table& operator=(const Table&&) = delete;
 	};
 
+#ifdef _MSC_VER
+#pragma region
+#endif // _MSC_VER
+
 	inline int Table::GetLimit(const EBet& name)
 	{
 		if ((mMaxiter = mMaximums.find(name)) == mMaximums.end())
@@ -138,6 +142,11 @@ namespace roulette
 		// TODO: implement functionality
 		throw ref;
 	}
+
+#ifdef _MSC_VER
+#pragma endregion inlines
+#endif // _MSC_VER
+
 } // namespace roulette
 
 #endif // ! TABLE_HH

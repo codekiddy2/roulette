@@ -85,9 +85,9 @@ namespace roulette
 	*/
 
 
-#ifdef _MSC_VER
+//#ifdef _MSC_VER
 	// #pragma warning (disable: 4100) // TODO: unreferenced formal parameter
-#endif // _MSC_VER
+//#endif // _MSC_VER
 
 
 	void Chip::on_drag_begin(const Glib::RefPtr<Gdk::DragContext>& context)
