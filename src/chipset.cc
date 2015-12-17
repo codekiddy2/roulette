@@ -47,8 +47,10 @@ namespace roulette
 		mChip5(EChip::Chip5),
 		mChip25(EChip::Chip25),
 		mChip50(EChip::Chip50),
-		mChip100(EChip::Chip100)
+		mChip100(EChip::Chip100),
+		mEraser(EChip::Eraser)
 	{
+		pack_end(mEraser, Gtk::PACK_SHRINK);
 		pack_end(mChip1, Gtk::PACK_SHRINK);
 		pack_end(mChip5, Gtk::PACK_SHRINK);
 		pack_end(mChip25, Gtk::PACK_SHRINK);

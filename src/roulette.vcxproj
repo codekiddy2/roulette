@@ -158,6 +158,7 @@
     <Image Include="chip25.ico" />
     <Image Include="chip5.ico" />
     <Image Include="chip50.ico" />
+    <Image Include="eraser.ico" />
     <Image Include="roulette.ico" />
   </ItemGroup>
   <ItemGroup>

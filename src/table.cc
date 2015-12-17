@@ -73,7 +73,7 @@ namespace roulette
 			mFields.insert(make_pair(temp, new Field(temp, this)));
 		}
 		// TODO: check if any signals are connected more than once,
-		//ex: debug output how many time handlers get called per chip placed (should be once only)
+		//ex: debug output how many times handlers get called per chip placed (should be once only)
 	
 		// get dozens and their neighbors on top (column1) (will be used later, forward declaration.
 		auto zerro = mFields.find(EField::Number0)->second;
@@ -687,7 +687,7 @@ namespace roulette
 	}
 
 #ifdef _MSC_VER
-#pragma endregion methods
+#pragma endregion inlines
 #endif // _MSC_VER
 
 } // namespace roulette

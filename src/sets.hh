@@ -43,6 +43,7 @@ namespace roulette
 {
 	enum class EChip: unsigned
 	{
+		Eraser,
 		Chip1 = 1,
 		Chip5 = 5,
 		Chip25 = 25,

@@ -66,6 +66,7 @@ namespace roulette
 		Chip mChip25;
 		Chip mChip50;
 		Chip mChip100;
+		Chip mEraser;
 		/// end initializer list
 
 		// deleted

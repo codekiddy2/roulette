@@ -64,7 +64,11 @@ namespace roulette
 		// constructors
 		Field(EField field_index, Table* parent);
 
-		typedef sigc::signal<void, const EField&, EChip> signal;
+		typedef std::pair<const EChip, Gdk::Point> type_chip_pair;
+		typedef std::shared_ptr<type_chip_pair> type_chip;
+		typedef sigc::signal<void, const EField&, type_chip> signal;
+		typedef std::vector<type_chip> type_chip_container;
+
 		// signals emited by number fields only
 		signal signal_bet_top;
 		signal signal_bet_bottom;
@@ -94,18 +98,18 @@ namespace roulette
 		signal signal_bet_line4;
 		signal signal_bet_line5; // not used by dozen1 and dozen2 only
 
-		// signal handlers
-		void on_signal_bet_bottom(const EField& sender, EChip index);
-		void on_signal_bet_top(const EField& sender, EChip index);
-		void on_signal_bet_left(const EField& sender, EChip index);
-		void on_signal_bet_right(const EField& sender, EChip index);
-		void on_signal_bet_top_right(const EField& sender, EChip index);
-		void on_signal_bet_top_left(const EField& sender, EChip index);
-		void on_signal_bet_bottom_right(const EField& sender, EChip index);
-		void on_signal_bet_bottom_left(const EField& sender, EChip index);
-
 		// methods
 		inline const EField& get_index() const;
+
+		// signal handlers
+		void on_signal_bet_bottom(const EField& sender, type_chip chip);
+		void on_signal_bet_top(const EField& sender, type_chip chip);
+		void on_signal_bet_left(const EField& sender, type_chip chip);
+		void on_signal_bet_right(const EField& sender, type_chip chip);
+		void on_signal_bet_top_right(const EField& sender, type_chip chip);
+		void on_signal_bet_top_left(const EField& sender, type_chip chip);
+		void on_signal_bet_bottom_right(const EField& sender, type_chip chip);
+		void on_signal_bet_bottom_left(const EField& sender, type_chip chip);
 
 	protected:
 		// overrides:
@@ -133,25 +137,22 @@ namespace roulette
 
 	private:
 		// methods
-		void clear();
-		EBet calculate_points(EChip chip, Gdk::Point& point);
+		void clear_all();
+		void clear(Gdk::Point& chip_point);
+		void calculate_points(type_chip chip, bool emit = true);
 		bool on_clicked(GdkEventButton* button_event);
 		void assign_apperance(EField index);
 		void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int field_width, int field_height);
 
 		// members
 		Pango::FontDescription mFont;
-		std::vector<std::shared_ptr<Bet>> m_bets;
-
-		typedef std::vector<std::pair<EChip, Gdk::Point>> type_chips;
-		type_chips m_chips;
+		type_chip_container m_chips;
 
 #ifdef DEBUG_DND_LOG
 		int motion_count = 0;
 #endif
 
 		/// begin initializer list
-		//std::string mName;
 		Gdk::RGBA mBackground;
 		Glib::RefPtr<Pango::Layout> mLayout;
 		Table* p_parent;

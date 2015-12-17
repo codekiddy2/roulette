@@ -48,6 +48,7 @@ namespace roulette
 	type_chip_icon icon25;
 	type_chip_icon icon50;
 	type_chip_icon icon100;
+	type_chip_icon eraser;
 	type_chip_icon app_icon;
 
 	vector<Gtk::TargetEntry> dnd_targets;
@@ -71,13 +72,16 @@ namespace roulette
 		file_name = "Chip100.ico";
 		exists(file_name) ? icon100 = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
 
+		file_name = "eraser.ico";
+		exists(file_name) ? eraser = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
+
 		file_name = "roulette.ico";
 		exists(file_name) ? app_icon = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
 
 		return success;
 	}
-} // namespace
 
+} // namespace
 
 int main(int argc, char* argv[])
 {
@@ -139,14 +143,12 @@ namespace roulette
 		else return false;
 	}
 
-
 	short which_column(const unsigned number)
 	{
 		if (number % 3 == 0)
 			return 3;
 		else return number % 3;
 	}
-
 
 	short which_dozen(const unsigned number)
 	{
@@ -156,7 +158,6 @@ namespace roulette
 			return 2;
 		else return 3;
 	}
-
 
 	type_chip_icon get_pixbuf(EChip ref)
 	{
@@ -171,11 +172,11 @@ namespace roulette
 		case roulette::EChip::Chip50:
 			return icon50;
 		case roulette::EChip::Chip100:
-		default:
 			return icon100;
+		case roulette::EChip::Eraser:
+			return eraser;
 		}
 	}
-
 
 	unsigned get_neighbor(const ETable table, const unsigned refNum, const unsigned position)
 	{
