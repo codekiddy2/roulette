@@ -33,6 +33,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "chipset.hh"
 #include "table.hh"
 #include "main.hh"
+#include "bet.hh"
 
 namespace roulette
 {
@@ -54,21 +55,21 @@ namespace roulette
 
 	extern std::vector<Gtk::TargetEntry> dnd_targets;
 	
-	Field::Field(EField field_index, Table* parent) :
+	Field::Field(EField field_index, Table* p_parent) :
 		Glib::ObjectBase("Field"), // The GType name will be gtkmm__CustomObject_Field
 		Gtk::Widget(),
-		mBackground("rgb(0, 102, 0)"), // green
-		p_parent(parent),
+		m_background("rgb(0, 102, 0)"), // green
+		mp_parent(p_parent),
 		m_index(field_index)
 	{
 		set_has_window(true);
 		set_events(Gdk::EventMask::ALL_EVENTS_MASK);
 
 		assign_apperance(field_index);
-		mFont.set_family("Arial");
-		mLayout->set_font_description(mFont);
+		m_font.set_family("Arial");
+		m_layout->set_font_description(m_font);
 
-		parent->signal_clear.connect(sigc::mem_fun(*this, &Field::clear_all));
+		mp_parent->signal_clear.connect(sigc::mem_fun(*this, &Field::clear_all));
 
 		// Make Field a drop target
 		drag_dest_set(dnd_targets, Gtk::DestDefaults::DEST_DEFAULT_ALL, Gdk::DragAction::ACTION_COPY);
@@ -478,10 +479,9 @@ namespace roulette
 					point.set_y(height);
 					emit ? signal_bet_bottom.emit(m_index, chip) : 0;
 				}
-				else // y == cy
+				else // y == cy, x = cx
 				{
 					point.set_y(cy);
-					// cx, cy -> no signal
 				}
 			}
 			break;
@@ -516,60 +516,60 @@ namespace roulette
 		switch (index)
 		{
 		case roulette::EField::Number00:
-			mLayout = create_pango_layout("00");
+			m_layout = create_pango_layout("00");
 			break;
 		case roulette::EField::Column1:
-			mLayout = create_pango_layout("2 to 1");
+			m_layout = create_pango_layout("2 to 1");
 			break;
 		case roulette::EField::Column2:
-			mLayout = create_pango_layout("2 to 1");
+			m_layout = create_pango_layout("2 to 1");
 			break;
 		case roulette::EField::Column3:
-			mLayout = create_pango_layout("2 to 1");
+			m_layout = create_pango_layout("2 to 1");
 			break;
 		case roulette::EField::Dozen1:
-			mLayout = create_pango_layout("1st 12");
+			m_layout = create_pango_layout("1st 12");
 			break;
 		case roulette::EField::Dozen2:
-			mLayout = create_pango_layout("2nd 12");
+			m_layout = create_pango_layout("2nd 12");
 			break;
 		case roulette::EField::Dozen3:
-			mLayout = create_pango_layout("3rd 12");
+			m_layout = create_pango_layout("3rd 12");
 			break;
 		case roulette::EField::Red:
-			mBackground.set("Red");
-			mLayout = create_pango_layout("RED");
+			m_background.set("Red");
+			m_layout = create_pango_layout("RED");
 			break;
 		case roulette::EField::Black:
-			mBackground.set("Black");
-			mLayout = create_pango_layout("BLACK");
+			m_background.set("Black");
+			m_layout = create_pango_layout("BLACK");
 			break;
 		case roulette::EField::Even:
-			mLayout = create_pango_layout("EVEN");
+			m_layout = create_pango_layout("EVEN");
 			break;
 		case roulette::EField::Odd:
-			mLayout = create_pango_layout("ODD");
+			m_layout = create_pango_layout("ODD");
 			break;
 		case roulette::EField::High:
-			mLayout = create_pango_layout("HIGH");
+			m_layout = create_pango_layout("HIGH");
 			break;
 		case roulette::EField::Low:
-			mLayout = create_pango_layout("LOW");
+			m_layout = create_pango_layout("LOW");
 			break;
 		case roulette::EField::Dummy1:
 		case roulette::EField::Dummy2:
 		case roulette::EField::Dummy3:
-			mLayout = create_pango_layout("");
+			m_layout = create_pango_layout("");
 			break;
 		default:
-			mLayout = create_pango_layout(to_string(static_cast<int>(index)));
+			m_layout = create_pango_layout(to_string(static_cast<int>(index)));
 			if (is_red(static_cast<int>(index)))
 			{
-				mBackground.set("Red");
+				m_background.set("Red");
 			}
 			else if (is_black(static_cast<int>(index)))
 			{
-				mBackground.set("Black");
+				m_background.set("Black");
 			}
 		}
 	}
@@ -592,7 +592,8 @@ namespace roulette
 			{
 				m_chips.erase(iter);
 				iter = m_chips.begin();
-				if (iter == m_chips.end()) break;
+				if (iter == m_chips.end())
+					break;
 			}
 		}
 		return refGdkWindow->invalidate(false);
@@ -693,7 +694,7 @@ namespace roulette
 		const int field_height = allocation.get_height();
 
 		// paint the background
-		Gdk::Cairo::set_source_rgba(cr, mBackground);
+		Gdk::Cairo::set_source_rgba(cr, m_background);
 		cr->paint();
 
 		// stroke lines around filed
@@ -723,6 +724,7 @@ namespace roulette
 		return true;
 	}
 
+	// Draw text or number in the middle
 	void Field::draw_text(const Cairo::RefPtr<Cairo::Context>& cr,
 		int field_width, int field_height)
 	{
@@ -730,12 +732,12 @@ namespace roulette
 		int text_height;
 
 		//get the text dimensions (it updates the variables -- by reference)
-		mLayout->get_pixel_size(text_width, text_height);
+		m_layout->get_pixel_size(text_width, text_height);
 
 		cr->set_source_rgb(1.0, 1.0, 1.0); // white text
 		cr->move_to((field_width - text_width) / 2, (field_height - text_height) / 2);
 
-		mLayout->show_in_cairo_context(cr);
+		m_layout->show_in_cairo_context(cr);
 	}
 
 #ifdef _MSC_VER
@@ -1210,90 +1212,15 @@ namespace roulette
 
 ///<summary>
 //
-//
 // DRAG AND DROP CALL STACK
 //
 // on_drag_data_received
-// 
 // calculate_points
-//
 // signal.emit
-//
 // m_chips.push_back
-//
 // refGdkWindow->invalidate
-//
 // on_draw
-//
 // for_each cr->paint();
-//
 // draw neighboring chips
 //
-//
 ///<summary>
-
-// not used
-#if 0 // DEBUG_DND_LOG
-cout << endl;
-cout << "Field::on_drag_data_received()" << endl;
-cout << "-> INFO: target = " << selection_data.get_target() << endl;
-cout << "-> INFO: pointer: " << selection_data.get_data() << endl;
-cout << "-> INFO: length = " << selection_data.get_length() << endl;
-cout << "-> INFO: format = " << selection_data.get_format() << endl;
-cout << "-> INFO: info = " << info << endl;
-cout << "-> INFO: time = " << time << endl;
-cout << "-> INFO: x = " << x << endl;
-cout << "-> INFO: y = " << y << endl;
-#endif // DEBUG_DND_LOG
-
-#ifdef DEBUG_DND_VERBOSE
-
-Glib::RefPtr<const Gdk::Pixbuf> temp = selection_data.get_pixbuf();
-
-if (temp)
-{
-	cout << "-> INFO: pixbuf size = " << temp->get_byte_length() << endl;
-}
-else
-{
-	cerr << "-> WARNING: get_pixbuf() did not return a pixbuf" << endl;
-	cout << "-> INFO: if targets include image = " << selection_data.targets_include_image(false) << endl;
-}
-#if 0
-// TODO: this is redundant, make use of selection data
-static const int format = 8;
-if ((selection_data.get_length() == 0) && (selection_data.get_format() == format))
-{
-	context->drag_finish(true, false, time); // drop finished, data no longer required
-}
-#endif
-
-#endif // DEBUG_DND_LOG
-#if 0 //DEBUG_DND_LOG
-cout << endl;
-cout << "Field::on_drag_leave()" << endl;
-cout << "-> INFO: time = " << time << endl;
-#endif // DEBUG_DND_LOG
-#if 0 // DEBUG_DND_LOG
-if (motion_count < 3)
-{
-	++motion_count;
-	cout << endl;
-	cout << "Field::on_drag_motion()" << endl;
-	cout << "-> INFO: x = " << x << endl;
-	cout << "-> INFO: y = " << y << endl;
-	cout << "-> INFO: time = " << time << endl;
-}
-#endif // DEBUG_DND_VERBOSE
-
-#if 0 // DEBUG_DND_LOG
-cout << endl;
-cout << "Field::on_drag_drop()" << endl;
-cout << "-> INFO: x = " << x << endl;
-cout << "-> INFO: y = " << y << endl;
-cout << "-> INFO: time = " << time << endl;
-#endif // DEBUG_DND_LOG
-
-#ifdef DEBUG_SIGNALS
-cout << "clear: " << mName << endl;
-#endif // DEBUG_SIGNALS

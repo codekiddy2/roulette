@@ -31,24 +31,39 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "engine.hh"
 #include "main.hh"
 #include "history.hh" // forward declared class
-#include "sets.hh" // forward declared enum
+//#include "infobar.hh"
+#include "table.hh"
 
 namespace roulette
 {
-	boost::random::random_device Engine::rng;
 
-	Engine::Engine(History* history) :
-		pHistory(history)
+#ifdef _MSC_VER
+#pragma region
+#endif // _MSC_VER
+
+
+	using std::string;
+	using std::to_string;
+
+	boost::random::random_device Engine::m_rng;
+
+	Engine::Engine(Table* p_table, History* p_history/*, InfoBar* p_infobar*/) :
+		mp_table(p_table),
+		mp_history(p_history)
 	{
 
+		mp_table->signal_bet.connect(sigc::mem_fun(*this, &Engine::place_bet));
 	}
 
-	void Engine::spin(const ETable table_type) const
-	{
-		using std::string;
-		using std::to_string;
+#ifdef _MSC_VER
+#pragma endregion begin
 
-		typedef boost::random::uniform_smallint<> dist_t;
+#pragma region
+#endif // _MSC_VER
+
+	void Engine::spin(const ETable table_type)
+	{
+		typedef boost::random::uniform_smallint<> type_dist;
 
 		string red_output, black_output, green_output;
 		string single_space = " ", triple_space = "   ", newline = "\n", tab = "\t";
@@ -59,8 +74,8 @@ namespace roulette
 			break;
 		case ETable::European:
 		{
-			static dist_t dist(0, static_cast<int>(EuropeanWheel.size()));
-			int result = dist(Engine::rng);
+			static type_dist dist(0, static_cast<int>(EuropeanWheel.size()));
+			int result = dist(Engine::m_rng);
 
 			// format result to be properly aligned with past results
 			if (result == 0)
@@ -78,20 +93,20 @@ namespace roulette
 
 			// what ever the result each column in history applies text
 			green_output.append(newline);
-			green_output.append(pHistory->get_green_buffer_text());
+			green_output.append(mp_history->get_green_buffer_text());
 
 			red_output.append(newline);
-			red_output.append(pHistory->get_red_buffer_text());
+			red_output.append(mp_history->get_red_buffer_text());
 
 			black_output.append(newline);
-			black_output.append(pHistory->get_black_buffer_text());
+			black_output.append(mp_history->get_black_buffer_text());
 
-			pHistory->set_green_buffer_text(green_output);
-			pHistory->set_red_buffer_text(red_output);
-			pHistory->set_black_buffer_text(black_output);
+			mp_history->set_green_buffer_text(green_output);
+			mp_history->set_red_buffer_text(red_output);
+			mp_history->set_black_buffer_text(black_output);
 
 			// apply colors
-			pHistory->apply_tags();
+			mp_history->apply_tags();
 			break;
 		}
 		case ETable::American:
@@ -101,8 +116,11 @@ namespace roulette
 		case ETable::TripleImprisonment:
 		case ETable::InfininiteImprisonment:
 			break;
-		default:
-			break;
 		}
 	}
+
+#ifdef _MSC_VER
+#pragma endregion methods
+#endif // _MSC_VER
+
 } // namespace roulette

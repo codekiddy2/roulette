@@ -45,7 +45,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 namespace roulette
 {
-	//typedef std::vector<unsigned> Selection_t; // numbers selected for the bet (ALSO DEFINED AS set_t !)
+	//typedef std::vector<unsigned> type_selection; // numbers selected for the bet (ALSO DEFINED AS type_set !)
 
 	class Bet final
 	{
@@ -55,8 +55,13 @@ namespace roulette
 			const EBet bet,
 			unsigned chip_info,
 			Gdk::Point& point,
-			std::shared_ptr<Selection_t> selection = nullptr,
+			std::shared_ptr<type_selection> selection = nullptr,
 			Bet* parent = nullptr
+			);
+
+		Bet(const EBet bet,
+			const EChip chip,
+			std::shared_ptr<type_selection> selection = nullptr
 			);
 
 		Bet(Bet&& ref);
@@ -66,10 +71,10 @@ namespace roulette
 
 		// methods
 		EBet get_id() const; // ID
-		EChip get_chips() const; // amount of chips
+		unsigned get_chips() const; // amount of chips
 		unsigned get_childs() const; // amount of childs
 		unsigned get_numbers() const; // amount of numbers
-		Selection_t get_selection() const;
+		type_selection get_selection() const;
 		unsigned get_number(const unsigned& index) const; // reference number
 		
 		void set_points(Gdk::Point& point);
@@ -90,7 +95,15 @@ namespace roulette
 		EBet mId;
 		const Bet* mpParent;
 		std::shared_ptr<Childs_t> mpChilds;
-		std::shared_ptr<Selection_t> mpSelection;
+
+		// new constructor
+		EBet m_bet;
+		unsigned m_chip;
+		std::shared_ptr<type_selection> mp_selection;
+		unsigned m_nums; // total table numbers
+
+
+		std::shared_ptr<type_selection> mpSelection;
 		const char* mpName;
 		signed mCoverage;
 		unsigned mChips;
@@ -123,7 +136,7 @@ namespace roulette
 		void assign_name();
 		void set_part_1(const unsigned& chips);
 		void set_part_2(const ETable& table, const unsigned& nums, const unsigned& chips);
-		void fill_childs(const ETable& table, const std::shared_ptr<Selection_t> selection, const int& chips, Gdk::Point point);
+		void fill_childs(const ETable& table, const std::shared_ptr<type_selection> selection, const int& chips, Gdk::Point point);
 	};
 
 #ifdef _MSC_VER
@@ -158,12 +171,12 @@ namespace roulette
 		}
 	}
 
-	inline EChip Bet::get_chips() const
+	inline unsigned Bet::get_chips() const
 	{
-		return static_cast<EChip>( mChips );
+		return m_chip;
 	}
 
-	inline Selection_t Bet::get_selection() const
+	inline type_selection Bet::get_selection() const
 	{
 		if (mpSelection)
 		{
@@ -171,9 +184,9 @@ namespace roulette
 		}
 		else
 		{
-			std::cout << "WARNING: get_selection() -> pointer is null, returning empty Selection_t " << std::endl;
+			std::cout << "WARNING: get_selection() -> pointer is null, returning empty type_selection " << std::endl;
 
-			return Selection_t();
+			return type_selection();
 		}
 	}
 

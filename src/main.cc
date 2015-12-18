@@ -174,6 +174,7 @@ namespace roulette
 		case roulette::EChip::Chip100:
 			return icon100;
 		case roulette::EChip::Eraser:
+		default:
 			return eraser;
 		}
 	}
@@ -182,7 +183,7 @@ namespace roulette
 	{
 		unsigned i = 0;
 		using std::find;
-		static set_t::const_iterator iter;
+		static type_set::const_iterator iter;
 
 		switch (table)
 		{

@@ -38,10 +38,12 @@ using std::string;
 using namespace roulette;
 
 Window::Window(Glib::RefPtr<Gdk::Pixbuf> refIcon) :
-	mHistory(new History),
-	mEngine(mHistory),
-	mFrameHistory("History"),
-	mFrameBets("Bets")
+	mp_table(new Table),
+	mp_history(new History),
+	mp_engine(new Engine(mp_table, mp_history)),
+	m_infobar(mp_table, mp_engine)
+	//mFrameHistory("History"),
+	//mFrameBets("Bets")
 {
 	// Window options
 	int width = 500;
@@ -57,21 +59,24 @@ Window::Window(Glib::RefPtr<Gdk::Pixbuf> refIcon) :
 	Gdk::RGBA background("rgb(0, 102, 0)"); // green
 
 	// PACKING from left to right
-	mHBoxTop.pack_start(mFrameHistory, Gtk::PACK_SHRINK); // history widnow
-	mFrameHistory.add(*mHistory);
-	mFrameHistory.set_size_request(width / 5, 0);
+	mHBoxTop.pack_start(*mp_history, Gtk::PACK_SHRINK);
+	//mHBoxTop.pack_start(mFrameHistory, Gtk::PACK_SHRINK); // history widnow
+	//mFrameHistory.add(*mp_history);
+	//mFrameHistory.set_size_request(width / 5, 0);
 	mHBoxTop.pack_start(mVBoxArea, Gtk::PACK_EXPAND_WIDGET);
 
 	// PACKING from top to bottom
-	mVBoxArea.pack_start(mFrameBets, Gtk::PACK_EXPAND_WIDGET); // Table
-	mFrameBets.add(mTable);
+	mVBoxArea.pack_start(m_infobar, Gtk::PACK_SHRINK);
+	mVBoxArea.pack_start(*mp_table, Gtk::PACK_EXPAND_WIDGET);
+	//mVBoxArea.pack_start(mFrameBets, Gtk::PACK_EXPAND_WIDGET); // Table
+	//mFrameBets.add(*mp_table);
 	mVBoxArea.pack_start(mHBoxControls, Gtk::PACK_SHRINK);
 	mHBoxControls.override_background_color(background); // TODO: temporary background color
 	
 	// PACKING from right to left
 	mHBoxControls.pack_end(mControlset, Gtk::PACK_SHRINK); // Controlset
 	Control::set_background_color(background);
-	mHBoxControls.pack_end(mChipset, Gtk::PACK_SHRINK); // chipset
+	mHBoxControls.pack_start(mChipset, Gtk::PACK_SHRINK); // chipset
 	Chip::set_background_color(background);
 	
 	// Controlset properties
@@ -85,9 +90,6 @@ Window::Window(Glib::RefPtr<Gdk::Pixbuf> refIcon) :
 
 	show_all();
 
-	// temp
-	mTable.PrintProperties();
-
 	// signals
 	mControlset.mBtnClose.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_close));
 	mControlset.mBtnSpin.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_spin));
@@ -95,9 +97,11 @@ Window::Window(Glib::RefPtr<Gdk::Pixbuf> refIcon) :
 	mControlset.mBtnClear.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_clear));
 }
 
-Window::~Window()
+roulette::Window::~Window()
 {
-	delete mHistory;
+	delete mp_table;
+	delete mp_history;
+	delete mp_engine;
 }
 
 bool Window::on_button_close(GdkEventButton* /*button_event*/)
@@ -108,8 +112,7 @@ bool Window::on_button_close(GdkEventButton* /*button_event*/)
 
 bool Window::on_button_spin(GdkEventButton* /*button_event*/)
 {
-
-	mEngine.spin(mTable.get_table_type());
+	mp_engine->spin(mp_table->get_table_type());
 	return true;
 }
 
@@ -119,12 +122,11 @@ bool Window::on_button_spin50(GdkEventButton* button_event)
 	{
 		on_button_spin(button_event);
 	}
-
 	return true;
 }
 
 bool Window::on_button_clear(GdkEventButton* /*button_event*/)
 {
-	mTable.signal_clear.emit();
+	mp_table->signal_clear.emit();
 	return true;
 }

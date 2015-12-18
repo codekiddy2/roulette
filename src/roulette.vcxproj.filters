@@ -56,6 +56,9 @@
     <ClInclude Include="main.hh">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="infobar.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="table.cc">
@@ -95,6 +98,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="bet.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="infobar.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

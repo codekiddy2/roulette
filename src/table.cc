@@ -49,9 +49,9 @@ namespace roulette
 	using roulette::error;
 
 	Table::Table(const ETable table_type) :
-		mTableMax(0),
-		mTableType(table_type),
-		mTotalBets(0)
+		m_tablemax(0),
+		m_tabletype(table_type),
+		m_totalbets(0)
 	{
 		set_column_homogeneous(true);
 		set_row_homogeneous(true);
@@ -70,31 +70,31 @@ namespace roulette
 		for (size_t i = 0; i < static_cast<size_t>(EField::Dummy3); i++)
 		{
 			temp = static_cast<EField>(i);
-			mFields.insert(make_pair(temp, new Field(temp, this)));
+			m_fields.insert(make_pair(temp, new Field(temp, this)));
 		}
 		// TODO: check if any signals are connected more than once,
 		//ex: debug output how many times handlers get called per chip placed (should be once only)
 	
 		// get dozens and their neighbors on top (column1) (will be used later, forward declaration.
-		auto zerro = mFields.find(EField::Number0)->second;
-		auto number1 = mFields.find(EField::Number1)->second;
-		auto number2 = mFields.find(EField::Number2)->second;
-		auto number3 = mFields.find(EField::Number3)->second;
-		auto dozen1 = mFields.find(EField::Dozen1)->second;
-		auto dozen2 = mFields.find(EField::Dozen2)->second;
-		auto dozen3 = mFields.find(EField::Dozen3)->second;
-		auto number4 = mFields.find(EField::Number4)->second;
-		auto number7 = mFields.find(EField::Number7)->second;
-		auto number10 = mFields.find(EField::Number10)->second;
-		auto number13 = mFields.find(EField::Number13)->second;
-		auto number16 = mFields.find(EField::Number16)->second;
-		auto number19 = mFields.find(EField::Number19)->second;
-		auto number22 = mFields.find(EField::Number22)->second;
-		auto number25 = mFields.find(EField::Number25)->second;
-		auto number28 = mFields.find(EField::Number28)->second;
-		auto number31 = mFields.find(EField::Number31)->second;
-		auto number34 = mFields.find(EField::Number34)->second;
-		auto dummy1 = mFields.find(EField::Dummy1)->second;
+		auto zerro = m_fields.find(EField::Number0)->second;
+		auto number1 = m_fields.find(EField::Number1)->second;
+		auto number2 = m_fields.find(EField::Number2)->second;
+		auto number3 = m_fields.find(EField::Number3)->second;
+		auto dozen1 = m_fields.find(EField::Dozen1)->second;
+		auto dozen2 = m_fields.find(EField::Dozen2)->second;
+		auto dozen3 = m_fields.find(EField::Dozen3)->second;
+		auto number4 = m_fields.find(EField::Number4)->second;
+		auto number7 = m_fields.find(EField::Number7)->second;
+		auto number10 = m_fields.find(EField::Number10)->second;
+		auto number13 = m_fields.find(EField::Number13)->second;
+		auto number16 = m_fields.find(EField::Number16)->second;
+		auto number19 = m_fields.find(EField::Number19)->second;
+		auto number22 = m_fields.find(EField::Number22)->second;
+		auto number25 = m_fields.find(EField::Number25)->second;
+		auto number28 = m_fields.find(EField::Number28)->second;
+		auto number31 = m_fields.find(EField::Number31)->second;
+		auto number34 = m_fields.find(EField::Number34)->second;
+		auto dummy1 = m_fields.find(EField::Dummy1)->second;
 
 		// begin attaching beinning from zero and connect signals by the way
 		attach(*zerro, 0, 0, 1, 3);
@@ -123,7 +123,7 @@ namespace roulette
 		zerro->signal_bet_basket.connect(sigc::mem_fun(number1, &Field::on_signal_bet_bottom_left));
 
 		// dummy1 - placed below zero
-		attach(*mFields.find(EField::Dummy1)->second, 0, 3, 1, 2);
+		attach(*m_fields.find(EField::Dummy1)->second, 0, 3, 1, 2);
 		dummy1->signal_bet_basket.connect(sigc::mem_fun(zerro, &Field::on_signal_bet_bottom_right));
 		dummy1->signal_bet_basket.connect(sigc::mem_fun(number1, &Field::on_signal_bet_bottom_left));
 		dummy1->signal_bet_basket.connect(sigc::mem_fun(dozen1, &Field::on_signal_bet_top_left));
@@ -141,15 +141,15 @@ namespace roulette
 			++col) // iterate street by street
 		{
 			// attach current street beginning from top to bottom
-			attach(*mFields.find(static_cast<EField>(col3))->second, col, 0, 1, 1); // on roulette table this is: Field, street number, column number, size, size
-			attach(*mFields.find(static_cast<EField>(col2))->second, col, 1, 1, 1);
-			attach(*mFields.find(static_cast<EField>(col1))->second, col, 2, 1, 1);
+			attach(*m_fields.find(static_cast<EField>(col3))->second, col, 0, 1, 1); // on roulette table this is: Field, street number, column number, size, size
+			attach(*m_fields.find(static_cast<EField>(col2))->second, col, 1, 1, 1);
+			attach(*m_fields.find(static_cast<EField>(col1))->second, col, 2, 1, 1);
 
 			// begin connecting signals...
 			// get numbers (Fields): 1, 2, 3 from current street ...
-			auto c1 = mFields.find(static_cast<EField>(col1))->second;
-			auto c2 = mFields.find(static_cast<EField>(col2))->second;
-			auto c3 = mFields.find(static_cast<EField>(col3))->second;
+			auto c1 = m_fields.find(static_cast<EField>(col1))->second;
+			auto c2 = m_fields.find(static_cast<EField>(col2))->second;
+			auto c3 = m_fields.find(static_cast<EField>(col3))->second;
 
 			// neighbors on top
 			c2->signal_bet_top.connect(sigc::mem_fun(c3, &Field::on_signal_bet_bottom));
@@ -160,185 +160,185 @@ namespace roulette
 			c2->signal_bet_bottom.connect(sigc::mem_fun(c1, &Field::on_signal_bet_top));
 
 			// neighbors to the right ( using +/- relative to current filed)
-			if (mFields.count(static_cast<EField>(col1 + 3))) // count returns either 0 or 1, need to check on first street and last street
+			if (m_fields.count(static_cast<EField>(col1 + 3))) // count returns either 0 or 1, need to check on first street and last street
 			{
-				auto right1 = mFields.find(static_cast<EField>(col1 + 3))->second;
+				auto right1 = m_fields.find(static_cast<EField>(col1 + 3))->second;
 				c1->signal_bet_right.connect(sigc::mem_fun(right1, &Field::on_signal_bet_left));
 			}
-			if (mFields.count(static_cast<EField>(col2 + 3)))
+			if (m_fields.count(static_cast<EField>(col2 + 3)))
 			{
-				auto right2 = mFields.find(static_cast<EField>(col2 + 3))->second;
+				auto right2 = m_fields.find(static_cast<EField>(col2 + 3))->second;
 				c2->signal_bet_right.connect(sigc::mem_fun(right2, &Field::on_signal_bet_left));
 			}
-			if (mFields.count(static_cast<EField>(col3 + 3)))
+			if (m_fields.count(static_cast<EField>(col3 + 3)))
 			{
-				auto right3 = mFields.find(static_cast<EField>(col3 + 3))->second;
+				auto right3 = m_fields.find(static_cast<EField>(col3 + 3))->second;
 				c3->signal_bet_right.connect(sigc::mem_fun(right3, &Field::on_signal_bet_left));
 			}
 
 			// neighbors to the left
-			if (mFields.count(static_cast<EField>(col1 - 3)))
+			if (m_fields.count(static_cast<EField>(col1 - 3)))
 			{
-				auto left1 = mFields.find(static_cast<EField>(col1 - 3))->second;
+				auto left1 = m_fields.find(static_cast<EField>(col1 - 3))->second;
 				c1->signal_bet_left.connect(sigc::mem_fun(left1, &Field::on_signal_bet_right));
 			}
-			if (mFields.count(static_cast<EField>(col2 - 3)))
+			if (m_fields.count(static_cast<EField>(col2 - 3)))
 			{
-				auto left2 = mFields.find(static_cast<EField>(col2 - 3))->second;
+				auto left2 = m_fields.find(static_cast<EField>(col2 - 3))->second;
 				c2->signal_bet_left.connect(sigc::mem_fun(left2, &Field::on_signal_bet_right));
 			}
-			if (mFields.count(static_cast<EField>(col3 - 3)))
+			if (m_fields.count(static_cast<EField>(col3 - 3)))
 			{
-				auto left3 = mFields.find(static_cast<EField>(col3 - 3))->second;
+				auto left3 = m_fields.find(static_cast<EField>(col3 - 3))->second;
 				c3->signal_bet_left.connect(sigc::mem_fun(left3, &Field::on_signal_bet_right));
 			}
 
 			// neighbors on right top
-			if (mFields.count(static_cast<EField>(col1 + 4)))
+			if (m_fields.count(static_cast<EField>(col1 + 4)))
 			{
-				auto right_top = mFields.find(static_cast<EField>(col1 + 4))->second;
+				auto right_top = m_fields.find(static_cast<EField>(col1 + 4))->second;
 				c1->signal_bet_top_right.connect(sigc::mem_fun(right_top, &Field::on_signal_bet_bottom_left));
 			}
-			if (mFields.count(static_cast<EField>(col2 + 4)))
+			if (m_fields.count(static_cast<EField>(col2 + 4)))
 			{
-				auto right_top = mFields.find(static_cast<EField>(col2 + 4))->second;
+				auto right_top = m_fields.find(static_cast<EField>(col2 + 4))->second;
 				c2->signal_bet_top_right.connect(sigc::mem_fun(right_top, &Field::on_signal_bet_bottom_left));
 			}
-			if (mFields.count(static_cast<EField>(col1 + 1)))
+			if (m_fields.count(static_cast<EField>(col1 + 1)))
 			{
-				auto right_top = mFields.find(static_cast<EField>(col1 + 1))->second;
+				auto right_top = m_fields.find(static_cast<EField>(col1 + 1))->second;
 				c1->signal_bet_top_right.connect(sigc::mem_fun(right_top, &Field::on_signal_bet_bottom_right));
 			}
-			if (mFields.count(static_cast<EField>(col2 + 1)))
+			if (m_fields.count(static_cast<EField>(col2 + 1)))
 			{
-				auto right_top = mFields.find(static_cast<EField>(col2 + 1))->second;
+				auto right_top = m_fields.find(static_cast<EField>(col2 + 1))->second;
 				c2->signal_bet_top_right.connect(sigc::mem_fun(right_top, &Field::on_signal_bet_bottom_right));
 			}
-			if (mFields.count(static_cast<EField>(col1 + 3)))
+			if (m_fields.count(static_cast<EField>(col1 + 3)))
 			{
-				auto right_top = mFields.find(static_cast<EField>(col1 + 3))->second;
+				auto right_top = m_fields.find(static_cast<EField>(col1 + 3))->second;
 				c1->signal_bet_top_right.connect(sigc::mem_fun(right_top, &Field::on_signal_bet_top_left));
 			}
-			if (mFields.count(static_cast<EField>(col2 + 3)))
+			if (m_fields.count(static_cast<EField>(col2 + 3)))
 			{
-				auto right_top = mFields.find(static_cast<EField>(col2 + 3))->second;
+				auto right_top = m_fields.find(static_cast<EField>(col2 + 3))->second;
 				c2->signal_bet_top_right.connect(sigc::mem_fun(right_top, &Field::on_signal_bet_top_left));
 			}
 
 			// neighbors on left top
-			if (mFields.count(static_cast<EField>(col2 - 2)))
+			if (m_fields.count(static_cast<EField>(col2 - 2)))
 			{
-				auto left_top = mFields.find(static_cast<EField>(col2 - 2))->second;
+				auto left_top = m_fields.find(static_cast<EField>(col2 - 2))->second;
 				if(left_top->get_index() != EField::Number0) // its already connected (this signal would be dead call)
 					c2->signal_bet_top_left.connect(sigc::mem_fun(left_top, &Field::on_signal_bet_bottom_right));
 			}
-			if (mFields.count(static_cast<EField>(col1 - 2)))
+			if (m_fields.count(static_cast<EField>(col1 - 2)))
 			{
-				auto left_top = mFields.find(static_cast<EField>(col1 - 2))->second;
+				auto left_top = m_fields.find(static_cast<EField>(col1 - 2))->second;
 				c1->signal_bet_top_left.connect(sigc::mem_fun(left_top, &Field::on_signal_bet_bottom_right));
 			}
-			if (mFields.count(static_cast<EField>(col2 + 1)))
+			if (m_fields.count(static_cast<EField>(col2 + 1)))
 			{
-				auto left_top = mFields.find(static_cast<EField>(col2 + 1))->second;
+				auto left_top = m_fields.find(static_cast<EField>(col2 + 1))->second;
 				c2->signal_bet_top_left.connect(sigc::mem_fun(left_top, &Field::on_signal_bet_bottom_left));
 			}
-			if (mFields.count(static_cast<EField>(col1 + 1)))
+			if (m_fields.count(static_cast<EField>(col1 + 1)))
 			{
-				auto left_top = mFields.find(static_cast<EField>(col1 + 1))->second;
+				auto left_top = m_fields.find(static_cast<EField>(col1 + 1))->second;
 				c1->signal_bet_top_left.connect(sigc::mem_fun(left_top, &Field::on_signal_bet_bottom_left));
 			}
 
-			if (mFields.count(static_cast<EField>(col2 - 3)))
+			if (m_fields.count(static_cast<EField>(col2 - 3)))
 			{
-				auto left_top = mFields.find(static_cast<EField>(col2 - 3))->second;
+				auto left_top = m_fields.find(static_cast<EField>(col2 - 3))->second;
 				c2->signal_bet_top_left.connect(sigc::mem_fun(left_top, &Field::on_signal_bet_top_right));
 			}
-			if (mFields.count(static_cast<EField>(col1 - 3)))
+			if (m_fields.count(static_cast<EField>(col1 - 3)))
 			{
-				auto left_top = mFields.find(static_cast<EField>(col1 - 3))->second;
+				auto left_top = m_fields.find(static_cast<EField>(col1 - 3))->second;
 				c1->signal_bet_top_left.connect(sigc::mem_fun(left_top, &Field::on_signal_bet_top_right));
 			}
 
 			// neighbors on bottom right
-			if (mFields.count(static_cast<EField>(col3 + 2)))
+			if (m_fields.count(static_cast<EField>(col3 + 2)))
 			{
-				auto bottom_right = mFields.find(static_cast<EField>(col3 + 2))->second;
+				auto bottom_right = m_fields.find(static_cast<EField>(col3 + 2))->second;
 				c3->signal_bet_bottom_right.connect(sigc::mem_fun(bottom_right, &Field::on_signal_bet_top_left));
 			}
-			if (mFields.count(static_cast<EField>(col2 + 2)))
+			if (m_fields.count(static_cast<EField>(col2 + 2)))
 			{
-				auto bottom_right = mFields.find(static_cast<EField>(col2 + 2))->second;
+				auto bottom_right = m_fields.find(static_cast<EField>(col2 + 2))->second;
 				c2->signal_bet_bottom_right.connect(sigc::mem_fun(bottom_right, &Field::on_signal_bet_top_left));
 			}
-			if (mFields.count(static_cast<EField>(col3 - 1)))
+			if (m_fields.count(static_cast<EField>(col3 - 1)))
 			{
-				auto bottom_right = mFields.find(static_cast<EField>(col3 - 1))->second;
+				auto bottom_right = m_fields.find(static_cast<EField>(col3 - 1))->second;
 				c3->signal_bet_bottom_right.connect(sigc::mem_fun(bottom_right, &Field::on_signal_bet_top_right));
 			}
-			if (mFields.count(static_cast<EField>(col2 - 1)))
+			if (m_fields.count(static_cast<EField>(col2 - 1)))
 			{
-				auto bottom_right = mFields.find(static_cast<EField>(col2 - 1))->second;
+				auto bottom_right = m_fields.find(static_cast<EField>(col2 - 1))->second;
 				c2->signal_bet_bottom_right.connect(sigc::mem_fun(bottom_right, &Field::on_signal_bet_top_right));
 			}
-			if (mFields.count(static_cast<EField>(col3 + 3)))
+			if (m_fields.count(static_cast<EField>(col3 + 3)))
 			{
-				auto bottom_right = mFields.find(static_cast<EField>(col3 + 3))->second;
+				auto bottom_right = m_fields.find(static_cast<EField>(col3 + 3))->second;
 				c3->signal_bet_bottom_right.connect(sigc::mem_fun(bottom_right, &Field::on_signal_bet_bottom_left));
 			}
-			if (mFields.count(static_cast<EField>(col2 + 3)))
+			if (m_fields.count(static_cast<EField>(col2 + 3)))
 			{
-				auto bottom_right = mFields.find(static_cast<EField>(col2 + 3))->second;
+				auto bottom_right = m_fields.find(static_cast<EField>(col2 + 3))->second;
 				c2->signal_bet_bottom_right.connect(sigc::mem_fun(bottom_right, &Field::on_signal_bet_bottom_left));
 			}
-			if (mFields.count(static_cast<EField>(col1 + 3)))
+			if (m_fields.count(static_cast<EField>(col1 + 3)))
 			{
-				auto bottom_right = mFields.find(static_cast<EField>(col1 + 3))->second;
+				auto bottom_right = m_fields.find(static_cast<EField>(col1 + 3))->second;
 				c1->signal_bet_bottom_right.connect(sigc::mem_fun(bottom_right, &Field::on_signal_bet_bottom_left));
 			}
 
 			// neighbors on left bottom
-			if (mFields.count(static_cast<EField>(col3 - 1)))
+			if (m_fields.count(static_cast<EField>(col3 - 1)))
 			{
-				auto left_bottom = mFields.find(static_cast<EField>(col3 - 1))->second;
+				auto left_bottom = m_fields.find(static_cast<EField>(col3 - 1))->second;
 				c3->signal_bet_bottom_left.connect(sigc::mem_fun(left_bottom, &Field::on_signal_bet_top_left));
 			}
-			if (mFields.count(static_cast<EField>(col2 - 1)))
+			if (m_fields.count(static_cast<EField>(col2 - 1)))
 			{
-				auto left_bottom = mFields.find(static_cast<EField>(col2 - 1))->second;
+				auto left_bottom = m_fields.find(static_cast<EField>(col2 - 1))->second;
 				c2->signal_bet_bottom_left.connect(sigc::mem_fun(left_bottom, &Field::on_signal_bet_top_left));
 			}
-			if (mFields.count(static_cast<EField>(col3 - 4)))
+			if (m_fields.count(static_cast<EField>(col3 - 4)))
 			{
-				auto left_bottom = mFields.find(static_cast<EField>(col3 - 4))->second;
+				auto left_bottom = m_fields.find(static_cast<EField>(col3 - 4))->second;
 				c3->signal_bet_bottom_left.connect(sigc::mem_fun(left_bottom, &Field::on_signal_bet_top_right));
 			}
-			if (mFields.count(static_cast<EField>(col2 - 4)))
+			if (m_fields.count(static_cast<EField>(col2 - 4)))
 			{
-				auto left_bottom = mFields.find(static_cast<EField>(col2 - 4))->second;
+				auto left_bottom = m_fields.find(static_cast<EField>(col2 - 4))->second;
 				c2->signal_bet_bottom_left.connect(sigc::mem_fun(left_bottom, &Field::on_signal_bet_top_right));
 			}
-			if (mFields.count(static_cast<EField>(col3 - 3)))
+			if (m_fields.count(static_cast<EField>(col3 - 3)))
 			{
-				auto left_bottom = mFields.find(static_cast<EField>(col3 - 3))->second;
+				auto left_bottom = m_fields.find(static_cast<EField>(col3 - 3))->second;
 				c3->signal_bet_bottom_left.connect(sigc::mem_fun(left_bottom, &Field::on_signal_bet_bottom_right));
 			}
-			if (mFields.count(static_cast<EField>(col2 - 3)))
+			if (m_fields.count(static_cast<EField>(col2 - 3)))
 			{
-				auto left_bottom = mFields.find(static_cast<EField>(col2 - 3))->second;
+				auto left_bottom = m_fields.find(static_cast<EField>(col2 - 3))->second;
 				c2->signal_bet_bottom_left.connect(sigc::mem_fun(left_bottom, &Field::on_signal_bet_bottom_right));
 			}
-			if (mFields.count(static_cast<EField>(col1 - 3)))
+			if (m_fields.count(static_cast<EField>(col1 - 3)))
 			{
-				auto left_bottom = mFields.find(static_cast<EField>(col1 - 3))->second;
+				auto left_bottom = m_fields.find(static_cast<EField>(col1 - 3))->second;
 				c1->signal_bet_bottom_left.connect(sigc::mem_fun(left_bottom, &Field::on_signal_bet_bottom_right));
 			}
 		} // for
 
 
 		// attach column fields
-		attach(*mFields.find(EField::Column3)->second, 13, 0, 1, 1);
-		attach(*mFields.find(EField::Column2)->second, 13, 1, 1, 1);
-		attach(*mFields.find(EField::Column1)->second, 13, 2, 1, 1);
+		attach(*m_fields.find(EField::Column3)->second, 13, 0, 1, 1);
+		attach(*m_fields.find(EField::Column2)->second, 13, 1, 1, 1);
+		attach(*m_fields.find(EField::Column1)->second, 13, 2, 1, 1);
 
 		// attach dozens
 		attach(*dozen1, 1, 3, 4, 1);
@@ -471,83 +471,83 @@ namespace roulette
 		number34->signal_bet_bottom.connect(sigc::mem_fun(dozen3, &Field::on_signal_bet_top));
 
 		// dummy2 ( placed below column fields "2 to 1" )
-		attach(*mFields.find(EField::Dummy2)->second, 13, 3, 1, 2);
+		attach(*m_fields.find(EField::Dummy2)->second, 13, 3, 1, 2);
 
 		// low/high red/black high/low
-		attach(*mFields.find(EField::Low)->second, 1, 4, 2, 1);
-		attach(*mFields.find(EField::Even)->second, 3, 4, 2, 1);
-		attach(*mFields.find(EField::Red)->second, 5, 4, 2, 1);
-		attach(*mFields.find(EField::Black)->second, 7, 4, 2, 1);
-		attach(*mFields.find(EField::Odd)->second, 9, 4, 2, 1);
-		attach(*mFields.find(EField::High)->second, 11, 4, 2, 1);
+		attach(*m_fields.find(EField::Low)->second, 1, 4, 2, 1);
+		attach(*m_fields.find(EField::Even)->second, 3, 4, 2, 1);
+		attach(*m_fields.find(EField::Red)->second, 5, 4, 2, 1);
+		attach(*m_fields.find(EField::Black)->second, 7, 4, 2, 1);
+		attach(*m_fields.find(EField::Odd)->second, 9, 4, 2, 1);
+		attach(*m_fields.find(EField::High)->second, 11, 4, 2, 1);
 
 
 
 		// set up table limits
 
 		// single zero layout
-		mMaxBets.insert(make_pair(EBet::StraightUp, 37));
-		mMaxBets.insert(make_pair(EBet::Split, 60));
-		mMaxBets.insert(make_pair(EBet::Street, 12));
-		mMaxBets.insert(make_pair(EBet::Corner, 23));
-		mMaxBets.insert(make_pair(EBet::Basket, 0));
-		mMaxBets.insert(make_pair(EBet::Line, 11));
-		mMaxBets.insert(make_pair(EBet::Column1, 1));
-		mMaxBets.insert(make_pair(EBet::Column2, 1));
-		mMaxBets.insert(make_pair(EBet::Column3, 1));
-		mMaxBets.insert(make_pair(EBet::Dozen1, 1));
-		mMaxBets.insert(make_pair(EBet::Dozen2, 1));
-		mMaxBets.insert(make_pair(EBet::Dozen3, 1));
-		mMaxBets.insert(make_pair(EBet::High, 1));
-		mMaxBets.insert(make_pair(EBet::Low, 1));
-		mMaxBets.insert(make_pair(EBet::Red, 1));
-		mMaxBets.insert(make_pair(EBet::Black, 1));
-		mMaxBets.insert(make_pair(EBet::Even, 1));
-		mMaxBets.insert(make_pair(EBet::Odd, 1));
+		m_maxbets.insert(make_pair(EBet::StraightUp, 37));
+		m_maxbets.insert(make_pair(EBet::Split, 60));
+		m_maxbets.insert(make_pair(EBet::Street, 12));
+		m_maxbets.insert(make_pair(EBet::Corner, 23));
+		m_maxbets.insert(make_pair(EBet::Basket, 0));
+		m_maxbets.insert(make_pair(EBet::Line, 11));
+		m_maxbets.insert(make_pair(EBet::Column1, 1));
+		m_maxbets.insert(make_pair(EBet::Column2, 1));
+		m_maxbets.insert(make_pair(EBet::Column3, 1));
+		m_maxbets.insert(make_pair(EBet::Dozen1, 1));
+		m_maxbets.insert(make_pair(EBet::Dozen2, 1));
+		m_maxbets.insert(make_pair(EBet::Dozen3, 1));
+		m_maxbets.insert(make_pair(EBet::High, 1));
+		m_maxbets.insert(make_pair(EBet::Low, 1));
+		m_maxbets.insert(make_pair(EBet::Red, 1));
+		m_maxbets.insert(make_pair(EBet::Black, 1));
+		m_maxbets.insert(make_pair(EBet::Even, 1));
+		m_maxbets.insert(make_pair(EBet::Odd, 1));
 
-		mMaxiter = mMaxBets.begin();
+		m_maxiter = m_maxbets.begin();
 
-		switch (mTableType)
+		switch (m_tabletype)
 		{
 		case ETable::American:
 			// modify maximum number of single EBet that can be placed on a ETable
-			mMaxiter->second = 38;
-			++mMaxiter;
-			mMaxiter->second = 61;
-			++mMaxiter;
-			mMaxiter->second = 15;
-			++mMaxiter;
-			mMaxiter->second = 22;
-			++mMaxiter;
-			mMaxiter->second = 1;
-			++mMaxiter;
-			mMaxiter->second = 11;
+			m_maxiter->second = 38;
+			++m_maxiter;
+			m_maxiter->second = 61;
+			++m_maxiter;
+			m_maxiter->second = 15;
+			++m_maxiter;
+			m_maxiter->second = 22;
+			++m_maxiter;
+			m_maxiter->second = 1;
+			++m_maxiter;
+			m_maxiter->second = 11;
 
 			// blacklisted bets for this table
-			mBlacklist.push_back(EBet::Jeu0);
-			mBlacklist.push_back(EBet::OrphelinsEnPlen);
-			mBlacklist.push_back(EBet::OrphelinsACheval);
-			mBlacklist.push_back(EBet::TriesDuCylindre);
-			mBlacklist.push_back(EBet::VoisinsDeZero);
+			m_blacklist.push_back(EBet::Jeu0);
+			m_blacklist.push_back(EBet::OrphelinsEnPlen);
+			m_blacklist.push_back(EBet::OrphelinsACheval);
+			m_blacklist.push_back(EBet::TriesDuCylindre);
+			m_blacklist.push_back(EBet::VoisinsDeZero);
 			break;
 
 		case ETable::NoZero:
-			mMaxiter->second = 36;
-			++mMaxiter;
-			mMaxiter->second = 57;
-			++mMaxiter;
-			mMaxiter->second = 10;
-			++mMaxiter;
-			++mMaxiter;
-			mMaxiter->second = 0;
+			m_maxiter->second = 36;
+			++m_maxiter;
+			m_maxiter->second = 57;
+			++m_maxiter;
+			m_maxiter->second = 10;
+			++m_maxiter;
+			++m_maxiter;
+			m_maxiter->second = 0;
 
-			mBlacklist.push_back(EBet::Jeu0);
-			mBlacklist.push_back(EBet::Basket);
-			mBlacklist.push_back(EBet::Maximus0);
-			mBlacklist.push_back(EBet::Maximus00);
-			mBlacklist.push_back(EBet::VoisinsDeZero);
-			mBlacklist.push_back(EBet::FinalesEnPlen0);
-			mBlacklist.push_back(EBet::FinalesACheval01);
+			m_blacklist.push_back(EBet::Jeu0);
+			m_blacklist.push_back(EBet::Basket);
+			m_blacklist.push_back(EBet::Maximus0);
+			m_blacklist.push_back(EBet::Maximus00);
+			m_blacklist.push_back(EBet::VoisinsDeZero);
+			m_blacklist.push_back(EBet::FinalesEnPlen0);
+			m_blacklist.push_back(EBet::FinalesACheval01);
 			break;
 		case ETable::European:
 		case ETable::French:
@@ -556,48 +556,48 @@ namespace roulette
 		case ETable::TripleImprisonment:
 		case ETable::InfininiteImprisonment:
 		default: // single zero table
-			mBlacklist.push_back(EBet::Basket);
-			mBlacklist.push_back(EBet::Maximus00);
+			m_blacklist.push_back(EBet::Basket);
+			m_blacklist.push_back(EBet::Maximus00);
 			break;
 		}
 
 		// calculate SUM of total bets
-		for (mMaxiter = mMaxBets.begin(); mMaxiter != mMaxBets.end(); ++mMaxiter)
-			mTotalBets += mMaxiter->second;
+		for (m_maxiter = m_maxbets.begin(); m_maxiter != m_maxbets.end(); ++m_maxiter)
+			m_totalbets += m_maxiter->second;
 
 		// Insert initial miminums
-		mMinimums.insert(make_pair(EMinimum::Inside, 1));
-		mMinimums.insert(make_pair(EMinimum::Outside, 1));
-		mMinimums.insert(make_pair(EMinimum::Table, 1));
+		m_minimums.insert(make_pair(EMinimum::Inside, 1));
+		m_minimums.insert(make_pair(EMinimum::Outside, 1));
+		m_minimums.insert(make_pair(EMinimum::Table, 1));
 
 		//Insert initial maximums
-		mMaximums.insert(make_pair(EBet::StraightUp, 20));
-		mMaximums.insert(make_pair(EBet::Split, 40));
-		mMaximums.insert(make_pair(EBet::Street, 60));
-		mMaximums.insert(make_pair(EBet::Corner, 80));
-		mMaximums.insert(make_pair(EBet::Basket, 80));
-		mMaximums.insert(make_pair(EBet::Line, 120));
-		mMaximums.insert(make_pair(EBet::Column1, 200));
-		mMaximums.insert(make_pair(EBet::Column2, 200));
-		mMaximums.insert(make_pair(EBet::Column3, 200));
-		mMaximums.insert(make_pair(EBet::Dozen1, 200));
-		mMaximums.insert(make_pair(EBet::Dozen2, 200));
-		mMaximums.insert(make_pair(EBet::Dozen3, 200));
-		mMaximums.insert(make_pair(EBet::Red, 400));
-		mMaximums.insert(make_pair(EBet::Black, 400));
-		mMaximums.insert(make_pair(EBet::Even, 400));
-		mMaximums.insert(make_pair(EBet::Odd, 400));
-		mMaximums.insert(make_pair(EBet::High, 400));
-		mMaximums.insert(make_pair(EBet::Low, 400));
+		m_maximums.insert(make_pair(EBet::StraightUp, 20));
+		m_maximums.insert(make_pair(EBet::Split, 40));
+		m_maximums.insert(make_pair(EBet::Street, 60));
+		m_maximums.insert(make_pair(EBet::Corner, 80));
+		m_maximums.insert(make_pair(EBet::Basket, 80));
+		m_maximums.insert(make_pair(EBet::Line, 120));
+		m_maximums.insert(make_pair(EBet::Column1, 200));
+		m_maximums.insert(make_pair(EBet::Column2, 200));
+		m_maximums.insert(make_pair(EBet::Column3, 200));
+		m_maximums.insert(make_pair(EBet::Dozen1, 200));
+		m_maximums.insert(make_pair(EBet::Dozen2, 200));
+		m_maximums.insert(make_pair(EBet::Dozen3, 200));
+		m_maximums.insert(make_pair(EBet::Red, 400));
+		m_maximums.insert(make_pair(EBet::Black, 400));
+		m_maximums.insert(make_pair(EBet::Even, 400));
+		m_maximums.insert(make_pair(EBet::Odd, 400));
+		m_maximums.insert(make_pair(EBet::High, 400));
+		m_maximums.insert(make_pair(EBet::Low, 400));
 
-		SetTableMax();
+		set_table_max();
 	}
 
 	Table::~Table()
 	{
-		for (size_t i = 0; i <= mFields.size(); i++)
+		for (size_t i = 0; i <= m_fields.size(); i++)
 		{
-			delete mFields.at(static_cast<EField>(i));
+			delete m_fields.at(static_cast<EField>(i));
 		}
 	}
 
@@ -607,38 +607,35 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
-	ETable Table::get_table_type()
+	void Table::set_table_max(const short& limit /*= 0*/)
 	{
-		return mTableType;
-	}
-
-	void Table::SetTableMax(const short& limit /*= 0*/)
-	{
-		if (limit > GetLimit(EBet::Red))
+		if (limit > get_limit(EBet::Red))
 		{
-			mTableMax = limit;
+			m_tablemax = limit;
 			return;
 		}
 
 		if (limit) // if limit is not 0
-			limit > 0 ? throw error("CTable -> SetTableMax -> Table max smaler then even oney bet") : throw error("CTable -> SetMinimum -> Table limit too low");
+			limit > 0 ?
+			throw error("CTable -> SetTableMax -> Table max smaler then even oney bet") :
+			throw error("CTable -> SetMinimum -> Table limit too low");
 
 		// if limit is zero it will be calculated according to maximum bets possible
-		mTableMax = 0;
-		mMaxiter = mMaxBets.begin();
-		for (auto btMax = mMaximums.begin(); btMax != mMaximums.end(); ++mMaxiter, ++btMax)
-			mTableMax += mMaxiter->second * btMax->second;
+		m_tablemax = 0;
+		m_maxiter = m_maxbets.begin();
+
+		for (auto btMax = m_maximums.begin(); btMax != m_maximums.end(); ++m_maxiter, ++btMax)
+		{
+			m_tablemax += m_maxiter->second * btMax->second;
+		}
 	}
 
-	void Table::PrintProperties() const
+	void Table::print_properties() const
 	{
-		using std::cout;
-		using std::endl;
-
 		cout << "Table properties" << endl;
 		cout << "**************************" << endl << endl;
 		cout << "Layout	";
-		switch (mTableType)
+		switch (m_tabletype)
 		{
 		case ETable::NoZero:
 			cout << "	No zerro" << endl;
@@ -651,7 +648,7 @@ namespace roulette
 			break;
 		case ETable::French:
 			cout << "	French ";
-			switch (mTableType)
+			switch (m_tabletype)
 			{
 			case ETable::SingleImprisonment:
 				cout << "single imprisonment" << endl;
@@ -669,25 +666,48 @@ namespace roulette
 				cout << endl;
 				break;
 			} //single zero table
-			cout << "Maximum bets    " << mTotalBets << endl;
+			cout << "Maximum bets    " << m_totalbets << endl;
 			break;
 		}
-		cout << "Inside min.	" << mMinimums.at(EMinimum::Inside) << endl;
-		cout << "Outside min.	" << mMinimums.at(EMinimum::Outside) << endl;
-		cout << "Table min.	" << mMinimums.at(EMinimum::Table) << endl;
-		cout << "Table max.	" << mTableMax << endl;
-		cout << "StraightUp	" << mMaximums.at(EBet::StraightUp) << endl;
-		cout << "Split		" << mMaximums.at(EBet::Split) << endl;
-		cout << "Street		" << mMaximums.at(EBet::Street) << endl;
-		cout << "Corner		" << mMaximums.at(EBet::Corner) << endl;
-		cout << "Basket		" << mMaximums.at(EBet::Basket) << endl;
-		cout << "Line		" << mMaximums.at(EBet::Line) << endl;
-		cout << "Column/Dozen	" << mMaximums.at(EBet::Column1) << endl;
-		cout << "EvenMoney	" << mMaximums.at(EBet::Red) << endl;
+		cout << "Inside min.	" << m_minimums.at(EMinimum::Inside) << endl;
+		cout << "Outside min.	" << m_minimums.at(EMinimum::Outside) << endl;
+		cout << "Table min.	" << m_minimums.at(EMinimum::Table) << endl;
+		cout << "Table max.	" << m_tablemax << endl;
+		cout << "StraightUp	" << m_maximums.at(EBet::StraightUp) << endl;
+		cout << "Split		" << m_maximums.at(EBet::Split) << endl;
+		cout << "Street		" << m_maximums.at(EBet::Street) << endl;
+		cout << "Corner		" << m_maximums.at(EBet::Corner) << endl;
+		cout << "Basket		" << m_maximums.at(EBet::Basket) << endl;
+		cout << "Line		" << m_maximums.at(EBet::Line) << endl;
+		cout << "Column/Dozen	" << m_maximums.at(EBet::Column1) << endl;
+		cout << "EvenMoney	" << m_maximums.at(EBet::Red) << endl;
+	}
+
+	int Table::get_limit(const EBet& name)
+	{
+		if ((m_maxiter = m_maximums.find(name)) == m_maximums.end())
+			error_handler(error("Table -> get_limit -> iterator out of range"));
+
+		return m_maxiter->second;
+	}
+
+	void Table::set_minimum(const EMinimum& name, const short& minimum)
+	{
+		if (name == EMinimum::Table && (minimum < 0))
+			error_handler(error("Table -> set_minimum -> Table minimum less then 0"));
+
+		minimum > 1 ? m_minimums.find(name)->second = minimum :
+			error_handler(error("Table -> set_minimum -> Bet minimum less then 1"));
+	}
+
+	void Table::set_maximum(const EBet& name, const short& limit)
+	{
+		(m_maxiter = m_maximums.find(name)) != m_maximums.end() ? m_maxiter->second = limit :
+			error_handler(error("Table -> set_maximum -> Iterator out of range"));
 	}
 
 #ifdef _MSC_VER
-#pragma endregion inlines
+#pragma endregion methods
 #endif // _MSC_VER
 
 } // namespace roulette

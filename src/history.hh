@@ -76,10 +76,6 @@ namespace roulette
 		History& operator=(const History&&) = delete;
 	};
 
-#ifdef _MSC_VER
-	//#pragma warning (disable: 4514) // TODO: unreferenced inline function has been removed
-#endif // _MSC_VER
-
 	void History::set_red_buffer_text(std::string text)
 	{
 		refRedBuffer->set_text(text);
@@ -110,9 +106,6 @@ namespace roulette
 		return refGreenBuffer->get_text();
 	}
 
-#ifdef _MSC_VER
-	//#pragma warning (default: 4514) // unreferenced inline function has been removed
-#endif // _MSC_VER
 } // namespace roulette
 
 #endif // ! HISTORY_HH

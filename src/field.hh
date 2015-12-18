@@ -55,6 +55,11 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 namespace roulette
 {
+
+#ifdef _MSC_VER
+#pragma region
+#endif // _MSC_VER
+
 	class Table;
 
 	class Field final
@@ -62,8 +67,9 @@ namespace roulette
 	{
 	public:
 		// constructors
-		Field(EField field_index, Table* parent);
+		Field(EField field_index, Table* p_parent);
 
+		// typedefs
 		typedef std::pair<const EChip, Gdk::Point> type_chip_pair;
 		typedef std::shared_ptr<type_chip_pair> type_chip;
 		typedef sigc::signal<void, const EField&, type_chip> signal;
@@ -145,17 +151,13 @@ namespace roulette
 		void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int field_width, int field_height);
 
 		// members
-		Pango::FontDescription mFont;
+		Pango::FontDescription m_font;
 		type_chip_container m_chips;
 
-#ifdef DEBUG_DND_LOG
-		int motion_count = 0;
-#endif
-
 		/// begin initializer list
-		Gdk::RGBA mBackground;
-		Glib::RefPtr<Pango::Layout> mLayout;
-		Table* p_parent;
+		Gdk::RGBA m_background;
+		Glib::RefPtr<Pango::Layout> m_layout;
+		Table* mp_parent;
 		EField m_index;
 		/// end initializer list
 
@@ -167,6 +169,8 @@ namespace roulette
 	};
 
 #ifdef _MSC_VER
+#pragma endregion begin
+
 #pragma region
 #endif // _MSC_VER
 

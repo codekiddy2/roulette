@@ -31,28 +31,44 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
+#include "bet.hh"
+
+#include <vector>
+#include <memory>
 #include <boost/random/random_device.hpp>
 
 namespace roulette
 {
+
+#ifdef _MSC_VER
+#pragma region
+#endif // _MSC_VER
+
 	class History;
-	enum class ETable: unsigned;
+	class Table;
 
 	class Engine final
 	{
 	public:
 		// constructors
-		Engine(History* history);
+		Engine(Table* p_table, History* p_history/*, InfoBar* p_infobar*/);
 
 		// methods
-		void spin(const ETable table_type) const;
+		void spin(const ETable table_type);
+		inline unsigned get_bet() const;
+		inline unsigned get_bankroll() const;
+		inline void place_bet(std::shared_ptr<Bet> bet);
 
 	private:
 		// members
-		static boost::random::random_device rng;
+		std::vector<std::shared_ptr<Bet>> m_bets;
+		static boost::random::random_device m_rng;
 
 		/// begin initializer list
-		History* pHistory;
+		Table* mp_table;
+		History* mp_history;
+		unsigned m_current_bet = 0;
+		unsigned m_bankroll = 2000;
 		/// end initializer list
 
 		// deleted
@@ -61,6 +77,35 @@ namespace roulette
 		Engine& operator=(const Engine&) = delete;
 		Engine& operator=(const Engine&&) = delete;
 	};
+
+#ifdef _MSC_VER
+#pragma endregion begin
+
+#pragma region
+#endif // _MSC_VER
+
+	void Engine::place_bet(std::shared_ptr<Bet> bet)
+	{
+		m_bets.push_back(bet);
+		unsigned value = bet->get_chips();
+		m_bankroll -= value;
+		m_current_bet += value;
+	}
+
+	unsigned Engine::get_bankroll() const
+	{
+		return m_bankroll;
+	}
+
+	unsigned Engine::get_bet() const
+	{
+		return m_current_bet;
+	}
+
+#ifdef _MSC_VER
+#pragma endregion inlines
+#endif // _MSC_VER
+
 } // namespace roulette
 
 #endif // !ENGINE_HH

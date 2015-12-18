@@ -37,10 +37,11 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
-#include <unordered_set>	// set_t
+#include <unordered_set>	// type_set
 
 namespace roulette
 {
+	// Used by Field
 	enum class EChip: unsigned
 	{
 		Eraser,
@@ -51,6 +52,7 @@ namespace roulette
 		Chip100 = 100
 	};
 
+	// used by Table
 	enum class ETable: unsigned
 	{
 		NoZero = 36,
@@ -63,6 +65,7 @@ namespace roulette
 		InfininiteImprisonment,
 	};
 
+	// used by Bet
 	enum class EBet: unsigned
 	{
 		UNDEFINED = 0,
@@ -146,6 +149,7 @@ namespace roulette
 		///</hasSelection>
 	};
 
+	// used by Table
 	enum class EMinimum: unsigned
 	{
 		Inside = 1,
@@ -153,6 +157,7 @@ namespace roulette
 		Table
 	};
 
+	// used by Fields and Table
 	enum class EField: unsigned
 	{
 		Number0,
@@ -210,35 +215,54 @@ namespace roulette
 		Dummy3,
 	};
 
-	typedef const std::unordered_set<unsigned> set_t;
-	typedef std::unordered_set<unsigned> Selection_t;
+	// used by InfoBar
+	enum class ELayout : unsigned
+	{
+		Bankroll,
+		Bet,
+		Inside,
+		Outside,
+		Straight,
+		Split,
+		Street,
+		Corner,
+		Line,
+		Dozen,
+		High_Low,
+		Red_Black,
+		Even_Odd,
+		Column,
+	};
 
-	extern set_t NoZeroWheel;
-	extern set_t AmericanWheel;
-	extern set_t EuropeanWheel;
+	typedef const std::unordered_set<unsigned> type_set;
+	typedef std::unordered_set<unsigned> type_selection;
 
-	extern set_t Low;
-	extern set_t Odd;
-	extern set_t Red;
-	extern set_t Jeu0;
-	extern set_t High;
-	extern set_t Even;
-	extern set_t Jeu79;
-	extern set_t Black;
-	extern set_t Snake;
-	extern set_t Dozen1;
-	extern set_t Dozen2;
-	extern set_t Dozen3;
-	extern set_t Basket;
-	extern set_t Column1;
-	extern set_t Column2;
-	extern set_t Column3;
-	extern set_t RedSplits;
-	extern set_t BlackSplits;
-	extern set_t VoisinsDeZero;
-	extern set_t OrphelinsEnPlen;
-	extern set_t TriesDuCylindre;
-	extern set_t OrphelinsACheval;
+	extern type_set NoZeroWheel;
+	extern type_set AmericanWheel;
+	extern type_set EuropeanWheel;
+
+	extern type_set Low;
+	extern type_set Odd;
+	extern type_set Red;
+	extern type_set Jeu0;
+	extern type_set High;
+	extern type_set Even;
+	extern type_set Jeu79;
+	extern type_set Black;
+	extern type_set Snake;
+	extern type_set Dozen1;
+	extern type_set Dozen2;
+	extern type_set Dozen3;
+	extern type_set Basket;
+	extern type_set Column1;
+	extern type_set Column2;
+	extern type_set Column3;
+	extern type_set RedSplits;
+	extern type_set BlackSplits;
+	extern type_set VoisinsDeZero;
+	extern type_set OrphelinsEnPlen;
+	extern type_set TriesDuCylindre;
+	extern type_set OrphelinsACheval;
 
 } // namespace roulette
 #endif // ! SETS_HH

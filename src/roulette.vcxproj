@@ -82,6 +82,8 @@
     <ClCompile>
       <EnablePREfast>false</EnablePREfast>
     </ClCompile>
+    <Link />
+    <Link />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile />
@@ -126,6 +128,7 @@
     <ClInclude Include="error.hh" />
     <ClInclude Include="field.hh" />
     <ClInclude Include="history.hh" />
+    <ClInclude Include="infobar.hh" />
     <ClInclude Include="main.hh" />
     <ClInclude Include="window.hh" />
     <ClInclude Include="sets.hh" />
@@ -141,6 +144,7 @@
     <ClCompile Include="engine.cc" />
     <ClCompile Include="field.cc" />
     <ClCompile Include="history.cc" />
+    <ClCompile Include="infobar.cc" />
     <ClCompile Include="main.cc" />
     <ClCompile Include="window.cc" />
     <ClCompile Include="sets.cc" />

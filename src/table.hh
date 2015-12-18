@@ -36,19 +36,22 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 #include "sets.hh"
 #include "error.hh"
+#include "bet.hh"
 
 #include <map>
-#include <unordered_map>
+#include <memory>
 #include <vector>
+#include <unordered_map>
 
 #include <gtkmm/grid.h>
-#include <gdkmm/rgba.h>
 #include <sigc++/signal.h>
 
 namespace roulette
 {
-	// TODO: temporary
-	using roulette::error;
+
+#ifdef _MSC_VER
+#pragma region
+#endif // _MSC_VER
 
 	class Field;
 
@@ -59,48 +62,47 @@ namespace roulette
 	public:
 		// constructors
 		Table(const ETable table_type = ETable::European);
-		virtual ~Table();
+		~Table();
 
 		// methods
-		ETable get_table_type();
-		void PrintProperties() const;
-		int GetLimit(const EBet& bet);
-		void error_handler(const error&& ref);
-		void SetTableMax(const short& limit = 0);
-		void SetMaximum(const EBet& name, const short& limit);
-		void SetMinimum(const EMinimum& name, const short& minimum);
+		int get_limit(const EBet& bet);
+		void print_properties() const;
+		void set_table_max(const short& limit = 0);
+		void set_maximum(const EBet& name, const short& limit);
+		void set_minimum(const EMinimum& name, const short& minimum);
 
-
+		inline ETable get_table_type() const;
+		inline void error_handler(const error&& ref);
+		
 		// signals
 		sigc::signal<void> signal_clear;
+		sigc::signal<void, std::shared_ptr<Bet>> signal_bet; // fields emit bet signals
 
 	private:
 		// typedefs
-		typedef std::vector<EBet> BetList;
-		typedef std::map<EBet, int> MaxContainer;
-		typedef std::map<EMinimum, short> MinContainer;
+		typedef std::vector<EBet> type_bet_list;
+		typedef std::map<EBet, int> type_max_container;
+		typedef std::map<EMinimum, short> type_min_container;
 		typedef std::unordered_map<EField, Field*> type_fields;
 
 		// members
-		type_fields mFields;
-
-		int mTableMax;
-		float mResult;
+		type_fields m_fields;
+		int m_tablemax;
+		float m_result;
 
 		// SUM of maximum number of all the BetNames that can be placed on a ETable
-		int mTotalBets;
+		int m_totalbets;
 
 		// Maximum number of n EBet that can be placed, separated into container.
-		MaxContainer mMaxBets;
+		type_max_container m_maxbets;
+		type_bet_list m_blacklist; // unsupported bet list
+		type_min_container m_minimums;	// table minimums
+		type_max_container m_maximums;	// table maximums
 
-		BetList mBlacklist; // unsupported bet list
-		MinContainer mMinimums;	// table minimums
-		MaxContainer mMaximums;	// table maximums
-
-		MaxContainer::iterator mMaxiter;	// due to constructor and GetLimit 
+		type_max_container::iterator m_maxiter; // for constructor and get_limit 
 
 		/// begin initializer list
-		ETable mTableType;
+		ETable m_tabletype;
 		/// end initializer list
 
 		// deleted
@@ -111,33 +113,17 @@ namespace roulette
 	};
 
 #ifdef _MSC_VER
+#pragma endregion begin
+
 #pragma region
 #endif // _MSC_VER
 
-	inline int Table::GetLimit(const EBet& name)
+	ETable Table::get_table_type() const
 	{
-		if ((mMaxiter = mMaximums.find(name)) == mMaximums.end())
-			error_handler(error("Table -> GetLimit -> iterator out of range"));
-
-		return mMaxiter->second;
+		return m_tabletype;
 	}
 
-	inline void Table::SetMinimum(const EMinimum& name, const short& minimum)
-	{
-		if (name == EMinimum::Table && (minimum < 0))
-			error_handler(error("Table -> SetMinimum -> Table minimum less then 0"));
-
-		minimum > 1 ? mMinimums.find(name)->second = minimum :
-			error_handler(error("Table -> SetMinimum -> Bet minimum less then 1"));
-	}
-
-	inline void Table::SetMaximum(const EBet& name, const short& limit)
-	{
-		(mMaxiter = mMaximums.find(name)) != mMaximums.end() ? mMaxiter->second = limit :
-			error_handler(error("Table -> SetMaximum -> Iterator out of range"));
-	}
-
-	inline void Table::error_handler(const error&& ref)
+	void Table::error_handler(const error&& ref)
 	{
 		// TODO: implement functionality
 		throw ref;

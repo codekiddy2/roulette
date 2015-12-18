@@ -36,6 +36,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "chipset.hh"
 #include "controlset.hh"
 #include "engine.hh"
+#include "infobar.hh"
 
 #include <gtkmm/box.h>
 #include <gtkmm/frame.h>
@@ -70,14 +71,15 @@ namespace roulette
 		// Chipset must be constructed before Table because
 		// Chip which initializes Gtk::TargetEntry used by Chip and Field objects
 		Chipset mChipset;
-		Table mTable;
 		Controlset mControlset;
 
 		/// begin initializer list
-		History* mHistory;
-		Engine mEngine;
-		Gtk::Frame mFrameHistory;
-		Gtk::Frame mFrameBets;
+		Table* mp_table;
+		History* mp_history;
+		Engine* mp_engine; // engine must be constructed before infobar
+		InfoBar m_infobar;
+		//Gtk::Frame mFrameHistory;
+		//Gtk::Frame mFrameBets;
 		/// end of initializer list
 
 		// deleted
