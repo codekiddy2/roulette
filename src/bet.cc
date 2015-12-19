@@ -50,66 +50,103 @@ namespace roulette
 	using std::to_string;
 
 	// TODO selection as array
-	Bet::Bet(const ETable table, const EBet bet, unsigned chip_info, Gdk::Point& point,
-		std::shared_ptr<type_selection> selection, Bet* parent) :
-		mId(bet),
-		mpParent(parent),
-		mpChilds(nullptr),
-		mpSelection(selection),
-		mpName(nullptr),
-		mCoverage(1),
-		mChips(static_cast<unsigned>(chip_info)),
-		mReturn(0.f),
-		mPayout(0.f),
-		mWin(0.f),
-		mResult(0.f),
-		mLose(0.f),
-		mOdds(0.f),
-		mProbWin(0.f),
-		mProbPush(0.f),
-		mProbLose(0.f),
-		mExpectedValue(0.f),
-		mExpectedReturn(0.f),
-		mAverageWin(0.f),
-		mFirstMoment(0),
-		mSecondMoment(0),
-		mThirdMoment(0),
-		mFourthMoment(0),
-		mSkewness(0.f),
-		mKurtosis(0.f),
-		mVariance(0.f),
-		mBinomialVariance(0.f),
-		mStandardDeviation(0.f),
-		mBinomialStandardDeviation(0.f),
-		m_point(point)
-	{
-		assign_name();
+	//Bet::Bet(const ETable table, const EBet bet, unsigned chip_info, Gdk::Point& point,
+	//	std::shared_ptr<type_selection> selection, Bet* parent) :
+	//	mId(bet),
+	//	mpParent(parent),
+	//	mpChilds(nullptr),
+	//	mpSelection(selection),
+	//	mpName(nullptr),
+	//	mCoverage(1),
+	//	mChips(static_cast<unsigned>(chip_info)),
+	//	mReturn(0.f),
+	//	mPayout(0.f),
+	//	mWin(0.f),
+	//	mResult(0.f),
+	//	mLose(0.f),
+	//	mOdds(0.f),
+	//	mProbWin(0.f),
+	//	mProbPush(0.f),
+	//	mProbLose(0.f),
+	//	mExpectedValue(0.f),
+	//	mExpectedReturn(0.f),
+	//	mAverageWin(0.f),
+	//	mFirstMoment(0),
+	//	mSecondMoment(0),
+	//	mThirdMoment(0),
+	//	mFourthMoment(0),
+	//	mSkewness(0.f),
+	//	mKurtosis(0.f),
+	//	mVariance(0.f),
+	//	mBinomialVariance(0.f),
+	//	mStandardDeviation(0.f),
+	//	mBinomialStandardDeviation(0.f),
+	//	m_point(point)
+	//{
+	//	assign_name();
 
-		if (parent)
-			set_part_1(mChips);
-		else
-		{
-			mpChilds = make_shared<Childs_t>();
-			mpSelection = make_shared<type_selection>();
-			fill_childs(table, selection, mChips, m_point);
-			unsigned nums = table > ETable::American ? 37 : static_cast<unsigned>(table);
+	//	if (parent)
+	//		set_part_1(mChips);
+	//	else
+	//	{
+	//		mpChilds = make_shared<Childs_t>();
+	//		mpSelection = make_shared<type_selection>();
+	//		fill_childs(table, selection, mChips, m_point);
+	//		unsigned nums = table > ETable::American ? 37 : static_cast<unsigned>(table);
 
-			for (unsigned i = 0; i < mpChilds->size(); ++i)
-				mpChilds->at(i)->set_part_2(table, nums, mChips);
+	//		for (unsigned i = 0; i < mpChilds->size(); ++i)
+	//			mpChilds->at(i)->set_part_2(table, nums, mChips);
 
-			set_part_1(mChips);
-			set_part_2(table, nums, mChips);
-		}
-	}
+	//		set_part_1(mChips);
+	//		set_part_2(table, nums, mChips);
+	//	}
+	//}
 
-	Bet::Bet(const EBet bet, const EChip chip, std::shared_ptr<type_selection> selection) :
+	Bet::Bet(/*const*/ EBet bet, /*const*/ EChip chip, type_set selection) :
 		m_bet(bet),
 		m_chip(static_cast<unsigned>(chip)),
-		mp_selection(selection)
+		mp_set(selection)
 	{
-		
+
 	}
 
+	Bet::Bet(Bet&& ref) :
+		m_bet(ref.m_bet),
+		m_chip(ref.m_chip),
+		mp_set(std::move(ref.mp_set))
+	{
+	}
+
+	Bet::Bet(const Bet& ref) :
+		m_bet(ref.m_bet),
+		m_chip(ref.m_chip),
+		mp_set(ref.mp_set)
+	{
+	}
+
+	Bet& Bet::operator=(Bet&& ref)
+	{
+		if (this != &ref)
+		{
+			m_bet = ref.m_bet;
+			m_chip = ref.m_chip;
+			mp_set = ref.mp_set;
+		}
+		return *this;
+	}
+
+	Bet& Bet::operator=(const Bet& ref)
+	{
+		if (this != &ref)
+		{
+			m_bet = ref.m_bet;
+			m_chip = ref.m_chip;
+			mp_set = ref.mp_set;
+		}
+		return *this;
+	}
+
+#if 0
 	Bet::Bet(const Bet& ref) :
 		mId(ref.mId),
 		mpParent(ref.mpParent),
@@ -269,13 +306,13 @@ namespace roulette
 		}
 		return *this;
 	}
-
+#endif
 #ifdef _MSC_VER
 #pragma endregion contructors
 
 #pragma region
 #endif // _MSC_VER
-
+#if 0
 	// TODO implement map of strings with names 
 	void Bet::fill_childs(
 		const ETable& table, const std::shared_ptr<type_selection> selection, const int& chips, Gdk::Point point)
@@ -1065,7 +1102,7 @@ namespace roulette
 		mVariance = pow(chips * (mPayout + mReturn) * sqrt(mProbWin * mProbLose), 2);
 		mStandardDeviation = chips * (mPayout + mReturn) * sqrt(mProbWin * mProbLose);
 	}
-
+#endif
 #ifdef _MSC_VER
 #pragma endregion methods
 #endif // _MSC_VER

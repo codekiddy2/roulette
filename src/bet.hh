@@ -51,17 +51,17 @@ namespace roulette
 	{
 	public:
 		// constructors
-		Bet(const ETable table,
-			const EBet bet,
-			unsigned chip_info,
-			Gdk::Point& point,
-			std::shared_ptr<type_selection> selection = nullptr,
-			Bet* parent = nullptr
-			);
+		//Bet(const ETable table,
+		//	const EBet bet,
+		//	unsigned chip_info,
+		//	Gdk::Point& point,
+		//	std::shared_ptr<type_selection> selection = nullptr,
+		//	Bet* parent = nullptr
+		//	);
 
-		Bet(const EBet bet,
-			const EChip chip,
-			std::shared_ptr<type_selection> selection = nullptr
+		Bet(/*const*/ EBet bet,
+			/*const*/ EChip chip,
+			type_set selection = nullptr
 			);
 
 		Bet(Bet&& ref);
@@ -69,9 +69,19 @@ namespace roulette
 		Bet& operator=(Bet&& ref);
 		Bet& operator=(const Bet& ref);
 
+		inline EBet get_id() const;
+		inline unsigned get_chips() const; // amount of chips
+		inline type_set get_selection() const; // numbers included in this bet
+
+	private:
+		// new constructor
+		EBet m_bet;
+		unsigned m_chip;
+		type_set mp_set;
+
+#if 0
 		// methods
 		EBet get_id() const; // ID
-		unsigned get_chips() const; // amount of chips
 		unsigned get_childs() const; // amount of childs
 		unsigned get_numbers() const; // amount of numbers
 		type_selection get_selection() const;
@@ -95,13 +105,9 @@ namespace roulette
 		EBet mId;
 		const Bet* mpParent;
 		std::shared_ptr<Childs_t> mpChilds;
+#endif
 
-		// new constructor
-		EBet m_bet;
-		unsigned m_chip;
-		std::shared_ptr<type_selection> mp_selection;
-		unsigned m_nums; // total table numbers
-
+#if 0
 
 		std::shared_ptr<type_selection> mpSelection;
 		const char* mpName;
@@ -137,12 +143,27 @@ namespace roulette
 		void set_part_1(const unsigned& chips);
 		void set_part_2(const ETable& table, const unsigned& nums, const unsigned& chips);
 		void fill_childs(const ETable& table, const std::shared_ptr<type_selection> selection, const int& chips, Gdk::Point point);
+#endif
 	};
+	EBet Bet::get_id() const
+	{
+		return m_bet;
+	}
+
+	unsigned Bet::get_chips() const
+	{
+		return m_chip;
+	}
+
+	type_set Bet::get_selection() const
+	{
+		return mp_set;
+	}
 
 #ifdef _MSC_VER
 #pragma region
 #endif // _MSC_VER
-
+#if 0
 	inline EBet Bet::get_id() const
 	{
 		return mId;
@@ -171,10 +192,6 @@ namespace roulette
 		}
 	}
 
-	inline unsigned Bet::get_chips() const
-	{
-		return m_chip;
-	}
 
 	inline type_selection Bet::get_selection() const
 	{
@@ -274,11 +291,11 @@ namespace roulette
 			return 0;
 		}
 	}
-
 #ifdef _MSC_VER
 #pragma endregion inlines
 #endif // _MSC_VER
 
+#endif
 } // namespace roulette
 
 ///<summary>

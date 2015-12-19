@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "roulette", "src\roulette.vc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_bet", "src\test_bet\test_bet.vcxproj", "{69B921D7-20A8-4114-A825-E6C0B73D31F8}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_functions", "src\test_functions\test_functions.vcxproj", "{C241DB5E-79A1-42D7-9B8B-89148875E148}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -30,6 +32,14 @@ Global
 		{69B921D7-20A8-4114-A825-E6C0B73D31F8}.Release|x64.Build.0 = Release|x64
 		{69B921D7-20A8-4114-A825-E6C0B73D31F8}.Release|x86.ActiveCfg = Release|Win32
 		{69B921D7-20A8-4114-A825-E6C0B73D31F8}.Release|x86.Build.0 = Release|Win32
+		{C241DB5E-79A1-42D7-9B8B-89148875E148}.Debug|x64.ActiveCfg = Debug|x64
+		{C241DB5E-79A1-42D7-9B8B-89148875E148}.Debug|x64.Build.0 = Debug|x64
+		{C241DB5E-79A1-42D7-9B8B-89148875E148}.Debug|x86.ActiveCfg = Debug|Win32
+		{C241DB5E-79A1-42D7-9B8B-89148875E148}.Debug|x86.Build.0 = Debug|Win32
+		{C241DB5E-79A1-42D7-9B8B-89148875E148}.Release|x64.ActiveCfg = Release|x64
+		{C241DB5E-79A1-42D7-9B8B-89148875E148}.Release|x64.Build.0 = Release|x64
+		{C241DB5E-79A1-42D7-9B8B-89148875E148}.Release|x86.ActiveCfg = Release|Win32
+		{C241DB5E-79A1-42D7-9B8B-89148875E148}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -50,8 +50,9 @@ namespace roulette
 	bool is_black(const unsigned number);
 	bool is_green(const unsigned number);
 
-	short which_column(const unsigned number);
-	short which_dozen(const unsigned number);
+	unsigned which_column(EField field);
+	unsigned which_column(const unsigned number);
+	unsigned which_dozen(const unsigned number);
 	unsigned get_neighbor(const ETable table, const unsigned refNum, const unsigned position);
 
 	void set_chipsize(const int size);

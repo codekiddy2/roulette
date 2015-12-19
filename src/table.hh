@@ -72,11 +72,10 @@ namespace roulette
 		void set_minimum(const EMinimum& name, const short& minimum);
 
 		inline ETable get_table_type() const;
-		inline void error_handler(const error&& ref);
 		
 		// signals
 		sigc::signal<void> signal_clear;
-		sigc::signal<void, std::shared_ptr<Bet>> signal_bet; // fields emit bet signals
+		sigc::signal<void, std::shared_ptr<Bet>> signal_bet; // fields emit bet signals to engine and inforbar
 
 	private:
 		// typedefs
@@ -121,12 +120,6 @@ namespace roulette
 	ETable Table::get_table_type() const
 	{
 		return m_tabletype;
-	}
-
-	void Table::error_handler(const error&& ref)
-	{
-		// TODO: implement functionality
-		throw ref;
 	}
 
 #ifdef _MSC_VER

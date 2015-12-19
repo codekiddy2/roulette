@@ -84,6 +84,10 @@
     </ClCompile>
     <Link />
     <Link />
+    <Link />
+    <Link>
+      <SubSystem>Console</SubSystem>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile />
@@ -142,6 +146,7 @@
     <ClCompile Include="control.cc" />
     <ClCompile Include="controlset.cc" />
     <ClCompile Include="engine.cc" />
+    <ClCompile Include="error.cc" />
     <ClCompile Include="field.cc" />
     <ClCompile Include="history.cc" />
     <ClCompile Include="infobar.cc" />

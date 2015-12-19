@@ -32,7 +32,9 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 #include "bet.hh"
+#include "error.hh"
 
+#include <iostream>
 #include <vector>
 #include <memory>
 #include <boost/random/random_device.hpp>
@@ -47,7 +49,8 @@ namespace roulette
 	class History;
 	class Table;
 
-	class Engine final
+	class Engine final :
+		public IErrorHandler
 	{
 	public:
 		// constructors
@@ -57,6 +60,8 @@ namespace roulette
 		void spin(const ETable table_type);
 		inline unsigned get_bet() const;
 		inline unsigned get_bankroll() const;
+		inline unsigned get_last_bet() const;
+		inline type_set get_numbers() const;
 		inline void place_bet(std::shared_ptr<Bet> bet);
 
 	private:
@@ -68,6 +73,7 @@ namespace roulette
 		Table* mp_table;
 		History* mp_history;
 		unsigned m_current_bet = 0;
+		unsigned m_last_bet = 0;
 		unsigned m_bankroll = 2000;
 		/// end initializer list
 
@@ -84,14 +90,6 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
-	void Engine::place_bet(std::shared_ptr<Bet> bet)
-	{
-		m_bets.push_back(bet);
-		unsigned value = bet->get_chips();
-		m_bankroll -= value;
-		m_current_bet += value;
-	}
-
 	unsigned Engine::get_bankroll() const
 	{
 		return m_bankroll;
@@ -100,6 +98,16 @@ namespace roulette
 	unsigned Engine::get_bet() const
 	{
 		return m_current_bet;
+	}
+
+	unsigned Engine::get_last_bet() const
+	{
+		return m_last_bet;
+	}
+
+	type_set Engine::get_numbers() const
+	{
+		return m_bets.back()->get_selection();
 	}
 
 #ifdef _MSC_VER

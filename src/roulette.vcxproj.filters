@@ -103,6 +103,9 @@
     <ClCompile Include="infobar.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="error.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="chip1.ico">

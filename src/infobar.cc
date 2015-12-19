@@ -34,6 +34,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 #include <memory>
 #include <utility>
+#include <algorithm>
 
 namespace roulette
 {
@@ -42,12 +43,17 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
+	using std::string;
 	using std::to_string;
 	using std::make_pair;
+	using std::for_each;
 
 	roulette::InfoBar::InfoBar(Table* p_table, Engine* p_engine) :
+		IErrorHandler("InfoBar"),
 		mp_engine(p_engine)
 	{
+		if (!p_table) error_handler(error("Infobar -> p_engine is NULL"));
+
 		// InfoBar properties
 		set_size_request(500, 100);
 		font.set_family("Arial");
@@ -55,37 +61,28 @@ namespace roulette
 		// connect to table
 		p_table->signal_bet.connect(sigc::mem_fun(this, &InfoBar::on_signal_bet));
 
-		m_layouts.insert(make_pair(ELayout::Bankroll, create_pango_layout("Bankroll")));
-		m_layouts.insert(make_pair(ELayout::Bet, create_pango_layout("Bet")));
+		m_layouts.insert(make_pair(ELayout::Bankroll, create_pango_layout("Bankroll\t" + to_string(mp_engine->get_bankroll()))));
+		m_layouts.insert(make_pair(ELayout::TotalBet, create_pango_layout("Total Bet")));
+		m_layouts.insert(make_pair(ELayout::LastBet, create_pango_layout("Last bet")));
+		m_layouts.insert(make_pair(ELayout::Numbers, create_pango_layout("Numbers")));
 		// inside bets
 		m_layouts.insert(make_pair(ELayout::Inside, create_pango_layout("Inside bets")));
-		m_layouts.insert(make_pair(ELayout::Straight, create_pango_layout("Straight		35 to 1")));
-		m_layouts.insert(make_pair(ELayout::Split, create_pango_layout("Split			17 to 1")));
-		m_layouts.insert(make_pair(ELayout::Street, create_pango_layout("Street		11 to 1")));
-		m_layouts.insert(make_pair(ELayout::Corner, create_pango_layout("Corner		8 to 1")));
-		m_layouts.insert(make_pair(ELayout::Line, create_pango_layout("Line			5 to 1")));
+		m_layouts.insert(make_pair(ELayout::Straight, create_pango_layout("Straight\t\t35 to 1")));
+		m_layouts.insert(make_pair(ELayout::Split, create_pango_layout("Split\t\t\t17 to 1")));
+		m_layouts.insert(make_pair(ELayout::Street, create_pango_layout("Street\t\t11 to 1")));
+		m_layouts.insert(make_pair(ELayout::Corner, create_pango_layout("Corner\t\t8 to 1")));
+		m_layouts.insert(make_pair(ELayout::Line, create_pango_layout("Line\t\t\t5 to 1")));
 		// outside bets
 		m_layouts.insert(make_pair(ELayout::Outside, create_pango_layout("Outside bets")));
-		m_layouts.insert(make_pair(ELayout::Dozen, create_pango_layout("Dozen		2 to 1")));
-		m_layouts.insert(make_pair(ELayout::High_Low, create_pango_layout("High/Low		1 to 1")));
-		m_layouts.insert(make_pair(ELayout::Red_Black, create_pango_layout("Red/Black		1 to 1")));
-		m_layouts.insert(make_pair(ELayout::Even_Odd, create_pango_layout("Even/Odd		1 to 1")));
-		m_layouts.insert(make_pair(ELayout::Column, create_pango_layout("Column		2 to 1")));
+		m_layouts.insert(make_pair(ELayout::Dozen, create_pango_layout("Dozen\t\t2 to 1")));
+		m_layouts.insert(make_pair(ELayout::High_Low, create_pango_layout("High/Low\t\t1 to 1")));
+		m_layouts.insert(make_pair(ELayout::Red_Black, create_pango_layout("Red/Black\t\t1 to 1")));
+		m_layouts.insert(make_pair(ELayout::Even_Odd, create_pango_layout("Even/Odd\t\t1 to 1")));
+		m_layouts.insert(make_pair(ELayout::Column, create_pango_layout("Column\t\t2 to 1")));
 
 		for (auto pair : m_layouts)
 		{
 			pair.second->set_font_description(font);
-		}
-		
-		auto bankroll = m_layouts.find(ELayout::Bankroll);
-		if (bankroll != m_layouts.end())
-		{
-			bankroll->second->set_text(to_string(mp_engine->get_bankroll()));
-		}
-		auto bet = m_layouts.find(ELayout::Bet);
-		if (bet != m_layouts.end())
-		{
-			bet->second->set_text(to_string(0));
 		}
 	}
 
@@ -136,10 +133,14 @@ namespace roulette
 		const int column_x = width / 4;
 		const int column_y = text_height * 5;
 		// bankroll and bet
-		const int bankroll_x = static_cast<int>(width * .75);
+		const int bankroll_x = static_cast<int>(width * .70);
 		const int bankroll_y = 0;
-		const int bet_x = static_cast<int>(width * .75);
-		const int bet_y = text_height * 2;
+		const int bet_x = static_cast<int>(width * .70);
+		const int bet_y = text_height;
+		const int last_bet_x = static_cast<int>(width * .70);
+		const int last_bet_y = text_height * 2;
+		const int numbers_x = static_cast<int>(width * .70);
+		const int numbers_y = text_height * 3;
 
 
 		Gdk::Cairo::set_source_rgba(cr, m_background);
@@ -176,7 +177,11 @@ namespace roulette
 		cr->move_to(bankroll_x, bankroll_y);
 		m_layouts.find(ELayout::Bankroll)->second->show_in_cairo_context(cr);
 		cr->move_to(bet_x, bet_y);
-		m_layouts.find(ELayout::Bet)->second->show_in_cairo_context(cr);
+		m_layouts.find(ELayout::TotalBet)->second->show_in_cairo_context(cr);
+		cr->move_to(last_bet_x, last_bet_y);
+		m_layouts.find(ELayout::LastBet)->second->show_in_cairo_context(cr);
+		cr->move_to(numbers_x, numbers_y);
+		m_layouts.find(ELayout::Numbers)->second->show_in_cairo_context(cr);
 
 		return true;
 	}
@@ -186,15 +191,52 @@ namespace roulette
 		auto result = m_layouts.find(ELayout::Bankroll);
 		if (result != m_layouts.end())
 		{
-			result->second->set_text("Bankroll	" + to_string(mp_engine->get_bankroll()));
+			result->second->set_text("Bankroll\t" + to_string(mp_engine->get_bankroll()));
 		}
+		else error_handler(error("on_signal_bet -> layout not found"));
 
-		result = m_layouts.find(ELayout::Bet);
+		result = m_layouts.find(ELayout::TotalBet);
 		if (result != m_layouts.end())
 		{
-			result->second->set_text("Bet		" + to_string(mp_engine->get_bet()));
+			result->second->set_text("TotalBet\t" + to_string(mp_engine->get_bet()));
 		}
+		else error_handler(error("on_signal_bet -> layout not found"));
 
+		result = m_layouts.find(ELayout::LastBet);
+		if (result != m_layouts.end())
+		{
+			result->second->set_text("Last Bet\t" + to_string(mp_engine->get_last_bet()));
+		}
+		else error_handler(error("on_signal_bet -> layout not found"));
+
+		result = m_layouts.find(ELayout::Numbers);
+		if (result != m_layouts.end())
+		{
+			string numbers;
+			type_set number_set = mp_engine->get_numbers();
+			type_raw_set::iterator iter = number_set->begin();
+
+			if (number_set->size() > 8)
+			{
+				for (size_t i = 0; i < 8; i++, iter++)
+				{
+					numbers.append(to_string(*iter));
+					numbers.append(" ");
+				}
+				numbers.append("\n\t\t");
+			}
+			while (iter != number_set->end())
+			{
+				numbers.append(to_string(*iter));
+				numbers.append(" ");
+				++iter;
+			}
+
+			result->second->set_text("Numbers\t" + numbers);
+		}
+		else error_handler(error("on_signal_bet -> layout not found"));
+
+		// TODO: move assignement into constructor
 		if (!refGdkWindow)
 		{
 			refGdkWindow = get_window();

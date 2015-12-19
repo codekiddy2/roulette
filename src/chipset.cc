@@ -38,9 +38,7 @@ namespace roulette
 	using std::endl;
 	using std::cerr;
 
-#ifdef DEBUG_DND_LOG
 	bool Chipset::constructed = false;
-#endif // DEBUG_DND_LOG
 
 	Chipset::Chipset() :
 		mChip1(EChip::Chip1),
@@ -57,9 +55,7 @@ namespace roulette
 		pack_end(mChip50, Gtk::PACK_SHRINK);
 		pack_end(mChip100, Gtk::PACK_SHRINK);
 
-#ifdef DEBUG_DND_LOG
 		Chipset::constructed = true;
-#endif // DEBUG_DND_LOG
 	}
 
 	//void Chipset::set_chipsize(int size)
@@ -72,12 +68,8 @@ namespace roulette
 	//	return chip_size;
 	//}
 
-#ifdef DEBUG_DND_LOG
-
 	bool Chipset::is_constructed()
 	{
 		return constructed;
 	}
 }
-
-#endif // DEBUG_DND_LOG

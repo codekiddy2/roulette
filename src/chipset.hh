@@ -50,14 +50,11 @@ namespace roulette
 		//static void set_chipsize(int size);
 		//static int get_chipsize();
 
-#ifdef DEBUG_DND_LOG
 		static bool is_constructed();
 
 	private:
 		static bool constructed;
-#endif // DEBUG_DND_LOG
 
-	private:
 		//static int chip_size;
 
 		/// begin initializer list

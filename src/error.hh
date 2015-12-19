@@ -36,6 +36,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //	
 ///</summary>
 
+#include <string>
 #include <exception>
 
 namespace roulette
@@ -87,10 +88,34 @@ namespace roulette
 	// error handler interface
 	class IErrorHandler
 	{
+	public:
+		// costructors
+		IErrorHandler(const std::string&& derived_class);
+
+		// methods
+		inline virtual void set_debug(bool debug);
+
 	protected:
-		IErrorHandler() { }
-		virtual void error_handler(const error&& ref) = 0;
+		// methods
+		virtual void error_handler(const error&& ref);
+		virtual void print(const std::string&& info, bool newline = false);
+		virtual void print(const char* info, bool newline = false);
+		virtual void print(const unsigned char* info, bool newline = false);
+		virtual void print(const int&& info, bool newline = false);
+		virtual void print(const unsigned int info, bool newline = false);
+		virtual void print(const unsigned long long&& info, bool newline = false);
+
+		// members
+		bool m_debug = false;
+		std::string m_derived_class;
 	};
+
+
+	void IErrorHandler::set_debug(bool debug)
+	{
+		m_debug = debug;
+	}
+
 } // namespace roulette
 
 #endif // ERROR_H

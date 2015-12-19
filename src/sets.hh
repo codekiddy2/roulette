@@ -37,6 +37,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
+#include <memory>
 #include <unordered_set>	// type_set
 
 namespace roulette
@@ -219,7 +220,9 @@ namespace roulette
 	enum class ELayout : unsigned
 	{
 		Bankroll,
-		Bet,
+		TotalBet,
+		LastBet,
+		Numbers,
 		Inside,
 		Outside,
 		Straight,
@@ -234,8 +237,9 @@ namespace roulette
 		Column,
 	};
 
-	typedef const std::unordered_set<unsigned> type_set;
-	typedef std::unordered_set<unsigned> type_selection;
+	typedef /*const */std::unordered_set<unsigned> type_raw_set;
+	typedef std::shared_ptr<type_raw_set> type_set;
+	typedef std::unordered_set<unsigned> type_selection; // TODO: type_selection is deprecated
 
 	extern type_set NoZeroWheel;
 	extern type_set AmericanWheel;
@@ -264,5 +268,38 @@ namespace roulette
 	extern type_set TriesDuCylindre;
 	extern type_set OrphelinsACheval;
 
+	// streets including zero
+	extern type_set Street01;
+	extern type_set Street02;
+
+	// exceptional corner for zero
+	extern type_set Corner0;
+
+	// street sets
+	extern type_set Street1;
+	extern type_set Street2;
+	extern type_set Street3;
+	extern type_set Street4;
+	extern type_set Street5;
+	extern type_set Street6;
+	extern type_set Street7;
+	extern type_set Street8;
+	extern type_set Street9;
+	extern type_set Street10;
+	extern type_set Street11;
+	extern type_set Street12;
+
+	// line sets
+	extern type_set Line1;
+	extern type_set Line2;
+	extern type_set Line3;
+	extern type_set Line4;
+	extern type_set Line5;
+	extern type_set Line6;
+	extern type_set Line7;
+	extern type_set Line8;
+	extern type_set Line9;
+	extern type_set Line10;
+	extern type_set Line11;
 } // namespace roulette
 #endif // ! SETS_HH

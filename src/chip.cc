@@ -48,6 +48,7 @@ namespace roulette
 	Chip::Chip(const EChip chip_value) :
 		Glib::ObjectBase("Chip"), // The GType name will be gtkmm__CustomObject_Chip
 		Gtk::Widget(),
+		IErrorHandler("Chip"),
 		mValue(static_cast<unsigned>(chip_value)),
 		refIcon(get_pixbuf(chip_value))
 	{
@@ -84,24 +85,17 @@ namespace roulette
 	Provides DragContext.
 	*/
 
-
-//#ifdef _MSC_VER
-	// #pragma warning (disable: 4100) // TODO: unreferenced formal parameter
-//#endif // _MSC_VER
-
-
 	void Chip::on_drag_begin(const Glib::RefPtr<Gdk::DragContext>& context)
 	{
 		context->set_icon(refIcon, // the GdkPixbuf to use as the drag icon.
 			refIcon->get_width() / 2, // the X offset within widget of the hotspot.
 			refIcon->get_height() / 2); // the Y offset within widget of the hotspot.
 
-#ifdef DEBUG_DND_LOG
-		cout << endl;
-		cout << "Chip::on_drag_begin()" << endl;
-		cout << "-> INFO: context->set_icon()" << endl;
-		cout << "-> INFO: pixel pointer = " << refIcon->get_pixels() << endl;
-#endif // DEBUG_DND_LOG
+		if (m_debug)
+		{
+			print("Chip::on_drag_begin()");
+			print("context->set_icon()", true);
+		}
 	}
 
 
@@ -112,47 +106,50 @@ namespace roulette
 
 		selection_data.set(selection_data.get_target(), format, nullptr, 0);
 
-#ifdef DEBUG_DND_LOG
-		cout << endl;
-		cout << "Chip::on_drag_data_get()" << endl;;
-		cout << "-> INFO: target: " << selection_data.get_target() << endl;
-		cout << "-> INFO: pointer: " << selection_data.get_data() << endl;
-		cout << "-> INFO: length: " << selection_data.get_length() << endl;
-		cout << "-> INFO: format = " << format << endl;
-		cout << "-> INFO: info = " << info << endl;
-		cout << "-> INFO: time = " << time << endl;
-#endif // DEBUG_DND_LOG
+		if (m_debug)
+		{
+			print("INFO: Chip::on_drag_data_get()");
+			print("target: ", true);
+			print(selection_data.get_target());
+			print("pointer: ", true);
+			print(selection_data.get_data(), true);
+			print("length: ", true);
+			print(selection_data.get_length(), true);
+			print("format = ", true);
+			print(static_cast<int>(format), true);
+			print("info = ", true);
+			print(static_cast<int>(info), true);
+			print("time = ", true);
+			print(static_cast<int>(time), true);
 
-#ifdef DEBUG_DND_VERBOSE
-		if (selection_data.set_pixbuf(refIcon))
-		{
-			Glib::RefPtr<const Gdk::Pixbuf> temp = selection_data.get_pixbuf();
-			cout << "-> INFO: pixbuf size = " << temp->get_byte_length() << endl;
+			if (selection_data.set_pixbuf(refIcon))
+			{
+				Glib::RefPtr<const Gdk::Pixbuf> temp = selection_data.get_pixbuf();
+				print("pixbuf size = ", true);
+				print(temp->get_byte_length());
+			}
+			else
+			{
+				print("WARNING: get_pixbuf() did not return a pixbuf", true);
+				print("INFO: if targets include image = ", true);
+				print(selection_data.targets_include_image(false));
+			}
 		}
-		else
-		{
-			cerr << "-> WARNING: get_pixbuf() did not return a pixbuf" << endl;
-			cout << "-> INFO: if targets include image = " << selection_data.targets_include_image(false) << endl;
-		}
-#endif // DEBUG_DND_VERBOSE
 	}
 
 
-	void Chip::on_drag_end(const Glib::RefPtr<Gdk::DragContext>& /*context*/)
+	void Chip::on_drag_end(const Glib::RefPtr<Gdk::DragContext>& context)
 	{
-#ifdef DEBUG_DND_LOG
-		cout << endl;
-		cout << "Chip::on_drag_end()" << endl;
-#endif // DEBUG_DND_LOG
-
+		if (m_debug)
+		{
+			print("Chip::on_drag_end()");
+		}
 		// TODO: implement on_drag_end functionality
-		//return Gtk::Widget::on_drag_end(context);
+		return Gtk::Widget::on_drag_end(context);
 	}
 
 
 #ifdef _MSC_VER
-	// #pragma warning (default: 4100) // unreferenced formal parameter
-
 #pragma endregion
 
 #pragma region drawing

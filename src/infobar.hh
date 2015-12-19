@@ -32,6 +32,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 #include "bet.hh"
 #include "sets.hh"
+#include "error.hh"
 
 #include <map>
 #include <string>
@@ -55,7 +56,8 @@ namespace roulette
 	class Engine;
 
 	class InfoBar :
-		public Gtk::DrawingArea
+		public Gtk::DrawingArea,
+		public IErrorHandler
 	{
 	public:
 		// constructors

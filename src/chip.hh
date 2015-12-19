@@ -32,6 +32,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 #include "sets.hh"
+#include "error.hh"
 
 #include <string>
 #include <gtkmm/widget.h>
@@ -47,8 +48,14 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 namespace roulette
 {
-	class Chip final
-		: public Gtk::Widget
+
+#ifdef _MSC_VER
+#pragma region
+#endif // _MSC_VER
+
+	class Chip final : 
+		public Gtk::Widget,
+		public IErrorHandler
 	{
 	public:
 		// constructors
@@ -95,6 +102,17 @@ namespace roulette
 		Chip& operator=(const Chip&) = delete;
 		Chip& operator=(const Chip&&) = delete;
 	};
+
+#ifdef _MSC_VER
+#pragma endregion begin
+
+#pragma region
+#endif // _MSC_VER
+
+
+#ifdef _MSC_VER
+#pragma endregion inlines
+#endif // _MSC_VER
 
 } // namespace roulette
 

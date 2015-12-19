@@ -49,6 +49,7 @@ namespace roulette
 	using roulette::error;
 
 	Table::Table(const ETable table_type) :
+		IErrorHandler("Table"),
 		m_tablemax(0),
 		m_tabletype(table_type),
 		m_totalbets(0)
@@ -56,14 +57,8 @@ namespace roulette
 		set_column_homogeneous(true);
 		set_row_homogeneous(true);
 
-#ifdef DEBUG_DND_LOG
-
 		if (!Chipset::is_constructed())
-		{
-			cerr << "WARNING Chipset must be constructed before Table, DND will not work" << endl;
-			cout << "-> Table::Table(const ETable table_type)" << endl;
-		}
-#endif // DEBUG_DND_LOG
+			error_handler("Chipset must be constructed before Table, DND will not work");
 
 		// create fields
 		EField temp;
@@ -104,11 +99,14 @@ namespace roulette
 		number2->signal_bet_left.connect(sigc::mem_fun(zerro, &Field::on_signal_bet_right));
 		//number3->signal_bet_left.connect(sigc::mem_fun(zerro, &Field::on_signal_bet_right)); // number 3 will be connected in for loop below
 
-		// signal emited to zero
+		// signal emited to zero - NOTE: zero does chips drawing for number3 when signal from numbe2 is received
 		number1->signal_bet_top_left.connect(sigc::mem_fun(zerro, &Field::on_signal_bet_top_right));
 		number2->signal_bet_top_left.connect(sigc::mem_fun(zerro, &Field::on_signal_bet_top_right));
 		number1->signal_bet_bottom_left.connect(sigc::mem_fun(zerro, &Field::on_signal_bet_bottom_right));
 		number2->signal_bet_bottom_left.connect(sigc::mem_fun(zerro, &Field::on_signal_bet_bottom_right));
+
+		// this is not neded - check why not
+		//number3->signal_bet_bottom_left.connect(sigc::mem_fun(zerro, &Field::on_signal_bet_bottom_right));
 
 		// signals emitted by zero
 		zerro->signal_bet_split1.connect(sigc::mem_fun(number3, &Field::on_signal_bet_left));

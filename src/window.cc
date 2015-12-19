@@ -46,11 +46,8 @@ Window::Window(Glib::RefPtr<Gdk::Pixbuf> refIcon) :
 	//mFrameBets("Bets")
 {
 	// Window options
-	int width = 500;
-	int height = 300;
-
 	set_title("roulette");
-	set_size_request(width, height);
+	set_size_request(500, 300);
 	set_position(Gtk::WIN_POS_CENTER);
 	set_icon(refIcon);
 
@@ -88,13 +85,16 @@ Window::Window(Glib::RefPtr<Gdk::Pixbuf> refIcon) :
 	mChipset.set_spacing(0);
 	mChipset.set_border_width(0);
 
-	show_all();
-
 	// signals
 	mControlset.mBtnClose.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_close));
 	mControlset.mBtnSpin.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_spin));
 	mControlset.mBtnSpin50.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_spin50));
 	mControlset.mBtnClear.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_clear));
+
+	// engine options
+	mp_engine->set_debug(true);
+
+	show_all();
 }
 
 roulette::Window::~Window()

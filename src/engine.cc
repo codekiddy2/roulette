@@ -48,9 +48,12 @@ namespace roulette
 	boost::random::random_device Engine::m_rng;
 
 	Engine::Engine(Table* p_table, History* p_history/*, InfoBar* p_infobar*/) :
+		IErrorHandler("Chip"),
 		mp_table(p_table),
 		mp_history(p_history)
 	{
+		if(!p_table) error_handler(error("Engine -> p_table is NULL"));
+		if(!p_history) error_handler(error("spin -> p_infobar is NULL"));
 
 		mp_table->signal_bet.connect(sigc::mem_fun(*this, &Engine::place_bet));
 	}
@@ -61,9 +64,84 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
+	void Engine::place_bet(std::shared_ptr<Bet> bet)
+	{
+		if (!bet->get_selection()) error_handler(error("place_bet -> bet contains no numbers"));
+
+		for (auto var : *bet->get_selection())
+		{
+			if((var < 0) || (var > 36))
+				error_handler(error("place_bet -> bet contains invalid numbers"));
+		}
+
+		switch (bet->get_id())
+		{
+		case roulette::EBet::UNDEFINED:
+			error_handler(error("place_bet -> invalid bet 'UNDEFINED'"));
+			break;
+		case roulette::EBet::StraightUp:
+			if (bet->get_selection()->size() != 1) error_handler(error("place_bet -> invalid numbers for StraightUp"));
+			break;
+		case roulette::EBet::Split:
+			if (bet->get_selection()->size() != 2) error_handler(error("place_bet -> invalid numbers for Split"));
+			break;
+		case roulette::EBet::Street:
+			if (bet->get_selection()->size() != 3) error_handler(error("place_bet -> invalid numbers for Street"));
+			break;
+		case roulette::EBet::Corner:
+			if (bet->get_selection()->size() != 4) error_handler(error("place_bet -> invalid numbers for Corner"));
+			break;
+		case roulette::EBet::Line:
+			if (bet->get_selection()->size() != 6) error_handler(error("place_bet -> invalid numbers for Line"));
+			break;
+		case roulette::EBet::Column1:
+		case roulette::EBet::Column2:
+		case roulette::EBet::Column3:
+		case roulette::EBet::Dozen1:
+		case roulette::EBet::Dozen2:
+		case roulette::EBet::Dozen3:
+			if (bet->get_selection()->size() != 12) error_handler(error("place_bet -> invalid bet"));
+			break;
+		case roulette::EBet::Red:
+		case roulette::EBet::Black:
+		case roulette::EBet::Even:
+		case roulette::EBet::Odd:
+		case roulette::EBet::High:
+		case roulette::EBet::Low:
+			if (bet->get_selection()->size() != 18) error_handler(error("place_bet -> invalid bet"));
+			break;
+		case roulette::EBet::Basket:
+			if (bet->get_selection()->size() != 5) error_handler(error("place_bet -> invalid numbers for basket"));
+			break;
+		default:
+			print("WARNING: place_bet -> bet not implemented");
+			break;
+		}
+		m_bets.push_back(bet);
+		m_last_bet = bet->get_chips();
+		m_bankroll -= m_last_bet;
+		m_current_bet += m_last_bet;
+
+		if (m_debug)
+		{
+			print("INFO: bet placed ");
+			print("Chips: ", true);
+			print(bet->get_chips());
+			print("Numbers: ", true);
+
+			for (auto num : *m_bets.back()->get_selection())
+			{
+				print(num);
+				print(" ");
+			}
+			std::cout << std::endl;
+		}
+	}
+
 	void Engine::spin(const ETable table_type)
 	{
 		typedef boost::random::uniform_smallint<> type_dist;
+		if(mp_table->get_table_type() != table_type) error_handler(error("spin -> this table does not exist"));
 
 		string red_output, black_output, green_output;
 		string single_space = " ", triple_space = "   ", newline = "\n", tab = "\t";
@@ -71,10 +149,11 @@ namespace roulette
 		switch (table_type)
 		{
 		case ETable::NoZero:
+			error_handler(error("spin -> table_type not implemented"));
 			break;
 		case ETable::European:
 		{
-			static type_dist dist(0, static_cast<int>(EuropeanWheel.size()));
+			static type_dist dist(0, static_cast<int>(EuropeanWheel->size()));
 			int result = dist(Engine::m_rng);
 
 			// format result to be properly aligned with past results
@@ -115,6 +194,7 @@ namespace roulette
 		case ETable::DoubleImprisonment:
 		case ETable::TripleImprisonment:
 		case ETable::InfininiteImprisonment:
+			error_handler(error("spin -> table_type not implemented"));
 			break;
 		}
 	}

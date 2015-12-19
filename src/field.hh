@@ -33,6 +33,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 #include "bet.hh"
 #include "sets.hh"
+#include "error.hh"
 
 #include <string>
 #include <vector>
@@ -62,12 +63,13 @@ namespace roulette
 
 	class Table;
 
-	class Field final
-		: public Gtk::Widget
+	class Field final : 
+		public Gtk::Widget,
+		public IErrorHandler
 	{
 	public:
 		// constructors
-		Field(EField field_index, Table* p_parent);
+		Field(EField field_index, Table* p_table);
 
 		// typedefs
 		typedef std::pair<const EChip, Gdk::Point> type_chip_pair;
@@ -157,7 +159,7 @@ namespace roulette
 		/// begin initializer list
 		Gdk::RGBA m_background;
 		Glib::RefPtr<Pango::Layout> m_layout;
-		Table* mp_parent;
+		Table* mp_table;
 		EField m_index;
 		/// end initializer list
 

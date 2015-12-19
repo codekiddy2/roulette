@@ -143,14 +143,21 @@ namespace roulette
 		else return false;
 	}
 
-	short which_column(const unsigned number)
+	unsigned which_column(const unsigned number)
 	{
-		if (number % 3 == 0)
+		if ((number % 3) == 0)
 			return 3;
 		else return number % 3;
 	}
 
-	short which_dozen(const unsigned number)
+	unsigned which_column(EField field)
+	{
+		if ((static_cast<unsigned>(field) % 3) == 0)
+			return 3;
+		else return static_cast<unsigned>(field) % 3;
+	}
+
+	unsigned which_dozen(const unsigned number)
 	{
 		if (number < 13)
 			return 1;
@@ -183,25 +190,25 @@ namespace roulette
 	{
 		unsigned i = 0;
 		using std::find;
-		static type_set::const_iterator iter;
+		static type_raw_set::const_iterator iter;
 
 		switch (table)
 		{
 		case ETable::NoZero:
-			iter = find(NoZeroWheel.begin(), NoZeroWheel.end(), refNum);
+			iter = find(NoZeroWheel->begin(), NoZeroWheel->end(), refNum);
 			while (i != position) // if i == position refNum is returned
 			{ // if i != position then iterating.... position times
 				if (position > 0) // positive position
 				{
 					++i;
 					++iter;
-					if (iter == NoZeroWheel.end())
-						iter = NoZeroWheel.begin(); // return to begin and continue
+					if (iter == NoZeroWheel->end())
+						iter = NoZeroWheel->begin(); // return to begin and continue
 				}
 				else // negative position
 				{
-					if (iter == NoZeroWheel.begin() && i != position) //if begin is not what we want...
-						iter = NoZeroWheel.end(); // then go to end
+					if (iter == NoZeroWheel->begin() && i != position) //if begin is not what we want...
+						iter = NoZeroWheel->end(); // then go to end
 					--iter;
 					--i;
 				}
@@ -209,20 +216,20 @@ namespace roulette
 			break;
 
 		case ETable::American:
-			iter = find(AmericanWheel.begin(), AmericanWheel.end(), refNum);
+			iter = find(AmericanWheel->begin(), AmericanWheel->end(), refNum);
 			while (i != position)
 			{
 				if (position > 0)
 				{
 					++i;
 					++iter;
-					if (iter == AmericanWheel.end())
-						iter = AmericanWheel.begin();
+					if (iter == AmericanWheel->end())
+						iter = AmericanWheel->begin();
 				}
 				else
 				{
-					if (iter == AmericanWheel.begin() && i != position)
-						iter = AmericanWheel.end();
+					if (iter == AmericanWheel->begin() && i != position)
+						iter = AmericanWheel->end();
 					--iter;
 					--i;
 				}
@@ -235,20 +242,20 @@ namespace roulette
 		case ETable::DoubleImprisonment:
 		case ETable::TripleImprisonment:
 		case ETable::European:
-			iter = find(EuropeanWheel.begin(), EuropeanWheel.end(), refNum);
+			iter = find(EuropeanWheel->begin(), EuropeanWheel->end(), refNum);
 			while (i != position)
 			{
 				if (position > 0)
 				{
 					++i;
 					++iter;
-					if (iter == EuropeanWheel.end())
-						iter = EuropeanWheel.begin();
+					if (iter == EuropeanWheel->end())
+						iter = EuropeanWheel->begin();
 				}
 				else
 				{
-					if (iter == EuropeanWheel.begin() && i != position)
-						iter = EuropeanWheel.end();
+					if (iter == EuropeanWheel->begin() && i != position)
+						iter = EuropeanWheel->end();
 					--iter;
 					--i;
 				}
