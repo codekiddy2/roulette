@@ -47,7 +47,8 @@ namespace roulette
 {
 	//typedef std::vector<unsigned> type_selection; // numbers selected for the bet (ALSO DEFINED AS type_set !)
 
-	class Bet final
+	class Bet final :
+		public IErrorHandler
 	{
 	public:
 		// constructors

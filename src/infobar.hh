@@ -52,7 +52,6 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
-	class Table;
 	class Engine;
 
 	class InfoBar :
@@ -61,16 +60,16 @@ namespace roulette
 	{
 	public:
 		// constructors
-		InfoBar(Table* p_table, Engine* p_engine);
+		InfoBar(Engine* p_engine);
+
+		// signal handlers
+		void on_signal_bet(std::shared_ptr<Bet> bet);
 
 	protected:
 		// methods
 		bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
 	private:
-		// signal handlers
-		void on_signal_bet(std::shared_ptr<Bet> bet);
-
 		// typedefs
 		typedef Glib::RefPtr<Pango::Layout> type_layout;
 

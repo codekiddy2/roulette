@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{7954DF58-9125-433B-9EAE-765C43DF8061}</ProjectGuid>
-    <RootNamespace>roulette</RootNamespace>
+    <ProjectGuid>{5537AFAB-7040-43F4-8BE1-8CFBB1003321}</ProjectGuid>
+    <RootNamespace>test_controlset</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -54,21 +54,26 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="roulette_debug_x64.props" />
+    <Import Project="D:\GitHub\Visual-Studio-gtkmm\properties\user_debug_64.props" />
+    <Import Project="D:\GitHub\Visual-Studio-gtkmm\properties\user_stack_gtkmm.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="D:\GitHub\Visual-Studio-gtkmm\properties\user_release_64.props" />
+    <Import Project="D:\GitHub\Visual-Studio-gtkmm\properties\user_stack_gtkmm.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="D:\GitHub\Visual-Studio-gtkmm\properties\user_debug_32.props" />
+    <Import Project="D:\GitHub\Visual-Studio-gtkmm\properties\user_stack_gtkmm.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="D:\GitHub\Visual-Studio-gtkmm\properties\user_release_32.props" />
+    <Import Project="D:\GitHub\Visual-Studio-gtkmm\properties\user_stack_gtkmm.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-  </PropertyGroup>
+  <PropertyGroup />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile />
     <Link />
@@ -76,16 +81,10 @@
     <Link />
     <Link />
     <ClCompile />
-    <ClCompile />
-    <Link />
-    <ClCompile />
     <ClCompile>
-      <EnablePREfast>false</EnablePREfast>
+      <AdditionalIncludeDirectories>..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeaderFile>pch.hh</PrecompiledHeaderFile>
     </ClCompile>
-    <Link />
-    <Link />
-    <Link />
-    <Link />
     <Link>
       <SubSystem>Console</SubSystem>
     </Link>
@@ -95,9 +94,9 @@
     <Link />
     <ClCompile />
     <ClCompile>
+      <AdditionalIncludeDirectories>..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>pch.hh</PrecompiledHeaderFile>
     </ClCompile>
-    <Link />
     <Link>
       <SubSystem>Console</SubSystem>
     </Link>
@@ -107,9 +106,9 @@
     <Link />
     <ClCompile />
     <ClCompile>
+      <AdditionalIncludeDirectories>..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>pch.hh</PrecompiledHeaderFile>
     </ClCompile>
-    <Link />
     <Link>
       <SubSystem>Console</SubSystem>
     </Link>
@@ -119,63 +118,38 @@
     <Link />
     <ClCompile />
     <ClCompile>
+      <AdditionalIncludeDirectories>..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>pch.hh</PrecompiledHeaderFile>
     </ClCompile>
-    <Link />
     <Link>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="base_control.hh" />
-    <ClInclude Include="bet.hh" />
-    <ClInclude Include="chip.hh" />
-    <ClInclude Include="color.hh" />
-    <ClInclude Include="control.hh" />
-    <ClInclude Include="engine.hh" />
-    <ClInclude Include="error.hh" />
-    <ClInclude Include="field.hh" />
-    <ClInclude Include="history.hh" />
-    <ClInclude Include="infobar.hh" />
-    <ClInclude Include="main.hh" />
-    <ClInclude Include="window.hh" />
-    <ClInclude Include="sets.hh" />
+    <ClInclude Include="..\color.hh" />
+    <ClInclude Include="..\control.hh" />
+    <ClInclude Include="..\controlset.hh" />
+    <ClInclude Include="..\error.hh" />
+    <ClInclude Include="MainWindow.h" />
     <ClInclude Include="pch.hh" />
-    <ClInclude Include="table.hh" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="basecontrol.cc" />
-    <ClCompile Include="bet.cc" />
-    <ClCompile Include="chip.cc" />
-    <ClCompile Include="color.cc" />
-    <ClCompile Include="control.cc" />
-    <ClCompile Include="engine.cc" />
-    <ClCompile Include="error.cc" />
-    <ClCompile Include="field.cc" />
-    <ClCompile Include="history.cc" />
-    <ClCompile Include="infobar.cc" />
-    <ClCompile Include="main.cc" />
-    <ClCompile Include="window.cc" />
-    <ClCompile Include="sets.cc" />
-    <ClCompile Include="pch.cc">
+    <ClCompile Include="..\color.cc" />
+    <ClCompile Include="..\control.cc" />
+    <ClCompile Include="..\controlset.cc" />
+    <ClCompile Include="..\error.cc" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch.hh</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">pch.hh</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hh</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hh</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="table.cc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="chip1.ico" />
-    <Image Include="chip100.ico" />
-    <Image Include="chip25.ico" />
-    <Image Include="chip5.ico" />
-    <Image Include="chip50.ico" />
-    <Image Include="eraser.ico" />
-    <Image Include="roulette.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="roulette.ruleset" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

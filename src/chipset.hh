@@ -32,14 +32,16 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 #include "chip.hh"
+#include "color.hh"
 
 #include <gdkmm/rgba.h>
 #include <gtkmm/buttonbox.h>
 
 namespace roulette
 {
-	class Chipset final
-		: public Gtk::ButtonBox
+	class Chipset final :
+		public IErrorHandler,
+		public Color
 	{
 	public:
 		// constructors
@@ -53,17 +55,20 @@ namespace roulette
 		static bool is_constructed();
 
 	private:
-		static bool constructed;
+		// methods
+		bool on_chipset_draw(const ::Cairo::RefPtr< ::Cairo::Context>& cr);
 
+		static bool constructed;
+		Gtk::ButtonBox m_BtnBox;
 		//static int chip_size;
 
 		/// begin initializer list
-		Chip mChip1;
-		Chip mChip5;
-		Chip mChip25;
-		Chip mChip50;
-		Chip mChip100;
-		Chip mEraser;
+		Chip m_Chip1;
+		Chip m_Chip5;
+		Chip m_Chip25;
+		Chip m_Chip50;
+		Chip m_Chip100;
+		Chip m_Eraser;
 		/// end initializer list
 
 		// deleted

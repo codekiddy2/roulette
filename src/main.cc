@@ -40,9 +40,6 @@ namespace roulette
 	using std::vector;
 	using boost::filesystem::exists;
 
-	// load size x size version from the ico file
-	int chip_size = 32;
-
 	type_chip_icon icon1;
 	type_chip_icon icon5;
 	type_chip_icon icon25;
@@ -51,35 +48,12 @@ namespace roulette
 	type_chip_icon eraser;
 	type_chip_icon app_icon;
 
+	// load size x size version from the ico file
+	int chip_size = 32;
+
 	vector<Gtk::TargetEntry> dnd_targets;
 
-	bool load_icons()
-	{
-		string file_name = "Chip1.ico";
-		bool success = true;
-
-		exists(file_name) ? icon1 = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
-
-		file_name = "Chip5.ico";
-		exists(file_name) ? icon5 = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
-
-		file_name = "Chip25.ico";
-		exists(file_name) ? icon25 = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
-
-		file_name = "Chip50.ico";
-		exists(file_name) ? icon50 = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
-
-		file_name = "Chip100.ico";
-		exists(file_name) ? icon100 = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
-
-		file_name = "eraser.ico";
-		exists(file_name) ? eraser = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
-
-		file_name = "roulette.ico";
-		exists(file_name) ? app_icon = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
-
-		return success;
-	}
+	bool load_icons();
 
 } // namespace
 
@@ -93,7 +67,9 @@ int main(int argc, char* argv[])
 
 		if (p_window)
 		{
-			return app->run(*p_window);
+			app->run(*p_window);
+			delete p_window;
+			return 0;
 		}
 	}
 	return -1;
@@ -166,21 +142,49 @@ namespace roulette
 		else return 3;
 	}
 
+	bool load_icons()
+	{
+		string file_name = "Chip1.ico";
+		bool success = true;
+
+		exists(file_name) ? icon1 = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
+
+		file_name = "Chip5.ico";
+		exists(file_name) ? icon5 = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
+
+		file_name = "Chip25.ico";
+		exists(file_name) ? icon25 = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
+
+		file_name = "Chip50.ico";
+		exists(file_name) ? icon50 = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
+
+		file_name = "Chip100.ico";
+		exists(file_name) ? icon100 = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
+
+		file_name = "eraser.ico";
+		exists(file_name) ? eraser = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
+
+		file_name = "roulette.ico";
+		exists(file_name) ? app_icon = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
+
+		return success;
+	}
+
 	type_chip_icon get_pixbuf(EChip ref)
 	{
 		switch (ref)
 		{
-		case roulette::EChip::Chip1:
+		case EChip::Chip1:
 			return icon1;
-		case roulette::EChip::Chip5:
+		case EChip::Chip5:
 			return icon5;
-		case roulette::EChip::Chip25:
+		case EChip::Chip25:
 			return icon25;
-		case roulette::EChip::Chip50:
+		case EChip::Chip50:
 			return icon50;
-		case roulette::EChip::Chip100:
+		case EChip::Chip100:
 			return icon100;
-		case roulette::EChip::Eraser:
+		case EChip::Eraser:
 		default:
 			return eraser;
 		}

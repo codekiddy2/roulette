@@ -32,9 +32,13 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 #include "sets.hh"
+#include "bet.hh"
 
+#include <vector>
+#include <memory>
 #include <glibmm/refptr.h>
 #include <gdkmm/pixbuf.h>
+#include <gtkmm/targetentry.h>
 
 namespace roulette
 {
@@ -42,8 +46,13 @@ namespace roulette
 	enum class EChip: unsigned;
 
 	extern std::vector<Gtk::TargetEntry> dnd_targets;
+
+	// typedefs
+	typedef std::shared_ptr<Bet> type_bet;
+	typedef std::vector<type_bet> type_bet_container;
 	typedef Glib::RefPtr<Gdk::Pixbuf> type_chip_icon;
 
+	// functions
 	type_chip_icon get_pixbuf(EChip ref);
 
 	bool is_red(const unsigned number);
@@ -55,8 +64,8 @@ namespace roulette
 	unsigned which_dozen(const unsigned number);
 	unsigned get_neighbor(const ETable table, const unsigned refNum, const unsigned position);
 
-	void set_chipsize(const int size);
 	int get_chipsize();
+	void set_chipsize(const int size);
 
 } // namespace
 

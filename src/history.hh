@@ -31,6 +31,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
+#include "error.hh"
+
 #include <string>
 #include <glibmm/refptr.h>
 #include <gtkmm/box.h>
@@ -40,25 +42,21 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 namespace roulette
 {
-	class History final
-		: public Gtk::ScrolledWindow
+	class History final :
+		public Gtk::ScrolledWindow,
+		public IErrorHandler
 	{
 	public:
 		// constructors
 		History();
 
 		// methods
-		void apply_tags();
-
-		inline void set_red_buffer_text(std::string text);
-		inline void set_black_buffer_text(std::string text);
-		inline void set_green_buffer_text(std::string text);
-
-		inline Glib::ustring get_red_buffer_text() const;
-		inline Glib::ustring get_black_buffer_text() const;
-		inline Glib::ustring get_green_buffer_text() const;
+		void set_result(unsigned result);
 
 	private:
+		// methods
+		void apply_tags();
+
 		// members
 		Gtk::HBox mHBox;
 
@@ -75,36 +73,6 @@ namespace roulette
 		History& operator=(const History&) = delete;
 		History& operator=(const History&&) = delete;
 	};
-
-	void History::set_red_buffer_text(std::string text)
-	{
-		refRedBuffer->set_text(text);
-	}
-
-	void History::set_black_buffer_text(std::string text)
-	{
-		refBlackBuffer->set_text(text);
-	}
-
-	void History::set_green_buffer_text(std::string text)
-	{
-		refGreenBuffer->set_text(text);
-	}
-
-	Glib::ustring History::get_red_buffer_text() const
-	{
-		return refRedBuffer->get_text();
-	}
-
-	Glib::ustring History::get_black_buffer_text() const
-	{
-		return refBlackBuffer->get_text();
-	}
-
-	Glib::ustring History::get_green_buffer_text() const
-	{
-		return refGreenBuffer->get_text();
-	}
 
 } // namespace roulette
 

@@ -103,6 +103,7 @@ namespace roulette
 	//}
 
 	Bet::Bet(/*const*/ EBet bet, /*const*/ EChip chip, type_set selection) :
+		IErrorHandler("Bet"),
 		m_bet(bet),
 		m_chip(static_cast<unsigned>(chip)),
 		mp_set(selection)
@@ -111,6 +112,7 @@ namespace roulette
 	}
 
 	Bet::Bet(Bet&& ref) :
+		IErrorHandler("Bet"),
 		m_bet(ref.m_bet),
 		m_chip(ref.m_chip),
 		mp_set(std::move(ref.mp_set))
@@ -118,6 +120,7 @@ namespace roulette
 	}
 
 	Bet::Bet(const Bet& ref) :
+		IErrorHandler("Bet"),
 		m_bet(ref.m_bet),
 		m_chip(ref.m_chip),
 		mp_set(ref.mp_set)

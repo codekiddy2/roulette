@@ -31,10 +31,11 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
+#include "color.hh"
 #include "table.hh"
 #include "history.hh"
-#include "chipset.hh"
-#include "controlset.hh"
+#include "chip.hh"
+#include "control.hh"
 #include "engine.hh"
 #include "infobar.hh"
 
@@ -49,7 +50,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 namespace roulette
 {
 	class Window final :
-		public Gtk::Window
+		public Gtk::Window,
+		public IErrorHandler
 	{
 	public:
 		// constructors
@@ -67,19 +69,28 @@ namespace roulette
 		Gtk::HBox mHBoxTop;
 		Gtk::VBox mVBoxArea;
 		Gtk::HBox mHBoxControls;
-
-		// Chipset must be constructed before Table because
-		// Chip which initializes Gtk::TargetEntry used by Chip and Field objects
-		Chipset mChipset;
-		Controlset mControlset;
+		Gtk::ButtonBox mChipset;
+		Gtk::ButtonBox mControlset;
 
 		/// begin initializer list
-		Table* mp_table;
-		History* mp_history;
+		// Chips must be constructed before Table because
+		// Chips initialize Gtk::TargetEntry used by Field objects for DND
+		Chip m_Chip1;
+		Chip m_Chip5;
+		Chip m_Chip25;
+		Chip m_Chip50;
+		Chip m_Chip100;
+		Chip m_Eraser;
+
+		Control m_BtnClose;
+		Control m_BtnSpin;
+		Control m_BtnSpin50;
+		Control m_BtnClear;
+
+		Table m_table;
+		History m_history; // history must be constructed before engine
 		Engine* mp_engine; // engine must be constructed before infobar
 		InfoBar m_infobar;
-		//Gtk::Frame mFrameHistory;
-		//Gtk::Frame mFrameBets;
 		/// end of initializer list
 
 		// deleted

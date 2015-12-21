@@ -153,12 +153,12 @@ namespace roulette
 		void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int field_width, int field_height);
 
 		// members
-		Pango::FontDescription m_font;
 		type_chip_container m_chips;
+		Pango::FontDescription m_font;
+		Glib::RefPtr<Pango::Layout> m_layout;
 
 		/// begin initializer list
 		Gdk::RGBA m_background;
-		Glib::RefPtr<Pango::Layout> m_layout;
 		Table* mp_table;
 		EField m_index;
 		/// end initializer list

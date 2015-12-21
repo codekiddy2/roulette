@@ -14,16 +14,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="chipset.hh">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="chip.hh">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="control.hh">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="controlset.hh">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="history.hh">
@@ -59,6 +53,12 @@
     <ClInclude Include="infobar.hh">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="color.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="base_control.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="table.cc">
@@ -67,16 +67,10 @@
     <ClCompile Include="field.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="chipset.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="chip.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="control.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="controlset.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cc">
@@ -104,6 +98,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="error.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="color.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="basecontrol.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

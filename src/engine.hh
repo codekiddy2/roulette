@@ -33,10 +33,14 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 #include "bet.hh"
 #include "error.hh"
+#include "main.hh"
 
 #include <iostream>
 #include <vector>
 #include <memory>
+
+#include <sigc++/signal.h>
+
 #include <boost/random/random_device.hpp>
 
 namespace roulette
@@ -46,15 +50,12 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
-	class History;
-	class Table;
-
 	class Engine final :
 		public IErrorHandler
 	{
 	public:
 		// constructors
-		Engine(Table* p_table, History* p_history/*, InfoBar* p_infobar*/);
+		Engine();
 
 		// methods
 		void spin(const ETable table_type);
@@ -62,16 +63,17 @@ namespace roulette
 		inline unsigned get_bankroll() const;
 		inline unsigned get_last_bet() const;
 		inline type_set get_numbers() const;
-		inline void place_bet(std::shared_ptr<Bet> bet);
+		void place_bet(type_bet bet);
+
+		// signals
+		sigc::signal1<void, int> signal_spin;
 
 	private:
 		// members
-		std::vector<std::shared_ptr<Bet>> m_bets;
+		type_bet_container m_bets;
 		static boost::random::random_device m_rng;
 
 		/// begin initializer list
-		Table* mp_table;
-		History* mp_history;
 		unsigned m_current_bet = 0;
 		unsigned m_last_bet = 0;
 		unsigned m_bankroll = 2000;

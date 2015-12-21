@@ -1,3 +1,7 @@
+
+#include "pch.hh"
+#include "color.hh"
+
 /*
 roulette - roulette simulation program
 
@@ -19,39 +23,45 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 ///<summary>
 //
-//	controlset.cc
+//	color.cc
 //
-//	Definition of Controlset class
+//	Definition of Color class
 //
 //	TODO: add description
 //
 ///</summary>
 
-#include "pch.hh"
-#include "controlset.hh"
-
 namespace roulette
 {
-	Controlset::Controlset() :
-		IErrorHandler("Controlset"),
-		m_BtnClose("Close"),
-		m_BtnSpin("Spin"),
-		m_BtnSpin50("Spin 50x"),
-		m_BtnClear("Clear")
-	{
-		pack_end(m_BtnClear, Gtk::PACK_SHRINK);
-		pack_end(m_BtnSpin, Gtk::PACK_SHRINK);
-		pack_end(m_BtnSpin50, Gtk::PACK_SHRINK);
-		pack_end(m_BtnClose, Gtk::PACK_SHRINK);
+	Gdk::RGBA Color::m_background("rgb(0, 102, 0)");
+	Gdk::RGBA Color::m_foreground("rgb(255, 255, 255)");
 
-		//signal_draw().connect(sigc::mem_fun(this, &Controlset::on_controlset_draw));
+	roulette::Color::Color()
+	{
 	}
 
-	bool Controlset::on_controlset_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+	roulette::Color::~Color()
 	{
-		Gdk::Cairo::set_source_rgba(cr, Color::get_background_color());
-		cr->paint();
-		return false;
 	}
 
-} // namespace roulette
+	const Gdk::RGBA & roulette::Color::get_background_color()
+	{
+		return m_background;
+	}
+
+	const Gdk::RGBA & roulette::Color::get_foreground_color()
+	{
+		return m_foreground;
+	}
+
+	void roulette::Color::set_background_color(const Gdk::RGBA & color)
+	{
+		m_background = color;
+	}
+
+	void roulette::Color::set_foreground_color(const Gdk::RGBA & color)
+	{
+		m_foreground = color;
+	}
+
+} // namespace

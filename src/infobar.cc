@@ -48,18 +48,13 @@ namespace roulette
 	using std::make_pair;
 	using std::for_each;
 
-	roulette::InfoBar::InfoBar(Table* p_table, Engine* p_engine) :
+	roulette::InfoBar::InfoBar(Engine* p_engine) :
 		IErrorHandler("InfoBar"),
 		mp_engine(p_engine)
 	{
-		if (!p_table) error_handler(error("Infobar -> p_engine is NULL"));
-
 		// InfoBar properties
 		set_size_request(500, 100);
 		font.set_family("Arial");
-
-		// connect to table
-		p_table->signal_bet.connect(sigc::mem_fun(this, &InfoBar::on_signal_bet));
 
 		m_layouts.insert(make_pair(ELayout::Bankroll, create_pango_layout("Bankroll\t" + to_string(mp_engine->get_bankroll()))));
 		m_layouts.insert(make_pair(ELayout::TotalBet, create_pango_layout("Total Bet")));
@@ -83,6 +78,8 @@ namespace roulette
 		for (auto pair : m_layouts)
 		{
 			pair.second->set_font_description(font);
+			// HACK: Layout reference hack
+			pair.second->reference();
 		}
 	}
 

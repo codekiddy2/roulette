@@ -41,20 +41,22 @@ namespace roulette
 	bool Chipset::constructed = false;
 
 	Chipset::Chipset() :
-		mChip1(EChip::Chip1),
-		mChip5(EChip::Chip5),
-		mChip25(EChip::Chip25),
-		mChip50(EChip::Chip50),
-		mChip100(EChip::Chip100),
-		mEraser(EChip::Eraser)
+		IErrorHandler("Chipset"),
+		m_Chip1(EChip::Chip1),
+		m_Chip5(EChip::Chip5),
+		m_Chip25(EChip::Chip25),
+		m_Chip50(EChip::Chip50),
+		m_Chip100(EChip::Chip100),
+		m_Eraser(EChip::Eraser)
 	{
-		pack_end(mEraser, Gtk::PACK_SHRINK);
-		pack_end(mChip1, Gtk::PACK_SHRINK);
-		pack_end(mChip5, Gtk::PACK_SHRINK);
-		pack_end(mChip25, Gtk::PACK_SHRINK);
-		pack_end(mChip50, Gtk::PACK_SHRINK);
-		pack_end(mChip100, Gtk::PACK_SHRINK);
+		m_BtnBox.pack_end(m_Eraser, Gtk::PACK_SHRINK);
+		m_BtnBox.pack_end(m_Chip1, Gtk::PACK_SHRINK);
+		m_BtnBox.pack_end(m_Chip5, Gtk::PACK_SHRINK);
+		m_BtnBox.pack_end(m_Chip25, Gtk::PACK_SHRINK);
+		m_BtnBox.pack_end(m_Chip50, Gtk::PACK_SHRINK);
+		m_BtnBox.pack_end(m_Chip100, Gtk::PACK_SHRINK);
 
+		//signal_draw().connect(sigc::mem_fun(this, &Chipset::on_chipset_draw));
 		Chipset::constructed = true;
 	}
 
@@ -72,4 +74,12 @@ namespace roulette
 	{
 		return constructed;
 	}
-}
+
+	bool Chipset::on_chipset_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+	{
+		Gdk::Cairo::set_source_rgba(cr, Color::get_background_color());
+		cr->paint();
+		return true;
+	}
+
+} // namespace

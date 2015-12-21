@@ -1,6 +1,6 @@
 
-#ifndef CHIP_HH
-#define CHIP_HH 1
+#ifndef BASE_CONTROL_HH
+#define BASE_CONTROL_HH 1
 
 /*
 roulette - roulette simulation program
@@ -23,48 +23,41 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 ///<summary>
 //
-//	chip.hh
+//	control.hh
 //
-//	Declaration of Bet class
+//	Declaration of BaseControl class
 //
 //	TODO: add description
 //
 ///</summary>
 
-#include "sets.hh"
 #include "error.hh"
 #include "color.hh"
 
 #include <string>
 #include <gtkmm/widget.h>
-#include <gtkmm/selectiondata.h>
 #include <glibmm/refptr.h>
+#include <pangomm/layout.h>
+#include <pangomm/fontdescription.h>
 #include <gdkmm/rgba.h>
 #include <gdkmm/window.h>
-#include <gdkmm/dragcontext.h>
-#include <gdkmm/pixbuf.h>
 #include <gdkmm/rectangle.h> // Gtk::Allocation
 #include <cairomm/refptr.h>
 #include <cairomm/context.h>
 
 namespace roulette
 {
-
-#ifdef _MSC_VER
-#pragma region
-#endif // _MSC_VER
-
-	class Chip final : 
+	class BaseControl :
 		public Gtk::Widget,
 		public IErrorHandler,
 		public Color
 	{
-	public:
-		// constructors
-		Chip(const EChip chip_value);
-
 	protected:
-		//Overrides:
+		// constructors
+		BaseControl(const std::string&& name);
+		virtual ~BaseControl();
+
+		// Overrides
 		Gtk::SizeRequestMode get_request_mode_vfunc() const override;
 		void get_preferred_width_vfunc(int& minimum_width, int& natural_width) const override;
 		void get_preferred_height_for_width_vfunc(int width, int& minimum_height, int& natural_height) const  override;
@@ -77,39 +70,27 @@ namespace roulette
 		void on_unrealize() override;
 		bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
-		// dnd
-		void on_drag_begin(const Glib::RefPtr< Gdk::DragContext >& context) override;
-		void on_drag_data_get(const Glib::RefPtr<Gdk::DragContext>& context,
-			Gtk::SelectionData& selection_data, guint info, guint time) override;
-		void on_drag_end(const Glib::RefPtr< Gdk::DragContext >& context) override;
-
 		// members
 		Glib::RefPtr<Gdk::Window> refGdkWindow;
 
-	private:
+		// methods
+		void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int control_width, int control_height);
+
+		// members
+		Pango::FontDescription mFont;
+
 		/// begin initializer list
-		const unsigned mValue;
-		Glib::RefPtr<Gdk::Pixbuf> refIcon;
+		std::string mName;
+		Glib::RefPtr<Pango::Layout> mLayout;
 		/// end initializer list
 
+	private:
 		// deleted
-		Chip(const Chip&) = delete;
-		Chip(const Chip&&) = delete;
-		Chip& operator=(const Chip&) = delete;
-		Chip& operator=(const Chip&&) = delete;
+		BaseControl(const BaseControl&) = delete;
+		BaseControl(const BaseControl&&) = delete;
+		BaseControl& operator=(const BaseControl&) = delete;
+		BaseControl& operator=(const BaseControl&&) = delete;
 	};
-
-#ifdef _MSC_VER
-#pragma endregion begin
-
-#pragma region
-#endif // _MSC_VER
-
-
-#ifdef _MSC_VER
-#pragma endregion inlines
-#endif // _MSC_VER
-
 } // namespace roulette
 
-#endif // ! CHIP_HH
+#endif // ! CONTROL_HH

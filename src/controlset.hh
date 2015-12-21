@@ -31,6 +31,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
+#include "color.hh"
 #include "control.hh"
 
 #include <gdkmm/rgba.h>
@@ -40,20 +41,27 @@ namespace roulette
 {
 	class window;
 
-	class Controlset final
-		: public Gtk::ButtonBox
+	class Controlset final : 
+		public Gtk::ButtonBox,
+		public IErrorHandler,
+		public Color
 	{
 	public:
 		// constructors
 		Controlset();
+		~Controlset();
 
 	private:
+		// methods
+		bool on_controlset_draw(const ::Cairo::RefPtr< ::Cairo::Context>& cr);
+
 		friend class Window; // to set signals
+
 		/// begin initialization list
-		Control mBtnClose;
-		Control mBtnSpin;
-		Control mBtnSpin50;
-		Control mBtnClear;
+		Control m_BtnClose;
+		Control m_BtnSpin;
+		Control m_BtnSpin50;
+		Control m_BtnClear;
 		/// end initialization list
 
 		// deleted
@@ -62,6 +70,7 @@ namespace roulette
 		Controlset& operator=(const Controlset&) = delete;
 		Controlset& operator=(const Controlset&&) = delete;
 	};
+
 } // namespace roulette
 
 #endif // ! CONTROLSET_HH

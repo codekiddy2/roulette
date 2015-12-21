@@ -31,6 +31,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
+#include "base_control.hh"
+
 #include <string>
 #include <gtkmm/widget.h>
 #include <glibmm/refptr.h>
@@ -44,46 +46,15 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 namespace roulette
 {
-	class Control final
-		: public Gtk::Widget
+	class Control final :
+		public BaseControl
 	{
 	public:
 		// constructors
-		Control(const std::string name);
-
-		// methods
-		// TODO: consider global background setup
-		static void set_background_color(const Gdk::RGBA& color);
-
-	protected:
-		// Overrides
-		Gtk::SizeRequestMode get_request_mode_vfunc() const override;
-		void get_preferred_width_vfunc(int& minimum_width, int& natural_width) const override;
-		void get_preferred_height_for_width_vfunc(int width, int& minimum_height, int& natural_height) const  override;
-		void get_preferred_height_vfunc(int& minimum_height, int& natural_height) const override;
-		void get_preferred_width_for_height_vfunc(int height, int& minimum_width, int& natural_width) const override;
-		void on_size_allocate(Gtk::Allocation& allocation) override;
-		void on_map() override;
-		void on_unmap() override;
-		void on_realize() override;
-		void on_unrealize() override;
-		bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
-
-		// members
-		Glib::RefPtr<Gdk::Window> refGdkWindow;
+		Control(const std::string&& name);
 
 	private:
-		// methods
-		void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int control_width, int control_height);
-
-		// members
-		Pango::FontDescription mFont;
-		static Gdk::RGBA mBackground;
-
-		/// begin initializer list
-		std::string mName;
-		Glib::RefPtr<Pango::Layout> mLayout;
-		/// end initializer list
+		bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
 		// deleted
 		Control(const Control&) = delete;

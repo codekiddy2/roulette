@@ -29,10 +29,16 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 #include "pch.hh"
 #include "history.hh"
+#include "color.hh"
+#include "main.hh"
 
 namespace roulette
 {
+	using std::string;
+	using std::to_string;
+
 	History::History() :
+		IErrorHandler("History"),
 		mTagTable(Gtk::TextTagTable::create()),
 		refRedBuffer(Gtk::TextBuffer::create(mTagTable)),
 		refBlackBuffer(Gtk::TextBuffer::create(mTagTable)),
@@ -62,6 +68,9 @@ namespace roulette
 		mTagBlack->property_foreground() = "Gold";
 		mTagRed->property_foreground() = "Red";
 		mTagGreen->property_foreground() = "Green";
+		mTagBlack->property_background() = "Black";
+		mTagRed->property_background() = "Black";
+		mTagGreen->property_background() = "Black";
 
 		// prevent history modification
 		mViewBlack.set_sensitive(false);
@@ -69,15 +78,12 @@ namespace roulette
 		mViewGreen.set_sensitive(false);
 
 		// initial buffer to prevent alignment of numbers
-		refRedBuffer->set_text("\t");
-		refGreenBuffer->set_text("\t");
-		refBlackBuffer->set_text("\t");
-
-		// set background color
-		Gdk::RGBA color("Black");
-		mViewBlack.override_background_color(color);
-		mViewRed.override_background_color(color);
-		mViewGreen.override_background_color(color);
+		string newline = "\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t";
+		refRedBuffer->set_text(newline);
+		refGreenBuffer->set_text(newline);
+		refBlackBuffer->set_text(newline);
+		
+		apply_tags();
 	}
 
 	void History::apply_tags()
@@ -96,5 +102,54 @@ namespace roulette
 			mTagGreen,
 			refGreenBuffer->begin(),
 			refGreenBuffer->end());
+	}
+
+	void History::set_result(unsigned result)
+	{
+		string red_output, black_output, green_output;
+		string single_space = " ", triple_space = "   ", newline = "\n", tab = "\t";
+
+		// format result to be properly aligned with past results
+		if (result == 0)
+		{
+			green_output.append(triple_space + to_string(result) + tab + newline);
+			green_output.append(refGreenBuffer->get_text());
+
+			red_output.append(tab + newline);
+			red_output.append(refRedBuffer->get_text());
+
+			black_output.append(tab + newline);
+			black_output.append(refBlackBuffer->get_text());
+		}
+		else if (is_red(result))
+		{
+			red_output.append(triple_space + to_string(result) + tab + newline);
+			red_output.append(refRedBuffer->get_text());
+
+			green_output.append(tab + newline);
+			green_output.append(refGreenBuffer->get_text());
+
+			black_output.append(tab + newline);
+			black_output.append(refBlackBuffer->get_text());
+		}
+		else // black result :)
+		{
+			black_output.append(single_space + to_string(result) + tab + newline);
+			black_output.append(refBlackBuffer->get_text());
+
+			green_output.append(tab + newline);
+			green_output.append(refGreenBuffer->get_text());
+
+			red_output.append(tab + newline);
+			red_output.append(refRedBuffer->get_text());
+		}
+
+		// set text
+		refGreenBuffer->set_text(green_output);
+		refRedBuffer->set_text(red_output);
+		refBlackBuffer->set_text(black_output);
+
+		// apply colors
+		apply_tags();
 	}
 } // namespace roulette

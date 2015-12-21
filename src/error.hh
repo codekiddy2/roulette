@@ -41,8 +41,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 namespace roulette
 {
-	class error final
-		: public std::exception
+	class error final :
+		public std::exception
 	{
 	public:
 		// constructors

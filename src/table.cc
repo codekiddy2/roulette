@@ -30,7 +30,6 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 #include "pch.hh"
-#include "chipset.hh"
 #include "field.hh"
 #include "table.hh"
 #include "error.hh"
@@ -57,9 +56,6 @@ namespace roulette
 		set_column_homogeneous(true);
 		set_row_homogeneous(true);
 
-		if (!Chipset::is_constructed())
-			error_handler("Chipset must be constructed before Table, DND will not work");
-
 		// create fields
 		EField temp;
 		for (size_t i = 0; i < static_cast<size_t>(EField::Dummy3); i++)
@@ -68,7 +64,7 @@ namespace roulette
 			m_fields.insert(make_pair(temp, new Field(temp, this)));
 		}
 		// TODO: check if any signals are connected more than once,
-		//ex: debug output how many times handlers get called per chip placed (should be once only)
+		//ex: debug output how many times handlers get called per chip placed (should be twice at most - drawing and bet signal)
 	
 		// get dozens and their neighbors on top (column1) (will be used later, forward declaration.
 		auto zerro = m_fields.find(EField::Number0)->second;
@@ -97,16 +93,13 @@ namespace roulette
 		// neighbors to the left
 		number1->signal_bet_left.connect(sigc::mem_fun(zerro, &Field::on_signal_bet_right));
 		number2->signal_bet_left.connect(sigc::mem_fun(zerro, &Field::on_signal_bet_right));
-		//number3->signal_bet_left.connect(sigc::mem_fun(zerro, &Field::on_signal_bet_right)); // number 3 will be connected in for loop below
+		// number3 will be connected in for loop below
 
 		// signal emited to zero - NOTE: zero does chips drawing for number3 when signal from numbe2 is received
 		number1->signal_bet_top_left.connect(sigc::mem_fun(zerro, &Field::on_signal_bet_top_right));
 		number2->signal_bet_top_left.connect(sigc::mem_fun(zerro, &Field::on_signal_bet_top_right));
 		number1->signal_bet_bottom_left.connect(sigc::mem_fun(zerro, &Field::on_signal_bet_bottom_right));
 		number2->signal_bet_bottom_left.connect(sigc::mem_fun(zerro, &Field::on_signal_bet_bottom_right));
-
-		// this is not neded - check why not
-		//number3->signal_bet_bottom_left.connect(sigc::mem_fun(zerro, &Field::on_signal_bet_bottom_right));
 
 		// signals emitted by zero
 		zerro->signal_bet_split1.connect(sigc::mem_fun(number3, &Field::on_signal_bet_left));
@@ -593,9 +586,9 @@ namespace roulette
 
 	Table::~Table()
 	{
-		for (size_t i = 0; i <= m_fields.size(); i++)
+		for (auto pair : m_fields)
 		{
-			delete m_fields.at(static_cast<EField>(i));
+			delete pair.second;
 		}
 	}
 
@@ -615,8 +608,8 @@ namespace roulette
 
 		if (limit) // if limit is not 0
 			limit > 0 ?
-			throw error("CTable -> SetTableMax -> Table max smaler then even oney bet") :
-			throw error("CTable -> SetMinimum -> Table limit too low");
+			error_handler(error("CTable -> SetTableMax -> Table max smaler then even oney bet")) :
+			error_handler(error("CTable -> SetMinimum -> Table limit too low"));
 
 		// if limit is zero it will be calculated according to maximum bets possible
 		m_tablemax = 0;

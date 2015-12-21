@@ -43,7 +43,6 @@ namespace roulette
 #pragma region begin
 #endif // _MSC_VER
 
-	Gdk::RGBA Chip::mBackground;
 
 	Chip::Chip(const EChip chip_value) :
 		Glib::ObjectBase("Chip"), // The GType name will be gtkmm__CustomObject_Chip
@@ -161,7 +160,7 @@ namespace roulette
 		Gtk::Allocation allocation = get_allocation();
 
 		// paint the background
-		Gdk::Cairo::set_source_rgba(cr, mBackground);
+		Gdk::Cairo::set_source_rgba(cr, Color::get_background_color());
 		cr->paint();
 
 		// draw chip in the middle
@@ -172,11 +171,6 @@ namespace roulette
 		cr->paint();
 
 		return true;
-	}
-
-	void Chip::set_background_color(const Gdk::RGBA & color)
-	{
-		mBackground = color;
 	}
 
 #ifdef _MSC_VER

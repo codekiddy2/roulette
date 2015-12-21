@@ -38,7 +38,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 #include <memory>
-#include <unordered_set>	// type_set
+#include <unordered_set> // type_set
 
 namespace roulette
 {
@@ -237,9 +237,8 @@ namespace roulette
 		Column,
 	};
 
-	typedef /*const */std::unordered_set<unsigned> type_raw_set;
+	typedef const std::unordered_set<unsigned> type_raw_set;
 	typedef std::shared_ptr<type_raw_set> type_set;
-	typedef std::unordered_set<unsigned> type_selection; // TODO: type_selection is deprecated
 
 	extern type_set NoZeroWheel;
 	extern type_set AmericanWheel;
