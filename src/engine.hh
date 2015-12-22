@@ -27,20 +27,23 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 //	Declaration of Engine class
 //
-//	TODO: add description
+//	Engine class is used to spin numbers,
+// store and place bets
+//
+// it also perform calculations of outcome and manages
+// player bankrol odds and looses
 //
 ///</summary>
 
+// roulette
 #include "bet.hh"
 #include "error.hh"
 #include "main.hh"
 
-#include <iostream>
-#include <vector>
-#include <memory>
-
+// gtkmm
 #include <sigc++/signal.h>
 
+// boost
 #include <boost/random/random_device.hpp>
 
 namespace roulette
@@ -57,26 +60,42 @@ namespace roulette
 		// constructors
 		Engine();
 
-		// methods
-		void spin(const ETable table_type);
-		inline unsigned get_bet() const;
-		inline unsigned get_bankroll() const;
-		inline unsigned get_last_bet() const;
-		inline type_set get_numbers() const;
+		// place a bet into the engine bet container
 		void place_bet(type_bet bet);
 
-		// signals
+		// spin a roulette wheel
+		void spin(const ETable table_type);
+
+		// remove all previously placed bets
+		void clear_all_bets();
+
+		// get total value of bets placed
+		inline unsigned get_bet() const;
+
+		// get current player bankroll
+		inline unsigned get_bankroll() const;
+
+		// get value of last bet placed
+		inline unsigned get_last_bet() const;
+
+		// get numbers on which the bet has been placed
+		inline type_set get_numbers() const;
+
+		// signal the spin
 		sigc::signal1<void, int> signal_spin;
 
 	private:
+		// clear a single bet from the engine store
+		void clear_bet(type_bet& bet);
+
 		// members
 		type_bet_container m_bets;
 		static boost::random::random_device m_rng;
 
 		/// begin initializer list
-		unsigned m_current_bet = 0;
-		unsigned m_last_bet = 0;
-		unsigned m_bankroll = 2000;
+		unsigned m_current_bet;
+		unsigned m_last_bet;
+		unsigned m_bankroll;
 		/// end initializer list
 
 		// deleted

@@ -62,6 +62,6 @@ namespace roulette
 		Color& operator=(const Color&&) = delete;
 	};
 
-} // namespace
+} // namespace roulette
 
 #endif // !COLOR_HH

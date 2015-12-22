@@ -23,17 +23,23 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 //	Definition of Field class
 //
-//	TODO: add description
+// DRAG AND DROP CALL STACK:
+//
+// on_drag_data_received
+// calculate_points
+// signal.emit
+// m_chips.push_back
+// refGdkWindow->invalidate
+// on_draw
+// for_each cr->paint();
+// draw neighboring chips
 //
 ///</summary>
 
 #include "pch.hh"
 #include "field.hh"
-#include "sets.hh"
-#include "chipset.hh"
 #include "table.hh"
 #include "main.hh"
-#include "bet.hh"
 #include "color.hh"
 
 namespace roulette
@@ -70,7 +76,7 @@ namespace roulette
 		m_font.set_family("Arial");
 		m_layout->set_font_description(m_font);
 
-		mp_table->signal_clear.connect(sigc::mem_fun(*this, &Field::clear_all));
+		mp_table->signal_clear_all.connect(sigc::mem_fun(*this, &Field::clear_all));
 
 		// Make Field a drop target
 		drag_dest_set(dnd_targets, Gtk::DestDefaults::DEST_DEFAULT_ALL, Gdk::DragAction::ACTION_COPY);
@@ -570,8 +576,6 @@ namespace roulette
 				m_background.set("Black");
 			}
 		} // switch
-		// HACK: Layout reference hack
-		m_layout->reference();
 	}
 
 	void Field::clear_all()
@@ -590,6 +594,8 @@ namespace roulette
 		{
 			if (iter->get()->second.equal(chip_point))
 			{
+				print("clear");
+				std::cout << endl;
 				m_chips.erase(iter);
 				iter = m_chips.begin();
 				if (iter == m_chips.end())
@@ -666,12 +672,12 @@ namespace roulette
 			return refGdkWindow->invalidate(false);
 		}
 
+		// if dummy's x is zero then dropped chips won't be drawn on it.
 		if ((m_index == EField::Dummy1 || m_index == EField::Dummy2) && (!chip->second.get_x()))
 		{
 			print("INFO: drop refused");
 			print("on_drag_data_received", true);
 			cout << endl;
-			// if dummy's x is zero then dropped chips won't be drawn on it.
 			return context->drag_finish(true, false, time);
 		}
 
@@ -1544,18 +1550,3 @@ namespace roulette
 #endif // _MSC_VER
 
 } // namespace roulette
-
-///<summary>
-//
-// DRAG AND DROP CALL STACK
-//
-// on_drag_data_received
-// calculate_points
-// signal.emit
-// m_chips.push_back
-// refGdkWindow->invalidate
-// on_draw
-// for_each cr->paint();
-// draw neighboring chips
-//
-///<summary>

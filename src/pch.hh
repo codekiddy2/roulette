@@ -25,12 +25,12 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 //	pch.hh
 //
+// precompiled header, used to speed up compilation and intelisense
 // reference any headers which are not frequently modified here
 //
 ///</summary>
 
 #ifdef _MSC_VER
-
 // disabled warnings for /W4
 #pragma warning(disable: 4309) // lvl2 'conversion' : truncation of constant value
 #pragma warning(disable: 4505) // lvl4 'function' : unreferenced local function has been removed
@@ -39,29 +39,21 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #pragma warning(disable: 4996) // lvl3 The compiler encountered a deprecated declaration.
 #pragma warning(disable: 4242) // lvl4 The types are different. Type conversion may result in loss of data.
 #pragma warning(push, 0)
-
-// disabled in property sheet for /WAll
-//#pragma warning (disable: 4820) // '4' bytes padding added after data member
-//#pragma warning (disable: 4514) // 'function' : unreferenced inline function has been removed
 #endif // _MSC_VER
 
 // std
-#include <vector>
-#include <string>
+#include <vector> // wide usage for containers
+#include <string> // wide usage to avoid const char*
 #include <algorithm>	// get_neighbor() and std::for_each
 #include <iostream> // for debugging (cout, cerr, endl)
-#include <exception>
+#include <exception> // sed for error class
 #include <cmath>	// SetPart2 in bet..
 #include <utility> // for make_pair
 #include <map> // used in Table
 #include <unordered_set> // used for sets (sets.hh)
-#include <memory>
+#include <memory> // wide usage for shared_ptr
 
 // gtkmm
-#ifdef GTKMM_ATKMM_ENABLED
-#include <atkmm\atkmm.h>
-#endif // GTKMM_ATKMM_ENABLED
-
 #include <gtkmm/gtkmm.h>
 
 #if 0
@@ -70,6 +62,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <glibmm/glibmm.h> // included by gtkmm.h and giomm.h
 #endif
 
+#include <atkmm/atkmm.h> // needed if GTKMM_ATKMM_ENABLED is defined
 #include <sigc++/sigc++.h>
 #include <cairomm/cairomm.h>
 #include <pangomm/pangomm.h>
@@ -79,12 +72,15 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #endif
 
 // boost
-#include <boost/random.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/random/random_device.hpp>
+#include <boost/random.hpp> // used by Engine class
+#include <boost/filesystem.hpp> // used to check for existence of icons
+#include <boost/random/random_device.hpp> // used by Engine class
 
-#define DEBUG_FILE_LOG
-#define DEBUG_DND_LOG
+#if 0
+// not used
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#endif
 
 #ifdef _MSC_VER
 // reenable warnings for /W4

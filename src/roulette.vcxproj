@@ -144,7 +144,7 @@
     <ClInclude Include="table.hh" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="basecontrol.cc" />
+    <ClCompile Include="base_control.cc" />
     <ClCompile Include="bet.cc" />
     <ClCompile Include="chip.cc" />
     <ClCompile Include="color.cc" />

@@ -27,11 +27,12 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 //	Declaration of Window class
 //
-//	TODO: add description
+//	Window class constructs other objects and packs them
+// Connects objects with signals instead of passing poiners around
 //
 ///</summary>
 
-#include "color.hh"
+// roulette
 #include "table.hh"
 #include "history.hh"
 #include "chip.hh"
@@ -39,10 +40,9 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "engine.hh"
 #include "infobar.hh"
 
+// gtkmm
 #include <gtkmm/box.h>
-#include <gtkmm/frame.h>
 #include <gtkmm/window.h>
-#include <gdkmm/rgba.h>
 #include <gdkmm/pixbuf.h>
 #include <gdkmm/event.h>
 #include <glibmm/refptr.h>
@@ -66,11 +66,11 @@ namespace roulette
 		bool on_button_clear(GdkEventButton* button_event);
 
 		// members
-		Gtk::HBox mHBoxTop;
-		Gtk::VBox mVBoxArea;
-		Gtk::HBox mHBoxControls;
-		Gtk::ButtonBox mChipset;
-		Gtk::ButtonBox mControlset;
+		Gtk::HBox m_HBoxTop;
+		Gtk::VBox m_VBoxArea;
+		Gtk::HBox m_HBoxControls;
+		Gtk::ButtonBox m_Chipset;
+		Gtk::ButtonBox m_Controlset;
 
 		/// begin initializer list
 		// Chips must be constructed before Table because
@@ -87,11 +87,13 @@ namespace roulette
 		Control m_BtnSpin50;
 		Control m_BtnClear;
 
-		Table m_table;
-		History m_history; // history must be constructed before engine
-		Engine* mp_engine; // engine must be constructed before infobar
+		// engine must be constructed before infobar
+		Engine* mp_engine;
 		InfoBar m_infobar;
 		/// end of initializer list
+
+		Table m_table;
+		History m_history;
 
 		// deleted
 		Window(const Window&) = delete;
@@ -99,6 +101,7 @@ namespace roulette
 		Window& operator=(const Window&) = delete;
 		Window& operator=(const Window&&) = delete;
 	};
+
 } // namespace roulette
 
 #endif // ! WINDOW_HH

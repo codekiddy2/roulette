@@ -103,7 +103,7 @@
     <ClCompile Include="color.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="basecontrol.cc">
+    <ClCompile Include="base_control.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

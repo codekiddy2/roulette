@@ -28,8 +28,6 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //	Bet class is used to set, calculate and print bet properties
 //	or to place a bet on the table (Table class)
 //
-// TODO: add description
-//
 ///</summary>
 
 #include "error.hh"
@@ -42,6 +40,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <gdkmm/types.h> // Gdk::Point
 #include <gdkmm/pixbuf.h>
 #include <glibmm/refptr.h>
+
+//#include <boost/uuid/uuid.hpp>
 
 namespace roulette
 {
@@ -79,6 +79,7 @@ namespace roulette
 		EBet m_bet;
 		unsigned m_chip;
 		type_set mp_set;
+		//boost::uuids::uuid m_uuid;
 
 #if 0
 		// methods

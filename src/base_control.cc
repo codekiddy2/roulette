@@ -19,11 +19,9 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 ///<summary>
 //
-//	control.cc
+//	base_control.cc
 //
 //	Definition of BaseControl class
-//
-//	TODO: add description
 //
 ///</summary>
 
@@ -39,15 +37,12 @@ namespace roulette
 		Glib::ObjectBase(name.c_str()),
 		Gtk::Widget(),
 		IErrorHandler(name.c_str()),
-		mName(name),
-		mLayout(create_pango_layout(name))
+		m_name(name),
+		m_font("Arial"),
+		m_layout(create_pango_layout(name))
 	{
 		set_has_window(true);
-
-		mFont.set_family("Arial");
-		mLayout->set_font_description(mFont);
-		// HACK: Layout reference hack
-		mLayout->reference();
+		m_layout->set_font_description(m_font);
 	}
 
 	BaseControl::~BaseControl()
@@ -194,12 +189,12 @@ namespace roulette
 		int text_height;
 
 		// get the text dimensions (it updates the variables -- by reference)
-		mLayout->get_pixel_size(text_width, text_height);
+		m_layout->get_pixel_size(text_width, text_height);
 
 		Gdk::Cairo::set_source_rgba(cr, Color::get_foreground_color());
 		cr->move_to((control_width - text_width) / 2, (control_height - text_height) / 2);
 
-		mLayout->show_in_cairo_context(cr);
+		m_layout->show_in_cairo_context(cr);
 	}
 
 } // namespace roulette

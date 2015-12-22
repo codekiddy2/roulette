@@ -23,160 +23,161 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 //	Definition of Window class
 //
-//	TODO: add description
-//
 ///</summary>
 
 #include "pch.hh"
-#include "window.hh"
 #include "sets.hh"
+#include "window.hh"
 
-using std::cerr;
-using std::cout;
-using std::endl;
-using std::string;
-using namespace roulette;
-
-class Dummy :
-	public BaseControl
+namespace roulette
 {
-public:
-	// constructors
-	Dummy();
-
-private:
-	// overrides
-	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
-
-	// deleted
-	Dummy(const Dummy&) = delete;
-	Dummy(const Dummy&&) = delete;
-	Dummy& operator=(const Dummy&) = delete;
-	Dummy& operator=(const Dummy&&) = delete;
-};
-
-Window::Window(Glib::RefPtr<Gdk::Pixbuf> refIcon) :
-	IErrorHandler("Window"),
-	m_Chip1(EChip::Chip1),
-	m_Chip5(EChip::Chip5),
-	m_Chip25(EChip::Chip25),
-	m_Chip50(EChip::Chip50),
-	m_Chip100(EChip::Chip100),
-	m_Eraser(EChip::Eraser),
-	m_BtnClose("Close"),
-	m_BtnSpin("Spin"),
-	m_BtnSpin50("Spin 50x"),
-	m_BtnClear("Clear"),
-	mp_engine(new Engine),
-	m_infobar(mp_engine)
-{
-	// Window options
-	set_title("roulette");
-	set_size_request(500, 300);
-	set_position(Gtk::WIN_POS_CENTER);
-	set_icon(refIcon);
-
-	// begin packing
-	add(mHBoxTop);
-
-	// PACKING from left to right
-	mHBoxTop.pack_start(m_history, Gtk::PACK_SHRINK);
-	mHBoxTop.pack_start(mVBoxArea, Gtk::PACK_EXPAND_WIDGET);
-
-	// PACKING from top to bottom
-	mVBoxArea.pack_start(m_infobar, Gtk::PACK_SHRINK);
-	mVBoxArea.pack_start(m_table, Gtk::PACK_EXPAND_WIDGET);
-	mVBoxArea.pack_start(mHBoxControls, Gtk::PACK_SHRINK);
-	
-	// PACKING from right to left
-	mHBoxControls.pack_end(mControlset, Gtk::PACK_SHRINK); // Controlset
-	mHBoxControls.pack_end(mChipset, Gtk::PACK_SHRINK); // chipset
-	Dummy* p_dummy = Gtk::manage(new Dummy);
-	mHBoxControls.add(*p_dummy);
-
-	// Controlset properties
-	mControlset.set_spacing(0);
-	mControlset.set_border_width(0);
-	mControlset.pack_end(m_BtnClear, Gtk::PACK_SHRINK);
-	mControlset.pack_end(m_BtnSpin, Gtk::PACK_SHRINK);
-	mControlset.pack_end(m_BtnSpin50, Gtk::PACK_SHRINK);
-	mControlset.pack_end(m_BtnClose, Gtk::PACK_SHRINK);
-
-	// Chipset properties
-	mChipset.set_spacing(0);
-	mChipset.set_border_width(0);
-	mChipset.set_layout(Gtk::BUTTONBOX_END);
-	mChipset.pack_end(m_Eraser, Gtk::PACK_SHRINK);
-	mChipset.pack_end(m_Chip1, Gtk::PACK_SHRINK);
-	mChipset.pack_end(m_Chip5, Gtk::PACK_SHRINK);
-	mChipset.pack_end(m_Chip25, Gtk::PACK_SHRINK);
-	mChipset.pack_end(m_Chip50, Gtk::PACK_SHRINK);
-	mChipset.pack_end(m_Chip100, Gtk::PACK_SHRINK);
-
-	// signals
-	m_BtnClose.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_close));
-	m_BtnSpin.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_spin));
-	m_BtnSpin50.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_spin50));
-	m_BtnClear.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_clear));
-
-	mp_engine->signal_spin.connect(sigc::mem_fun(m_history, &History::set_result));
-	m_table.signal_bet.connect(sigc::mem_fun(*mp_engine, &Engine::place_bet));
-	m_table.signal_bet.connect(sigc::mem_fun(m_infobar, &InfoBar::on_signal_bet));
-
-	// engine options
-	mp_engine->set_debug(true);
-
-	show_all();
-}
-
-roulette::Window::~Window()
-{
-	delete mp_engine;
-}
-
-bool Window::on_button_close(GdkEventButton* /*button_event*/)
-{
-	close();
-	return true;
-}
-
-bool Window::on_button_spin(GdkEventButton* /*button_event*/)
-{
-	mp_engine->spin(m_table.get_table_type());
-	return true;
-}
-
-bool Window::on_button_spin50(GdkEventButton* button_event)
-{
-	for (size_t i = 0; i < 50; i++)
+	// dummy control is used to fill the area at the bottom
+	class Dummy :
+		public BaseControl
 	{
-		on_button_spin(button_event);
+	public:
+		// constructors
+		Dummy();
+
+	private:
+		// overrides
+		bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+
+		// deleted
+		Dummy(const Dummy&) = delete;
+		Dummy(const Dummy&&) = delete;
+		Dummy& operator=(const Dummy&) = delete;
+		Dummy& operator=(const Dummy&&) = delete;
+	};
+
+	Window::Window(Glib::RefPtr<Gdk::Pixbuf> refIcon) :
+		IErrorHandler("Window"),
+		m_Chip1(EChip::Chip1),
+		m_Chip5(EChip::Chip5),
+		m_Chip25(EChip::Chip25),
+		m_Chip50(EChip::Chip50),
+		m_Chip100(EChip::Chip100),
+		m_Eraser(EChip::Eraser),
+		m_BtnClose("Close"),
+		m_BtnSpin("Spin"),
+		m_BtnSpin50("Spin 50x"),
+		m_BtnClear("Clear"),
+		mp_engine(new Engine),
+		m_infobar(mp_engine)
+	{
+		// Window options
+		set_title("roulette");
+		set_size_request(500, 300);
+		set_position(Gtk::WIN_POS_CENTER);
+		set_icon(refIcon);
+
+		// begin packing
+		add(m_HBoxTop);
+
+		// PACKING from left to right
+		m_HBoxTop.pack_start(m_history, Gtk::PACK_SHRINK);
+		m_HBoxTop.pack_start(m_VBoxArea, Gtk::PACK_EXPAND_WIDGET);
+		m_HBoxTop.show_all();
+
+		// PACKING from top to bottom
+		m_VBoxArea.pack_start(m_infobar, Gtk::PACK_SHRINK);
+		m_VBoxArea.pack_start(m_table, Gtk::PACK_EXPAND_WIDGET);
+		m_VBoxArea.pack_start(m_HBoxControls, Gtk::PACK_SHRINK);
+		m_VBoxArea.show_all();
+
+		// PACKING from right to left
+		m_HBoxControls.pack_end(m_Controlset, Gtk::PACK_SHRINK); // Controlset
+		m_HBoxControls.pack_end(m_Chipset, Gtk::PACK_SHRINK); // chipset
+		Dummy* p_dummy = Gtk::manage(new Dummy);
+		m_HBoxControls.add(*p_dummy);
+		m_HBoxControls.show_all();
+
+		// Controlset properties
+		m_Controlset.set_spacing(0);
+		m_Controlset.set_border_width(0);
+		m_Controlset.pack_end(m_BtnClear, Gtk::PACK_SHRINK);
+		m_Controlset.pack_end(m_BtnSpin, Gtk::PACK_SHRINK);
+		m_Controlset.pack_end(m_BtnSpin50, Gtk::PACK_SHRINK);
+		m_Controlset.pack_end(m_BtnClose, Gtk::PACK_SHRINK);
+		m_Controlset.show_all();
+
+		// Chipset properties
+		m_Chipset.set_spacing(0);
+		m_Chipset.set_border_width(0);
+		m_Chipset.pack_end(m_Eraser, Gtk::PACK_SHRINK);
+		m_Chipset.pack_end(m_Chip1, Gtk::PACK_SHRINK);
+		m_Chipset.pack_end(m_Chip5, Gtk::PACK_SHRINK);
+		m_Chipset.pack_end(m_Chip25, Gtk::PACK_SHRINK);
+		m_Chipset.pack_end(m_Chip50, Gtk::PACK_SHRINK);
+		m_Chipset.pack_end(m_Chip100, Gtk::PACK_SHRINK);
+		m_Chipset.show_all();
+
+		// signals for this window
+		m_BtnClose.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_close));
+		m_BtnSpin.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_spin));
+		m_BtnSpin50.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_spin50));
+		m_BtnClear.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_clear));
+
+		// signals connecting objects constructed by window
+		mp_engine->signal_spin.connect(sigc::mem_fun(m_history, &History::set_result));
+		m_table.signal_clear_all.connect(sigc::mem_fun(*mp_engine, &Engine::clear_all_bets));
+		m_table.signal_bet.connect(sigc::mem_fun(*mp_engine, &Engine::place_bet));
+		m_table.signal_bet.connect(sigc::mem_fun(m_infobar, &InfoBar::on_signal_bet));
+
+		// engine options
+		mp_engine->set_debug(true);
 	}
-	return true;
-}
 
-bool Window::on_button_clear(GdkEventButton* /*button_event*/)
-{
-	m_table.signal_clear.emit();
-	return true;
-}
+	roulette::Window::~Window()
+	{
+		delete mp_engine;
+	}
 
-Dummy::Dummy() :
-	BaseControl("Dummy")
-{
+	// close app
+	bool Window::on_button_close(GdkEventButton* /*button_event*/)
+	{
+		close();
+		return true;
+	}
 
-}
+	// spin single number
+	bool Window::on_button_spin(GdkEventButton* /*button_event*/)
+	{
+		mp_engine->spin(m_table.get_table_type());
+		return true;
+	}
 
-// Draw on the supplied Cairo::Context.
-bool Dummy::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
-{
-	Gtk::Allocation allocation = get_allocation();
-	const int width = allocation.get_width();
-	const int height = allocation.get_height();
+	// sping 50 times
+	bool Window::on_button_spin50(GdkEventButton* button_event)
+	{
+		for (size_t i = 0; i < 50; i++)
+		{
+			on_button_spin(button_event);
+		}
+		return true;
+	}
 
-	// paint the background
-	Gdk::Cairo::set_source_rgba(cr, Color::get_background_color());
-	cr->paint();
+	// clear all chips from the table
+	bool Window::on_button_clear(GdkEventButton* /*button_event*/)
+	{
+		m_table.signal_clear_all.emit();
+		return true;
+	}
 
-	return true;
-}
+	Dummy::Dummy() :
+		BaseControl("Dummy")
+	{
+
+	}
+
+	// Draw on the supplied Cairo::Context.
+	bool Dummy::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+	{
+		// paint the background
+		Gdk::Cairo::set_source_rgba(cr, Color::get_background_color());
+		cr->paint();
+
+		return true;
+	}
+
+} // namespace roulette

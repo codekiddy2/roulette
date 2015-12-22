@@ -21,25 +21,27 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 //	main.cc
 //
-//	Defined the application entry point
+//	Defines the application entry point
+// Defines common functions shared by most
+// translation units
 //
-//	TODO: add description
+// TODO: pass values by reference in functions
 //
 ///</summary>
 
+// roulette
 #include "pch.hh"
 #include "main.hh"
 #include "window.hh"
 
 namespace roulette
 {
-	using std::cout;
-	using std::endl;
-	using std::cerr;
-	using std::string;
-	using std::vector;
-	using boost::filesystem::exists;
+	using std::find; // get_neighbor()
+	using std::string; // load icons()
+	using std::vector; // dnd_targets
+	using boost::filesystem::exists; // load_icons()
 
+	// chip pixbuf icons
 	type_chip_icon icon1;
 	type_chip_icon icon5;
 	type_chip_icon icon25;
@@ -49,7 +51,7 @@ namespace roulette
 	type_chip_icon app_icon;
 
 	// load size x size version from the ico file
-	int chip_size = 32;
+	static int chip_size = 32;
 
 	vector<Gtk::TargetEntry> dnd_targets;
 
@@ -71,8 +73,9 @@ int main(int argc, char* argv[])
 			delete p_window;
 			return 0;
 		}
+		else return -1;
 	}
-	return -1;
+	else return -2;
 }
 
 namespace roulette
@@ -121,16 +124,16 @@ namespace roulette
 
 	unsigned which_column(const unsigned number)
 	{
-		if ((number % 3) == 0)
-			return 3;
-		else return number % 3;
+		if (number % 3)
+			return number % 3;
+		else return 3;
 	}
 
 	unsigned which_column(EField field)
 	{
-		if ((static_cast<unsigned>(field) % 3) == 0)
-			return 3;
-		else return static_cast<unsigned>(field) % 3;
+		if (static_cast<unsigned>(field) % 3)
+			return static_cast<unsigned>(field) % 3;
+		else return 3;
 	}
 
 	unsigned which_dozen(const unsigned number)
@@ -142,11 +145,21 @@ namespace roulette
 		else return 3;
 	}
 
+	void set_chipsize(const int size)
+	{
+		chip_size = size;
+	}
+
+	int get_chipsize()
+	{
+		return chip_size;
+	}
+
 	bool load_icons()
 	{
-		string file_name = "Chip1.ico";
 		bool success = true;
-
+		string file_name = "Chip1.ico";
+	
 		exists(file_name) ? icon1 = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
 
 		file_name = "Chip5.ico";
@@ -193,7 +206,6 @@ namespace roulette
 	unsigned get_neighbor(const ETable table, const unsigned refNum, const unsigned position)
 	{
 		unsigned i = 0;
-		using std::find;
 		static type_raw_set::const_iterator iter;
 
 		switch (table)
@@ -269,14 +281,4 @@ namespace roulette
 		return *iter;
 	}
 
-	void set_chipsize(const int size)
-	{
-		chip_size = size;
-	}
-
-	int get_chipsize()
-	{
-		return chip_size;
-	}
-
-} // namespace
+} // namespace roulette

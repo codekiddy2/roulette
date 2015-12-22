@@ -21,20 +21,18 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 // infobar.cc
 //
-//
-// TODO: add description
+// Defines Infobar class
 //
 ///</summary>
 
-
+// roulette
 #include "pch.hh"
 #include "infobar.hh"
-#include "table.hh"
 #include "engine.hh"
 
-#include <memory>
+// std
+#include <string>
 #include <utility>
-#include <algorithm>
 
 namespace roulette
 {
@@ -46,7 +44,6 @@ namespace roulette
 	using std::string;
 	using std::to_string;
 	using std::make_pair;
-	using std::for_each;
 
 	roulette::InfoBar::InfoBar(Engine* p_engine) :
 		IErrorHandler("InfoBar"),
@@ -78,8 +75,6 @@ namespace roulette
 		for (auto pair : m_layouts)
 		{
 			pair.second->set_font_description(font);
-			// HACK: Layout reference hack
-			pair.second->reference();
 		}
 	}
 
@@ -245,4 +240,4 @@ namespace roulette
 #pragma endregion methods
 #endif // _MSC_VER
 
-} // namespace
+} // namespace roulette

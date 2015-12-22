@@ -23,23 +23,29 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 ///<summary>
 //
-//	control.hh
+//	base_control.hh
 //
 //	Declaration of BaseControl class
 //
-//	TODO: add description
+// Base class for derived Control classes.
+// Controls are a customized buttons to be shown
+// on main window
+// derived by Control, Chip and Dummy in Window class
 //
 ///</summary>
 
+// roulette
 #include "error.hh"
 #include "color.hh"
 
+// std
 #include <string>
+
+// gtkmm
 #include <gtkmm/widget.h>
 #include <glibmm/refptr.h>
 #include <pangomm/layout.h>
 #include <pangomm/fontdescription.h>
-#include <gdkmm/rgba.h>
 #include <gdkmm/window.h>
 #include <gdkmm/rectangle.h> // Gtk::Allocation
 #include <cairomm/refptr.h>
@@ -54,10 +60,11 @@ namespace roulette
 	{
 	protected:
 		// constructors
+		// the name argument will be drawn onto control
 		BaseControl(const std::string&& name);
 		virtual ~BaseControl();
 
-		// Overrides
+		// Overrides derived from Gtk::Widget
 		Gtk::SizeRequestMode get_request_mode_vfunc() const override;
 		void get_preferred_width_vfunc(int& minimum_width, int& natural_width) const override;
 		void get_preferred_height_for_width_vfunc(int width, int& minimum_height, int& natural_height) const  override;
@@ -77,11 +84,10 @@ namespace roulette
 		void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int control_width, int control_height);
 
 		// members
-		Pango::FontDescription mFont;
-
 		/// begin initializer list
-		std::string mName;
-		Glib::RefPtr<Pango::Layout> mLayout;
+		std::string m_name;
+		Pango::FontDescription m_font;
+		Glib::RefPtr<Pango::Layout> m_layout;
 		/// end initializer list
 
 	private:
@@ -91,6 +97,7 @@ namespace roulette
 		BaseControl& operator=(const BaseControl&) = delete;
 		BaseControl& operator=(const BaseControl&&) = delete;
 	};
+
 } // namespace roulette
 
 #endif // ! CONTROL_HH

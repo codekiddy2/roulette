@@ -26,14 +26,13 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //	sets.hh
 //
 //	Sets header contains number sets of roulette wheel and enumerations.
-//	Definition of ETable, EBet and CErrorCode class.
+//	Definition of ETable, EBet.
 //	ETable is enumeration of table layouts available to play.
 //	EBet is enumeration of all the bet types available to put on the table (Table class).
 //	TODO reserve 0th enum and set start at 1
 //	c++11 TODO:
 //	forward declare enum class ans use short enumeration (not default int)
-//	mark classes final
-//	initialize sets in Sets namespace with <set> class
+//	initialize sets in Sets namespace with <set> class, ( some sets need to be ordered )
 //
 ///</summary>
 
@@ -43,6 +42,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 namespace roulette
 {
 	// Used by Field
+	// Chip enumerations
 	enum class EChip: unsigned
 	{
 		Eraser,
@@ -54,6 +54,7 @@ namespace roulette
 	};
 
 	// used by Table
+	// Table layout enumerations
 	enum class ETable: unsigned
 	{
 		NoZero = 36,
@@ -67,6 +68,7 @@ namespace roulette
 	};
 
 	// used by Bet
+	// Bet type enumerations
 	enum class EBet: unsigned
 	{
 		UNDEFINED = 0,
@@ -151,6 +153,7 @@ namespace roulette
 	};
 
 	// used by Table
+	// Table minimums
 	enum class EMinimum: unsigned
 	{
 		Inside = 1,
@@ -159,6 +162,7 @@ namespace roulette
 	};
 
 	// used by Fields and Table
+	// Table Field enumerations
 	enum class EField: unsigned
 	{
 		Number0,
@@ -217,6 +221,7 @@ namespace roulette
 	};
 
 	// used by InfoBar
+	// Layout enumerations
 	enum class ELayout : unsigned
 	{
 		Bankroll,
@@ -237,13 +242,18 @@ namespace roulette
 		Column,
 	};
 
+	// single type declaring a set of numbers in roulette
 	typedef const std::unordered_set<unsigned> type_raw_set;
+
+	// shared pointer to the const set is shared between objects
 	typedef std::shared_ptr<type_raw_set> type_set;
 
+	// wheel number sets
 	extern type_set NoZeroWheel;
 	extern type_set AmericanWheel;
 	extern type_set EuropeanWheel;
 
+	// popular bet sets
 	extern type_set Low;
 	extern type_set Odd;
 	extern type_set Red;
@@ -300,5 +310,7 @@ namespace roulette
 	extern type_set Line9;
 	extern type_set Line10;
 	extern type_set Line11;
+
 } // namespace roulette
+
 #endif // ! SETS_HH

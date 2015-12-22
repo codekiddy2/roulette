@@ -21,9 +21,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 //	sets.cc
 //
-//	Defines common functions and number sets
+//	Defines number sets
 //
-//	TODO: add description
 //
 ///</summary>
 
@@ -35,8 +34,6 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 namespace roulette
 {
-
-	using std::shared_ptr;
 	using std::make_shared;
 
 	type_set Corner0 = MAKE_SET({ 0, 1, 2, 3 });

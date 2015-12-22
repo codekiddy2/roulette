@@ -19,10 +19,10 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 ///<summary>
 //
-//stdafx.cc
+// pch.cc
 //
-//compiles PCH file for faster compilation and intellisense
-//Reference additional includes in pch.hh and not here
+//	compiles PCH file for faster compilation and intellisense
+//	Reference additional includes in pch.hh and not here
 //
 ///</summary>
 

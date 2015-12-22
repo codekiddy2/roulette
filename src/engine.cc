@@ -23,13 +23,15 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 //	Definition of Engine class
 //
-//	TODO: add description
-//
 ///</summary>
 
+// roulette
 #include "pch.hh"
 #include "engine.hh"
 #include "main.hh"
+
+// std
+#include <iostream> // for deubgging
 
 namespace roulette
 {
@@ -38,14 +40,13 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
-
-	using std::string;
-	using std::to_string;
-
 	boost::random::random_device Engine::m_rng;
 
 	Engine::Engine() :
-		IErrorHandler("Engine")
+		IErrorHandler("Engine"),
+		m_current_bet(0),
+		m_last_bet(0),
+		m_bankroll(5000)
 	{
 	}
 
@@ -57,6 +58,10 @@ namespace roulette
 
 	void Engine::place_bet(type_bet bet)
 	{
+		// do not count eraser as a bet EChip::Eraser equals to 0
+		if (!bet->get_chips())
+			return clear_bet(bet);
+
 		if (!bet->get_selection()) error_handler(error("place_bet -> bet contains no numbers"));
 
 		for (auto var : *bet->get_selection())
@@ -154,6 +159,43 @@ namespace roulette
 		case ETable::InfininiteImprisonment:
 			error_handler(error("spin -> table_type not implemented"));
 			break;
+		}
+	}
+
+	void Engine::clear_all_bets()
+	{
+		for (auto bet : m_bets)
+		{
+			m_bankroll += bet->get_chips();
+		}
+
+		m_current_bet = 0;
+		m_last_bet = 0;
+		m_bets.clear();
+	}
+
+	void Engine::clear_bet(type_bet& bet)
+	{
+		if (m_bets.empty())
+			return;
+
+		for (auto iter = m_bets.begin(); iter != m_bets.end(); iter++)
+		{
+			if (bet->get_id() == iter->get()->get_id())
+			{
+				if (bet->get_selection() == iter->get()->get_selection())
+				{
+					print("removing bet");
+					std::cout << std::endl;
+					m_bankroll += iter->get()->get_chips();
+					m_bets.erase(iter);
+					iter = m_bets.begin();
+					if (iter == m_bets.end())
+						break;
+					m_current_bet = 0;
+					m_last_bet = 0;
+				}
+			}
 		}
 	}
 

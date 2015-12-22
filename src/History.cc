@@ -23,14 +23,15 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 //	Definition of History class
 //
-//	TODO: add description
-//
 ///</summary>
 
 #include "pch.hh"
 #include "history.hh"
 #include "color.hh"
 #include "main.hh"
+
+// std
+#include <string>
 
 namespace roulette
 {
@@ -46,8 +47,8 @@ namespace roulette
 		mViewRed(refRedBuffer),
 		mViewBlack(refBlackBuffer),
 		mViewGreen(refGreenBuffer),
-		mTagBlack(Gtk::TextBuffer::Tag::create()),
 		mTagRed(Gtk::TextBuffer::Tag::create()),
+		mTagBlack(Gtk::TextBuffer::Tag::create()),
 		mTagGreen(Gtk::TextBuffer::Tag::create())
 	{
 		// window properties
@@ -60,17 +61,18 @@ namespace roulette
 		mHBox.pack_start(mViewGreen, Gtk::PACK_EXPAND_WIDGET);
 		mHBox.pack_start(mViewBlack, Gtk::PACK_EXPAND_WIDGET);
 
-		mTagTable->add(mTagBlack);
 		mTagTable->add(mTagRed);
 		mTagTable->add(mTagGreen);
+		mTagTable->add(mTagBlack);
 
 		// set up tag table for coloring
-		mTagBlack->property_foreground() = "Gold";
 		mTagRed->property_foreground() = "Red";
 		mTagGreen->property_foreground() = "Green";
-		mTagBlack->property_background() = "Black";
+		mTagBlack->property_foreground() = "Gold";
+
 		mTagRed->property_background() = "Black";
 		mTagGreen->property_background() = "Black";
+		mTagBlack->property_background() = "Black";
 
 		// prevent history modification
 		mViewBlack.set_sensitive(false);
@@ -78,6 +80,7 @@ namespace roulette
 		mViewGreen.set_sensitive(false);
 
 		// initial buffer to prevent alignment of numbers
+		// and also to color up the text buffers
 		string newline = "\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\t";
 		refRedBuffer->set_text(newline);
 		refGreenBuffer->set_text(newline);
@@ -152,4 +155,5 @@ namespace roulette
 		// apply colors
 		apply_tags();
 	}
+
 } // namespace roulette

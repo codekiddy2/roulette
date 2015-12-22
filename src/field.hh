@@ -27,19 +27,22 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 //	Declaration of Field class
 //
-//	TODO: add description
+// Table is composed of fields, majority of the logic is made
+// by fields, table just adds them together and connects signals
 //
 ///</summary>
 
+// roulette
 #include "bet.hh"
 #include "sets.hh"
 #include "error.hh"
 
-#include <string>
+// std
 #include <vector>
 #include <memory>
 #include <utility>
 
+// gtkmm
 #include <gtkmm/widget.h>
 #include <gtkmm/selectiondata.h>
 #include <glibmm/refptr.h>

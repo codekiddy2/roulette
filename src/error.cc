@@ -21,7 +21,9 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 //	error.cc
 //
-//	TODO: add description
+//	Defines IErrorHandler interface class
+//
+// TODO: add more overloads
 //	
 ///</summary>
 
@@ -114,4 +116,4 @@ namespace roulette
 		cout << info;
 	}
 
-} // namespace
+} // namespace roulette

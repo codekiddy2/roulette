@@ -22,9 +22,6 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //	table.cc
 //
 //	Definition of Table constructor and table methods
-//
-//	TODO: add description
-//	TODO: (OLD) forward declare enum class ans use short enumeration (not default int)
 // TODO: make print_properties print into a widget
 //
 ///</summary>
@@ -32,7 +29,6 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "pch.hh"
 #include "field.hh"
 #include "table.hh"
-#include "error.hh"
 
 namespace roulette
 {
@@ -41,11 +37,9 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
-	using std::cerr;
 	using std::endl;
 	using std::cout;
 	using std::make_pair;
-	using roulette::error;
 
 	Table::Table(const ETable table_type) :
 		IErrorHandler("Table"),

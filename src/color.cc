@@ -27,8 +27,6 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 //	Definition of Color class
 //
-//	TODO: add description
-//
 ///</summary>
 
 namespace roulette
@@ -64,4 +62,4 @@ namespace roulette
 		m_foreground = color;
 	}
 
-} // namespace
+} // namespace roulette

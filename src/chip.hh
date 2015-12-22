@@ -27,54 +27,26 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 //	Declaration of Bet class
 //
-//	TODO: add description
+//	Chips are used as a drag source to be drawn on the table
+// during construction their value is associated with dnd target entry
 //
 ///</summary>
 
+// roulette
 #include "sets.hh"
-#include "error.hh"
-#include "color.hh"
-
-#include <string>
-#include <gtkmm/widget.h>
-#include <gtkmm/selectiondata.h>
-#include <glibmm/refptr.h>
-#include <gdkmm/rgba.h>
-#include <gdkmm/window.h>
-#include <gdkmm/dragcontext.h>
-#include <gdkmm/pixbuf.h>
-#include <gdkmm/rectangle.h> // Gtk::Allocation
-#include <cairomm/refptr.h>
-#include <cairomm/context.h>
+#include "base_control.hh"
 
 namespace roulette
 {
-
-#ifdef _MSC_VER
-#pragma region
-#endif // _MSC_VER
-
 	class Chip final : 
-		public Gtk::Widget,
-		public IErrorHandler,
-		public Color
+		public BaseControl
 	{
 	public:
 		// constructors
 		Chip(const EChip chip_value);
 
 	protected:
-		//Overrides:
-		Gtk::SizeRequestMode get_request_mode_vfunc() const override;
-		void get_preferred_width_vfunc(int& minimum_width, int& natural_width) const override;
-		void get_preferred_height_for_width_vfunc(int width, int& minimum_height, int& natural_height) const  override;
-		void get_preferred_height_vfunc(int& minimum_height, int& natural_height) const override;
-		void get_preferred_width_for_height_vfunc(int height, int& minimum_width, int& natural_width) const override;
-		void on_size_allocate(Gtk::Allocation& allocation) override;
-		void on_map() override;
-		void on_unmap() override;
-		void on_realize() override;
-		void on_unrealize() override;
+		// Overrides from base_control
 		bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
 		// dnd
@@ -83,12 +55,8 @@ namespace roulette
 			Gtk::SelectionData& selection_data, guint info, guint time) override;
 		void on_drag_end(const Glib::RefPtr< Gdk::DragContext >& context) override;
 
-		// members
-		Glib::RefPtr<Gdk::Window> refGdkWindow;
-
 	private:
 		/// begin initializer list
-		const unsigned mValue;
 		Glib::RefPtr<Gdk::Pixbuf> refIcon;
 		/// end initializer list
 
@@ -98,17 +66,6 @@ namespace roulette
 		Chip& operator=(const Chip&) = delete;
 		Chip& operator=(const Chip&&) = delete;
 	};
-
-#ifdef _MSC_VER
-#pragma endregion begin
-
-#pragma region
-#endif // _MSC_VER
-
-
-#ifdef _MSC_VER
-#pragma endregion inlines
-#endif // _MSC_VER
 
 } // namespace roulette
 

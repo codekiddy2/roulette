@@ -27,22 +27,15 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 //	Declaration of Control class
 //
-//	TODO: add description
+//	Control is a customized button to be shown
+// on main window
+// it only overrides the on_draw method and
+// handles a clicked signal
 //
 ///</summary>
 
+// roulette
 #include "base_control.hh"
-
-#include <string>
-#include <gtkmm/widget.h>
-#include <glibmm/refptr.h>
-#include <pangomm/layout.h>
-#include <pangomm/fontdescription.h>
-#include <gdkmm/rgba.h>
-#include <gdkmm/window.h>
-#include <gdkmm/rectangle.h> // Gtk::Allocation
-#include <cairomm/refptr.h>
-#include <cairomm/context.h>
 
 namespace roulette
 {
@@ -62,6 +55,7 @@ namespace roulette
 		Control& operator=(const Control&) = delete;
 		Control& operator=(const Control&&) = delete;
 	};
+
 } // namespace roulette
 
 #endif // ! CONTROL_HH

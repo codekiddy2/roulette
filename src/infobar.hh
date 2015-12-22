@@ -25,18 +25,21 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 // infobar.hh
 //
-//
-// TODO: add description
+// Infobar class shows current game status,
+// calculations and table minimums/maximums
 //
 ///</summary>
 
+// roulette
 #include "bet.hh"
 #include "sets.hh"
 #include "error.hh"
 
+// std
 #include <map>
-#include <string>
+#include <memory>
 
+// gtkmm
 #include <glibmm/refptr.h>
 #include <cairomm/context.h>
 #include <gdkmm/rgba.h>
@@ -62,7 +65,7 @@ namespace roulette
 		// constructors
 		InfoBar(Engine* p_engine);
 
-		// signal handlers
+		// table will signal a bet and execute this handler
 		void on_signal_bet(std::shared_ptr<Bet> bet);
 
 	protected:
@@ -70,28 +73,19 @@ namespace roulette
 		bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
 	private:
-		// typedefs
-		typedef Glib::RefPtr<Pango::Layout> type_layout;
-
 		// members
 		Engine* mp_engine;
-		std::map<ELayout, type_layout> m_layouts;
 		Pango::FontDescription font;
 		Gdk::RGBA m_foreground = Gdk::RGBA("rgb(0, 190, 0)");
 		Gdk::RGBA m_background = Gdk::RGBA("rgb(0, 0, 0)");
+		std::map<ELayout, Glib::RefPtr<Pango::Layout>> m_layouts;
 		Glib::RefPtr<Gdk::Window> refGdkWindow;
 	};
 
 #ifdef _MSC_VER
 #pragma endregion begin
-
-#pragma region
 #endif // _MSC_VER
 
-#ifdef _MSC_VER
-#pragma endregion inlines
-#endif // _MSC_VER
-
-} // namespace
+} // namespace roulette
 
 #endif // ! INFOBAR_HH

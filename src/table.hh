@@ -34,15 +34,18 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
+// roulette
 #include "sets.hh"
 #include "error.hh"
 #include "bet.hh"
 
+// std
 #include <map>
 #include <memory>
 #include <vector>
 #include <unordered_map>
 
+// gtkmm
 #include <gtkmm/grid.h>
 #include <sigc++/signal.h>
 
@@ -64,18 +67,29 @@ namespace roulette
 		Table(const ETable table_type = ETable::European);
 		~Table();
 
-		// methods
+		// get maximum amount of chips which can be placed for given bet
 		int get_limit(const EBet& bet);
+
+		// TODO: remove this
 		void print_properties() const;
+
+		// set table maximum
 		void set_table_max(const short& limit = 0);
+
+		// set maximum for bet
 		void set_maximum(const EBet& name, const short& limit);
+
+		// set table minimum
 		void set_minimum(const EMinimum& name, const short& minimum);
 
+		// return table type, european, american...
 		inline ETable get_table_type() const;
 		
-		// signals
-		sigc::signal<void> signal_clear;
-		sigc::signal<void, std::shared_ptr<Bet>> signal_bet; // fields emit bet signals to engine and inforbar
+		// clear all chips from the table
+		sigc::signal<void> signal_clear_all;
+
+		// fields emit bet signals to engine and inforbar
+		sigc::signal<void, std::shared_ptr<Bet>> signal_bet;
 
 	private:
 		// typedefs

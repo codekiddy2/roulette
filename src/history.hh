@@ -27,15 +27,17 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 //	Declaration of History class
 //
-//	TODO: add description
+//	History object shows history of number outcomes
+// Engine class signals spin and sets the result
 //
 ///</summary>
 
+// roulette
 #include "error.hh"
 
-#include <string>
-#include <glibmm/refptr.h>
+// gtkmm
 #include <gtkmm/box.h>
+#include <glibmm/refptr.h>
 #include <gtkmm/textview.h>
 #include <gtkmm/textbuffer.h>
 #include <gtkmm/scrolledwindow.h>
@@ -50,11 +52,11 @@ namespace roulette
 		// constructors
 		History();
 
-		// methods
+		// set spin result to history
 		void set_result(unsigned result);
 
 	private:
-		// methods
+		// apply formating tags, background and foreground color
 		void apply_tags();
 
 		// members
@@ -62,9 +64,18 @@ namespace roulette
 
 		/// begin initializer list
 		Glib::RefPtr<Gtk::TextBuffer::TagTable> mTagTable;
-		Glib::RefPtr<Gtk::TextBuffer> refRedBuffer, refBlackBuffer, refGreenBuffer;
-		Gtk::TextView mViewRed, mViewBlack, mViewGreen;
-		Glib::RefPtr<Gtk::TextBuffer::Tag> mTagRed, mTagBlack, mTagGreen;
+
+		Glib::RefPtr<Gtk::TextBuffer> refRedBuffer;
+		Glib::RefPtr<Gtk::TextBuffer> refBlackBuffer;
+		Glib::RefPtr<Gtk::TextBuffer> refGreenBuffer;
+
+		Gtk::TextView mViewRed;
+		Gtk::TextView mViewBlack;
+		Gtk::TextView mViewGreen;
+
+		Glib::RefPtr<Gtk::TextBuffer::Tag> mTagRed;
+		Glib::RefPtr<Gtk::TextBuffer::Tag> mTagBlack;
+		Glib::RefPtr<Gtk::TextBuffer::Tag> mTagGreen;
 		/// end initializer list
 
 		// deleted

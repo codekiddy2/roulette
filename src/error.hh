@@ -25,15 +25,14 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 //	error.hh
 //
-//	
-//	TODO wrap all not necesary by main into second namespace
-//	TODO write comments
-//	TODO reserve 0th enum and set start at 1
-//	c++11 TODO-s:
-//	forward declare enum class ans use short enumeration (not default int)
-//	mark classes final
-//	initialize sets in Sets namespace with <set> class
-//	
+// error class is a customized class to throw error description
+// errors are thrown trough IErrorHandler interface class which
+// is inherited by all other classes.
+// if the derived class does not override error_handler() the base
+// class will throw and tell us which object throwed the error.
+// this is possible since base class takes derived class name into
+// constructor as parameter
+//
 ///</summary>
 
 #include <string>
@@ -92,12 +91,15 @@ namespace roulette
 		// costructors
 		IErrorHandler(const std::string&& derived_class);
 
-		// methods
+		// set debugging option for derived class
 		inline virtual void set_debug(bool debug);
 
 	protected:
 		// methods
+		// error handler to throw and handle errors
 		virtual void error_handler(const error&& ref);
+
+		// a set of overrides for debugging output
 		virtual void print(const std::string&& info, bool newline = false);
 		virtual void print(const char* info, bool newline = false);
 		virtual void print(const unsigned char* info, bool newline = false);
@@ -109,7 +111,6 @@ namespace roulette
 		bool m_debug = false;
 		std::string m_derived_class;
 	};
-
 
 	void IErrorHandler::set_debug(bool debug)
 	{

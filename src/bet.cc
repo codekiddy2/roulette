@@ -37,6 +37,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <iostream>		// due to PrintProperties
 #include <algorithm>	// due to sort in set_part_1
 
+//#include <boost/uuid/uuid_generators.hpp>
 
 namespace roulette
 {
@@ -108,7 +109,8 @@ namespace roulette
 		m_chip(static_cast<unsigned>(chip)),
 		mp_set(selection)
 	{
-
+		//static boost::uuids::basic_random_generator<boost::mt19937> generator;
+		//m_uuid = generator();
 	}
 
 	Bet::Bet(Bet&& ref) :
