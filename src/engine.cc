@@ -177,7 +177,7 @@ namespace roulette
 	void Engine::clear_bet(type_bet& bet)
 	{
 		if (m_bets.empty())
-			return;
+			return; // nothing to clear
 
 		for (auto iter = m_bets.begin(); iter != m_bets.end(); iter++)
 		{
@@ -187,13 +187,15 @@ namespace roulette
 				{
 					print("removing bet");
 					std::cout << std::endl;
+
 					m_bankroll += iter->get()->get_chips();
+					m_current_bet = 0;
+					m_last_bet = 0;
 					m_bets.erase(iter);
+
 					iter = m_bets.begin();
 					if (iter == m_bets.end())
 						break;
-					m_current_bet = 0;
-					m_last_bet = 0;
 				}
 			}
 		}

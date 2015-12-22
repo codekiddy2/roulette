@@ -594,8 +594,11 @@ namespace roulette
 		{
 			if (iter->get()->second.equal(chip_point))
 			{
-				print("clear");
+				print("INFO: clear chips");
+				print("Field index: ", true);
+				print(m_index, true);
 				std::cout << endl;
+
 				m_chips.erase(iter);
 				iter = m_chips.begin();
 				if (iter == m_chips.end())
@@ -667,6 +670,7 @@ namespace roulette
 
 		if (info == static_cast<unsigned>(EChip::Eraser))
 		{
+			// clear all chips where the eraser has been dropped
 			clear(chip->second);
 			context->drag_finish(false, false, time);
 			return refGdkWindow->invalidate(false);

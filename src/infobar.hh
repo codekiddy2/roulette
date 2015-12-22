@@ -34,6 +34,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "bet.hh"
 #include "sets.hh"
 #include "error.hh"
+#include "main.hh"
 
 // std
 #include <map>
@@ -66,7 +67,10 @@ namespace roulette
 		InfoBar(Engine* p_engine);
 
 		// table will signal a bet and execute this handler
-		void on_signal_bet(std::shared_ptr<Bet> bet);
+		// it will also execute this handler in case of clear_all_bets
+		// argument is not used, it's just a placeholder for compatibility with
+		// both signals, on_update uses mp_engine pointer to do updates
+		void on_update(type_bet /*bet*/);
 
 	protected:
 		// methods

@@ -120,9 +120,16 @@ namespace roulette
 
 		// signals connecting objects constructed by window
 		mp_engine->signal_spin.connect(sigc::mem_fun(m_history, &History::set_result));
+
+		/// in this order
 		m_table.signal_clear_all.connect(sigc::mem_fun(*mp_engine, &Engine::clear_all_bets));
+		m_table.signal_clear_all.connect(
+			sigc::bind( // bind nullptr, InfoBar does not use this argument
+				sigc::mem_fun(m_infobar, &InfoBar::on_update), nullptr));
+
+		/// in this order
 		m_table.signal_bet.connect(sigc::mem_fun(*mp_engine, &Engine::place_bet));
-		m_table.signal_bet.connect(sigc::mem_fun(m_infobar, &InfoBar::on_signal_bet));
+		m_table.signal_bet.connect(sigc::mem_fun(m_infobar, &InfoBar::on_update));
 
 		// engine options
 		mp_engine->set_debug(true);

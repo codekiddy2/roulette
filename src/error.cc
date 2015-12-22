@@ -29,6 +29,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 #include "pch.hh"
 #include "error.hh"
+#include "sets.hh"
 
 #include <iostream>
 
@@ -114,6 +115,17 @@ namespace roulette
 			return;
 		}
 		cout << info;
+	}
+
+	void IErrorHandler::print(EField& info, bool newline /*= false*/)
+	{
+		if (newline)
+		{
+			cout << endl;
+			cout << "-> " << std::to_string(static_cast<unsigned>(info));
+			return;
+		}
+		cout << std::to_string(static_cast<unsigned>(info));
 	}
 
 } // namespace roulette

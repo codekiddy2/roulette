@@ -37,7 +37,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 // roulette
 #include "sets.hh"
 #include "error.hh"
-#include "bet.hh"
+#include "main.hh"
 
 // std
 #include <map>
@@ -89,7 +89,7 @@ namespace roulette
 		sigc::signal<void> signal_clear_all;
 
 		// fields emit bet signals to engine and inforbar
-		sigc::signal<void, std::shared_ptr<Bet>> signal_bet;
+		sigc::signal<void, type_bet> signal_bet;
 
 	private:
 		// typedefs

@@ -45,7 +45,7 @@ namespace roulette
 	using std::to_string;
 	using std::make_pair;
 
-	roulette::InfoBar::InfoBar(Engine* p_engine) :
+	InfoBar::InfoBar(Engine* p_engine) :
 		IErrorHandler("InfoBar"),
 		mp_engine(p_engine)
 	{
@@ -178,7 +178,7 @@ namespace roulette
 		return true;
 	}
 
-	void InfoBar::on_signal_bet(std::shared_ptr<Bet> bet)
+	void InfoBar::on_update(type_bet /*bet*/)
 	{
 		auto result = m_layouts.find(ELayout::Bankroll);
 		if (result != m_layouts.end())
@@ -204,27 +204,30 @@ namespace roulette
 		result = m_layouts.find(ELayout::Numbers);
 		if (result != m_layouts.end())
 		{
-			string numbers;
-			type_set number_set = mp_engine->get_numbers();
-			type_raw_set::iterator iter = number_set->begin();
+			string numbers = "";
+			type_set number_set = mp_engine->get_numbers(); // could be nullptr (ex: no bets are placed)
 
-			if (number_set->size() > 8)
+			if (number_set)
 			{
-				for (size_t i = 0; i < 8; i++, iter++)
+				type_raw_set::iterator iter = number_set->begin();
+
+				if (number_set->size() > 8) // let layout show 8 numbers in a row
+				{
+					for (size_t i = 0; i < 8; i++, iter++)
+					{
+						numbers.append(to_string(*iter));
+						numbers.append(" ");
+					}
+					numbers.append("\n\t\t");
+				}
+				while (iter != number_set->end()) // show the rest in second row (if any)
 				{
 					numbers.append(to_string(*iter));
 					numbers.append(" ");
+					++iter;
 				}
-				numbers.append("\n\t\t");
 			}
-			while (iter != number_set->end())
-			{
-				numbers.append(to_string(*iter));
-				numbers.append(" ");
-				++iter;
-			}
-
-			result->second->set_text("Numbers\t" + numbers);
+			result->second->set_text("Numbers\t" + numbers); // show numbers (if any)
 		}
 		else error_handler(error("on_signal_bet -> layout not found"));
 

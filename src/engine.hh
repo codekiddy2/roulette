@@ -128,7 +128,15 @@ namespace roulette
 
 	type_set Engine::get_numbers() const
 	{
-		return m_bets.back()->get_selection();
+		// if bets are cleared from the table return nullptr
+		if (m_bets.empty())
+		{
+			return nullptr;
+		}
+		else
+		{
+			return m_bets.back()->get_selection();
+		}
 	}
 
 #ifdef _MSC_VER

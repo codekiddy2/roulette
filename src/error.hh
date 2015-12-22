@@ -40,6 +40,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 namespace roulette
 {
+	enum class EField : unsigned;
+
 	class error final :
 		public std::exception
 	{
@@ -106,6 +108,7 @@ namespace roulette
 		virtual void print(const int&& info, bool newline = false);
 		virtual void print(const unsigned int info, bool newline = false);
 		virtual void print(const unsigned long long&& info, bool newline = false);
+		virtual void print(EField& info, bool newline = false);
 
 		// members
 		bool m_debug = false;
