@@ -91,6 +91,8 @@ namespace roulette
 		// fields emit bet signals to engine and inforbar
 		sigc::signal<void, type_bet> signal_bet;
 
+		void set_debug(bool debug) override;
+
 	private:
 		// typedefs
 		typedef std::vector<EBet> type_bet_list;

@@ -138,7 +138,7 @@ namespace roulette
 			if (x < right) // no chip drawing signal
 			{
 				// TODO: making type_set for single number is not smart
-				mp_table->signal_bet.emit(make_shared<Bet>(EBet::StraightUp, chip->first,
+				mp_table->signal_bet.emit(make_shared<Bet>(EBet::StraightUp, chip,
 					make_shared<type_raw_set>(type_raw_set{ static_cast<unsigned>(m_index) })));
 			}
 			else // x > right
@@ -210,7 +210,7 @@ namespace roulette
 				{
 					// cx, cy -> no chip drawing signal
 					// TODO: making type_set for single number is not smart
-					if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::StraightUp, chip->first,
+					if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::StraightUp, chip,
 						make_shared<type_raw_set>(type_raw_set{ static_cast<unsigned>(m_index) })));
 				}
 			}
@@ -248,7 +248,7 @@ namespace roulette
 				{
 					// cx, cy -> no chip drawing signal
 					// TODO: making type_set for single number is not smart
-					if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::StraightUp, chip->first,
+					if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::StraightUp, chip,
 						make_shared<type_raw_set>(type_raw_set{ static_cast<unsigned>(m_index) })));
 				}
 			}
@@ -275,7 +275,7 @@ namespace roulette
 				{
 					// cx, cy -> no chip drawing signal
 					// TODO: making type_set for single number is not smart
-					if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::StraightUp, chip->first,
+					if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::StraightUp, chip,
 						make_shared<type_raw_set>(type_raw_set{ static_cast<unsigned>(m_index) })));
 				}
 			}
@@ -283,13 +283,13 @@ namespace roulette
 		case roulette::EField::Number00:
 			break;
 		case roulette::EField::Column1:
-			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Column1, chip->first, Column1));
+			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Column1, chip, Column1));
 			break;
 		case roulette::EField::Column2:
-			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Column2, chip->first, Column2));
+			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Column2, chip, Column2));
 			break;
 		case roulette::EField::Column3:
-			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Column3, chip->first, Column3));
+			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Column3, chip, Column3));
 			break;
 		case roulette::EField::Dozen1:
 		case roulette::EField::Dozen2:
@@ -368,30 +368,30 @@ namespace roulette
 			else // y > top
 			{
 				if (emit) m_index == EField::Dozen1 ?
-					mp_table->signal_bet.emit(make_shared<Bet>(EBet::Dozen1, chip->first, Dozen1)) :
+					mp_table->signal_bet.emit(make_shared<Bet>(EBet::Dozen1, chip, Dozen1)) :
 					m_index == EField::Dozen2 ?
-					mp_table->signal_bet.emit(make_shared<Bet>(EBet::Dozen2, chip->first, Dozen2)) :
-					mp_table->signal_bet.emit(make_shared<Bet>(EBet::Dozen3, chip->first, Dozen3));
+					mp_table->signal_bet.emit(make_shared<Bet>(EBet::Dozen2, chip, Dozen2)) :
+					mp_table->signal_bet.emit(make_shared<Bet>(EBet::Dozen3, chip, Dozen3));
 			} // if
 		} // case dozen
 			break;
 		case roulette::EField::Red:
-			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Red, chip->first, Red));
+			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Red, chip, Red));
 			break;
 		case roulette::EField::Black:
-			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Black, chip->first, Black));
+			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Black, chip, Black));
 			break;
 		case roulette::EField::Even:
-			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Even, chip->first, Even));
+			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Even, chip, Even));
 			break;
 		case roulette::EField::Odd:
-			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Odd, chip->first, Odd));
+			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Odd, chip, Odd));
 			break;
 		case roulette::EField::High:
-			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::High, chip->first, High));
+			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::High, chip, High));
 			break;
 		case roulette::EField::Low:
-			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Low, chip->first, Low));
+			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Low, chip, Low));
 			break;
 		case roulette::EField::Dummy1:
 			if (x > right && y < top / 2)
@@ -482,7 +482,7 @@ namespace roulette
 				else // y == cy, x = cx
 				{
 					// TODO: making type_set for single number is not smart
-					if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::StraightUp, chip->first,
+					if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::StraightUp, chip,
 						make_shared<type_raw_set>(type_raw_set{ static_cast<unsigned>(m_index) })));
 				}
 			}
@@ -583,8 +583,20 @@ namespace roulette
 		// TODO: some fields might not have Gdk::Window (dummies on different tables)
 		if (refGdkWindow)
 		{
-			m_chips.clear();
-			refGdkWindow->invalidate(false);
+			if (!m_chips.empty())
+			{
+				if (m_debug)
+				{
+					print("INFO: all chips cleared");
+					print("Source: Field", true);
+					print("Field index: ", true);
+					print(m_index);
+					print();
+				} // if debug
+
+				m_chips.clear();
+				refGdkWindow->invalidate(false);
+			}
 		}
 	}
 
@@ -594,10 +606,14 @@ namespace roulette
 		{
 			if (iter->get()->second.equal(chip_point))
 			{
-				print("INFO: clear chips");
-				print("Field index: ", true);
-				print(m_index, true);
-				std::cout << endl;
+				if (m_debug)
+				{
+					print("INFO: clear chips");
+					print("Source: Field", true);
+					print("Field index: ", true);
+					print(m_index);
+					print();
+				} // if debug
 
 				m_chips.erase(iter);
 				iter = m_chips.begin();
@@ -646,9 +662,13 @@ namespace roulette
 	{
 		if (m_index == EField::Dummy2 || m_index == EField::Dummy3)
 		{
-			print("INFO: drop refused");
-			print("on_drag_drop", true);
-			cout << endl;
+			if (m_debug)
+			{
+				print("INFO: drop refused");
+				print("Source: Field::on_drag_drop", true);
+				print();
+			} // if debug
+
 			// not drawing on these dummies
 			context->drop_reply(false, time);
 			return false;
@@ -666,7 +686,11 @@ namespace roulette
 		// TODO: make use of selection data
 		type_chip_pair chip_pair = make_pair(static_cast<EChip>(info), Gdk::Point(x, y));
 		type_chip chip = make_shared<type_chip_pair>(chip_pair);
-		calculate_points(chip); // chip will now be modified and emited
+		
+		// chip will now be modified and emited to the engine and neighboring
+		// fields for drawing and bet placing
+		// owner of the chip shared pointer will be engine and it should not be reused ?
+		calculate_points(chip);
 
 		if (info == static_cast<unsigned>(EChip::Eraser))
 		{
@@ -679,12 +703,24 @@ namespace roulette
 		// if dummy's x is zero then dropped chips won't be drawn on it.
 		if ((m_index == EField::Dummy1 || m_index == EField::Dummy2) && (!chip->second.get_x()))
 		{
-			print("INFO: drop refused");
-			print("on_drag_data_received", true);
-			cout << endl;
+			if (m_debug)
+			{
+				print("INFO: drop refused");
+				print("Source: Field::on_drag_data_received", true);
+				print();
+			} // if debug
+
 			return context->drag_finish(true, false, time);
 		}
 
+		if (m_debug)
+		{
+			print("INFO: chip dorpped");
+			print("Source: Field", true);
+			print("Field index: ", true);
+			print(m_index);
+			print();
+		}
 		m_chips.push_back(chip);
 		return context->drag_finish(false, false, time);
 	}
@@ -817,14 +853,14 @@ namespace roulette
 				error_handler(error("on_signal_bet_bottom -> case statement missing"));
 			} // switch m_index
 			if (!p_set) error_handler(error("on_signal_bet_bottom -> p_set is nullptr"));
-			mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip->first, p_set));
+			mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip, p_set));
 		} // if sender is dozen
 		else
 		{
 			// sender is number from column below, therefore their number is this fields' number - 1
 			unsigned neighbor_number = static_cast<unsigned>(m_index) - 1;
 			mp_table->signal_bet.emit(make_shared<Bet>(
-				EBet::Split, chip->first, make_shared<type_raw_set>(
+				EBet::Split, chip, make_shared<type_raw_set>(
 					type_raw_set{ static_cast<unsigned>(m_index), neighbor_number })));
 		}
 
@@ -919,14 +955,14 @@ namespace roulette
 				error_handler(error("on_signal_bet_top -> case statement missing"));
 			} // switch sender
 			if (!p_set) error_handler(error("on_signal_bet_top -> p_set is nullptr"));
-			mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip->first, p_set));
+			mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip, p_set));
 		} // if dozen
 		else
 		{
 			// sender is number from column above, therefore their number is this fields' number + 1
 			unsigned neighbor_number = static_cast<unsigned>(m_index) + 1;
 			mp_table->signal_bet.emit(make_shared<Bet>(
-				EBet::Split, chip->first, make_shared<type_raw_set>(
+				EBet::Split, chip, make_shared<type_raw_set>(
 					type_raw_set{ static_cast<unsigned>(m_index), neighbor_number })));
 		}
 
@@ -956,13 +992,13 @@ namespace roulette
 			// sender is number from the left, therefore their number is this fields' number - 3
 			unsigned neighbor_number = static_cast<unsigned>(m_index) - 3;
 			mp_table->signal_bet.emit(make_shared<Bet>(
-				EBet::Split, chip->first, make_shared<type_raw_set>(
+				EBet::Split, chip, make_shared<type_raw_set>(
 					type_raw_set{ static_cast<unsigned>(m_index), neighbor_number })));
 		}
 		else // this is number 1 or 2 and neighbor is 0
 		{
 			mp_table->signal_bet.emit(make_shared<Bet>(
-				EBet::Split, chip->first, make_shared<type_raw_set>(
+				EBet::Split, chip, make_shared<type_raw_set>(
 					type_raw_set{ static_cast<unsigned>(m_index), 0 })));
 		}
 
@@ -1000,7 +1036,7 @@ namespace roulette
 			}
 			// sender is either 1, 2 or 3 so we need to adjust on which numbers the bet is placed (0 and sender)
 			mp_table->signal_bet.emit(make_shared<Bet>(
-				EBet::Split, chip->first, make_shared<type_raw_set>(
+				EBet::Split, chip, make_shared<type_raw_set>(
 					type_raw_set{ static_cast<unsigned>(m_index), static_cast<unsigned>(sender) })));
 		}
 		else if (m_index <= EField::Number36)
@@ -1008,7 +1044,7 @@ namespace roulette
 			// sender is number from the right, therefore their number is this fields' number + 3
 			unsigned neighbor_number = static_cast<unsigned>(m_index) + 3;
 			mp_table->signal_bet.emit(make_shared<Bet>(
-				EBet::Split, chip->first, make_shared<type_raw_set>(
+				EBet::Split, chip, make_shared<type_raw_set>(
 					type_raw_set{ static_cast<unsigned>(m_index), neighbor_number })));
 		}
 
@@ -1051,11 +1087,11 @@ namespace roulette
 			{
 			case EField::Number1:
 				point.set_y(static_cast<int>(alloc.get_height() * .667)); // rounded up
-				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip->first, Street01));
+				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip, Street01));
 				break;
 			case EField::Number2:
 				point.set_y(static_cast<int>(alloc.get_height() * .334)); // rounded up
-				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip->first, Street02));
+				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip, Street02));
 			}
 		}
 		// if signal is sent from first column to dozens we need to figure out on which numbers is line bet placed
@@ -1139,12 +1175,12 @@ namespace roulette
 				error_handler(error("on_signal_bet_top_right -> case statement missing"));
 			} // switch sender
 			if (!p_set) error_handler(error("on_signal_bet_top_right -> p_set is nullptr"));
-			mp_table->signal_bet.emit(make_shared<Bet>(EBet::Line, chip->first, p_set));
+			mp_table->signal_bet.emit(make_shared<Bet>(EBet::Line, chip, p_set));
 		} // if dozen
 		// TODO: temp check
 		else if ((m_index == EField::Dummy1) && (sender == EField::Dozen1)) // Corner0
 		{
-			mp_table->signal_bet.emit(make_shared<Bet>(EBet::Corner, chip->first, Corner0));
+			mp_table->signal_bet.emit(make_shared<Bet>(EBet::Corner, chip, Corner0));
 		}
 		else if((sender != EField::Number0) && (sender != EField::Number1)) // signal is received from column 2 or 3 (corner bets)
 		{
@@ -1152,7 +1188,7 @@ namespace roulette
 			unsigned neighbor2 = static_cast<unsigned>(m_index) + 3;
 			unsigned neighbor3 = static_cast<unsigned>(m_index) + 4;
 			p_set = make_shared<type_raw_set>(type_raw_set{static_cast<unsigned>(m_index), neighbor1, neighbor2, neighbor3});
-			mp_table->signal_bet.emit(make_shared<Bet>(EBet::Corner, chip->first, p_set));
+			mp_table->signal_bet.emit(make_shared<Bet>(EBet::Corner, chip, p_set));
 		}
 	// signal will be emited by dozen2, skip re-emiting
 	dozen_2_will_emit_this_bet:
@@ -1274,14 +1310,14 @@ namespace roulette
 			} // switch sender
 			if (!p_set) error_handler(error("on_signal_bet_top_left -> p_set is nullptr"));
 			((sender == EField::Number1) || (sender == EField::Number0) || (sender == EField::Dummy1)) ?
-				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Corner, chip->first, p_set)) :
-			mp_table->signal_bet.emit(make_shared<Bet>(EBet::Line, chip->first, p_set));
+				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Corner, chip, p_set)) :
+			mp_table->signal_bet.emit(make_shared<Bet>(EBet::Line, chip, p_set));
 		} // if dozen
 		else if (sender == EField::Number0)
 		{
 			m_index == EField::Number1 ?
-				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip->first, Street01)) :
-				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip->first, Street02)); // m_index == Efield::Number2
+				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip, Street01)) :
+				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip, Street02)); // m_index == Efield::Number2
 		}
 		// signal is received from column 2 or 3 (corner bets)
 		else if(static_cast<unsigned>(sender) == (static_cast<unsigned>(m_index) - 3) )
@@ -1290,7 +1326,7 @@ namespace roulette
 			unsigned neighbor2 = static_cast<unsigned>(m_index) - 2;
 			unsigned neighbor3 = static_cast<unsigned>(m_index) - 3;
 			p_set = make_shared<type_raw_set>(type_raw_set{ static_cast<unsigned>(m_index), neighbor1, neighbor2, neighbor3 });
-			mp_table->signal_bet.emit(make_shared<Bet>(EBet::Corner, chip->first, p_set));
+			mp_table->signal_bet.emit(make_shared<Bet>(EBet::Corner, chip, p_set));
 		}
 
 	// signal will be emited by dozen2, skip re-emiting
@@ -1323,11 +1359,11 @@ namespace roulette
 			{
 			case EField::Number2:
 				point.set_y(static_cast<int>(alloc.get_height() * .667)); // rounded up
-				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip->first, Street01));
+				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip, Street01));
 				break;
 			case EField::Number3:
 				point.set_y(static_cast<int>(alloc.get_height() *.334)); // rounded up
-				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip->first, Street02));
+				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip, Street02));
 			}
 		}
 
@@ -1395,13 +1431,15 @@ namespace roulette
 				p_set = Line11;
 				break;
 			default:
-				if(m_index != EField::Number1) error_handler(error("on_signal_bet_bottom_left -> case statement missing"));
+				if(m_index != EField::Number1)
+					error_handler(error("on_signal_bet_bottom_left -> case statement missing"));
 			} // switch m_index
-			if (!p_set && (m_index != EField::Number1)) error_handler(error("on_signal_bet_bottom_left -> p_set is nullptr"));
-			//m_index == EField::Number1 ?
-			//	mp_table->signal_bet.emit(make_shared<Bet>(EBet::Corner, chip->first, p_set)) :
+
+			if (!p_set && (m_index != EField::Number1))
+				error_handler(error("on_signal_bet_bottom_left -> p_set is nullptr"));
+
 			if (m_index != EField::Number1)
-				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Line, chip->first, p_set));
+				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Line, chip, p_set));
 		} // if sender is dozen
 
 	// signal will be emited by dozen2, skip re-emiting

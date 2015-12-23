@@ -36,6 +36,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "bet.hh"
 #include "sets.hh"
 #include "error.hh"
+#include "main.hh"
 
 // std
 #include <vector>
@@ -75,8 +76,6 @@ namespace roulette
 		Field(EField field_index, Table* p_table);
 
 		// typedefs
-		typedef std::pair<const EChip, Gdk::Point> type_chip_pair;
-		typedef std::shared_ptr<type_chip_pair> type_chip;
 		typedef sigc::signal<void, const EField&, type_chip> signal;
 		typedef std::vector<type_chip> type_chip_container;
 

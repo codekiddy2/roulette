@@ -51,6 +51,11 @@ namespace roulette
 		throw(ref);
 	}
 
+	void IErrorHandler::print()
+	{
+		cout << endl;
+	}
+
 	void IErrorHandler::print(const std::string&& info, bool newline /*= false*/)
 	{
 		if (newline)
@@ -118,6 +123,17 @@ namespace roulette
 	}
 
 	void IErrorHandler::print(EField& info, bool newline /*= false*/)
+	{
+		if (newline)
+		{
+			cout << endl;
+			cout << "-> " << std::to_string(static_cast<unsigned>(info));
+			return;
+		}
+		cout << std::to_string(static_cast<unsigned>(info));
+	}
+
+	void IErrorHandler::print(EBet info, bool newline /*= false*/)
 	{
 		if (newline)
 		{

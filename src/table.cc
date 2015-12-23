@@ -592,6 +592,14 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
+	void Table::set_debug(bool debug)
+	{
+		for (auto pair : m_fields)
+		{
+			pair.second->set_debug(debug);
+		}
+	}
+
 	void Table::set_table_max(const short& limit /*= 0*/)
 	{
 		if (limit > get_limit(EBet::Red))

@@ -128,11 +128,12 @@ namespace roulette
 				sigc::mem_fun(m_infobar, &InfoBar::on_update), nullptr));
 
 		/// in this order
-		m_table.signal_bet.connect(sigc::mem_fun(*mp_engine, &Engine::place_bet));
-		m_table.signal_bet.connect(sigc::mem_fun(m_infobar, &InfoBar::on_update));
+		//m_table.signal_bet.connect(sigc::mem_fun(*mp_engine, &Engine::place_bet));
+		//m_table.signal_bet.connect(sigc::mem_fun(m_infobar, &InfoBar::on_update));
 
 		// engine options
 		mp_engine->set_debug(true);
+		m_table.set_debug(true);
 	}
 
 	roulette::Window::~Window()

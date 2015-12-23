@@ -13,7 +13,7 @@
     <GenerateManifest>false</GenerateManifest>
     <CodeAnalysisRuleSet>roulette.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
-    <LinkIncremental>false</LinkIncremental>
+    <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
@@ -35,8 +35,8 @@
       <PrecompiledHeaderFile>pch.hh</PrecompiledHeaderFile>
       <CompileAs>CompileAsCpp</CompileAs>
       <EnablePREfast>true</EnablePREfast>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <ControlFlowGuard>Guard</ControlFlowGuard>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <ControlFlowGuard>false</ControlFlowGuard>
       <FloatingPointExceptions>true</FloatingPointExceptions>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <SmallerTypeCheck>true</SmallerTypeCheck>

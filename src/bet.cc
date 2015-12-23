@@ -103,10 +103,10 @@ namespace roulette
 	//	}
 	//}
 
-	Bet::Bet(/*const*/ EBet bet, /*const*/ EChip chip, type_set selection) :
+	Bet::Bet(/*const*/ EBet bet, /*const*/ type_chip chip, type_set selection) :
 		IErrorHandler("Bet"),
 		m_bet(bet),
-		m_chip(static_cast<unsigned>(chip)),
+		m_chip(chip),
 		mp_set(selection)
 	{
 		//static boost::uuids::basic_random_generator<boost::mt19937> generator;

@@ -39,6 +39,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <memory>
 
 // gtkmm
+#include <gdkmm/types.h> // Gdk::Point
 #include <glibmm/refptr.h>
 #include <gdkmm/pixbuf.h>
 #include <gtkmm/targetentry.h>
@@ -64,6 +65,12 @@ namespace roulette
 
 	// type declaring a pixbuf icon for a chip
 	typedef Glib::RefPtr<Gdk::Pixbuf> type_chip_icon;
+
+	// type declaring a a pair which makes a chip
+	typedef std::pair<const EChip, Gdk::Point> type_chip_pair; // TODO: Bet uses their own typedef
+
+	// type declaring a final chip type
+	typedef std::shared_ptr<type_chip_pair> type_chip;
 
 	// return chip pixbuf associated with the chip enum
 	type_chip_icon get_pixbuf(EChip ref);
