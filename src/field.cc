@@ -508,6 +508,9 @@ namespace roulette
 			signal_bet_top_left.emit(m_index, chip);
 			signal_bet_top_right.emit(m_index, chip);
 
+			mp_table->signal_bet.emit(make_shared<Bet>(EBet::StraightUp, chip,
+				make_shared<type_raw_set>(type_raw_set{ static_cast<unsigned>(m_index) })));
+
 			clear_all();
 			refGdkWindow->invalidate(false);
 			return true;
@@ -602,7 +605,12 @@ namespace roulette
 
 	void Field::clear(Gdk::Point& chip_point)
 	{
-		for (auto iter = m_chips.begin(); iter != m_chips.end(); iter++)
+		if (m_chips.empty())
+			return;
+
+		auto iter = m_chips.begin();
+
+		for (size_t i = 1; i <= m_chips.size(); ++i)
 		{
 			if (iter->get()->second.equal(chip_point))
 			{
@@ -616,11 +624,10 @@ namespace roulette
 				} // if debug
 
 				m_chips.erase(iter);
-				iter = m_chips.begin();
-				if (iter == m_chips.end())
-					break;
-			}
-		}
+				--i;
+			} // if not end
+			iter = m_chips.begin() + i;
+		} // for
 		return refGdkWindow->invalidate(false);
 	}
 
@@ -798,6 +805,10 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
+	// signal handlers emit bet signals for all bets except those emited in calculate_points function
+	// the order of numbers in split and corner bets matters, it should be from lowest to highest
+	// so that we do not need to sort selection of numbers, this is useful so that engine can
+	// compare two sets on removing a bet.
 	// TODO: check why need to check for gdkwindow, why throws
 	void Field::on_signal_bet_bottom(const EField& sender, type_chip chip)
 	{
@@ -861,7 +872,7 @@ namespace roulette
 			unsigned neighbor_number = static_cast<unsigned>(m_index) - 1;
 			mp_table->signal_bet.emit(make_shared<Bet>(
 				EBet::Split, chip, make_shared<type_raw_set>(
-					type_raw_set{ static_cast<unsigned>(m_index), neighbor_number })));
+					type_raw_set{ neighbor_number, static_cast<unsigned>(m_index) })));
 		}
 
 		if (chip->first == EChip::Eraser)
@@ -993,13 +1004,13 @@ namespace roulette
 			unsigned neighbor_number = static_cast<unsigned>(m_index) - 3;
 			mp_table->signal_bet.emit(make_shared<Bet>(
 				EBet::Split, chip, make_shared<type_raw_set>(
-					type_raw_set{ static_cast<unsigned>(m_index), neighbor_number })));
+					type_raw_set{ neighbor_number, static_cast<unsigned>(m_index) })));
 		}
 		else // this is number 1 or 2 and neighbor is 0
 		{
 			mp_table->signal_bet.emit(make_shared<Bet>(
 				EBet::Split, chip, make_shared<type_raw_set>(
-					type_raw_set{ static_cast<unsigned>(m_index), 0 })));
+					type_raw_set{ 0, static_cast<unsigned>(m_index) })));
 		}
 
 		if (chip->first == EChip::Eraser)
@@ -1309,6 +1320,7 @@ namespace roulette
 				error_handler(error("on_signal_bet_top_left -> case statement missing"));
 			} // switch sender
 			if (!p_set) error_handler(error("on_signal_bet_top_left -> p_set is nullptr"));
+			// this is either corner bet (0, 1, 2, 3) or line bet.
 			((sender == EField::Number1) || (sender == EField::Number0) || (sender == EField::Dummy1)) ?
 				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Corner, chip, p_set)) :
 			mp_table->signal_bet.emit(make_shared<Bet>(EBet::Line, chip, p_set));
@@ -1322,10 +1334,10 @@ namespace roulette
 		// signal is received from column 2 or 3 (corner bets)
 		else if(static_cast<unsigned>(sender) == (static_cast<unsigned>(m_index) - 3) )
 		{
-			unsigned neighbor1 = static_cast<unsigned>(m_index) + 1;
+			unsigned neighbor1 = static_cast<unsigned>(m_index) - 3;
 			unsigned neighbor2 = static_cast<unsigned>(m_index) - 2;
-			unsigned neighbor3 = static_cast<unsigned>(m_index) - 3;
-			p_set = make_shared<type_raw_set>(type_raw_set{ static_cast<unsigned>(m_index), neighbor1, neighbor2, neighbor3 });
+			unsigned neighbor3 = static_cast<unsigned>(m_index) + 1;
+			p_set = make_shared<type_raw_set>(type_raw_set{ neighbor1, neighbor2, static_cast<unsigned>(m_index), neighbor3 });
 			mp_table->signal_bet.emit(make_shared<Bet>(EBet::Corner, chip, p_set));
 		}
 

@@ -31,6 +31,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "main.hh"
 
 // std
+#include <algorithm> // for std::equal
 #include <iostream> // for deubgging
 
 namespace roulette
@@ -192,12 +193,22 @@ namespace roulette
 
 	void Engine::clear_bet(type_bet& bet)
 	{
-		if (!m_bets.empty())
+		if (m_bets.empty())
+			return;
+
+		auto iter = m_bets.begin();
+		type_set selection = bet->get_selection();
+
+		// begin from current bet, which is first element
+		for (size_t current = 1; current <= m_bets.size(); ++current)
 		{
-			for (auto iter = m_bets.begin(); iter != m_bets.end(); iter++)
+			// if Bet types (id's) and thus the amount of numbers do not match then std::equal will not work as expected,
+			// for example split bet 1,2 will be treated same as bet column2 which is 1,2,3... by std::equal
+			if (bet->get_id() == iter->get()->get_id())
 			{
-				//if (bet->get_chip()->second.equal(iter->get()->get_chip()->second))
-				if (bet->get_selection() == iter->get()->get_selection())
+				// all numbers *including* the order of sequence must match, it's important both number selections are sorted
+				// we achieve this during bet construction in signal handlers while emiting
+				if (std::equal(selection->begin(), selection->end(), iter->get()->get_selection()->begin()))
 				{
 					if (m_debug)
 					{
@@ -215,16 +226,27 @@ namespace roulette
 					} // if debug
 
 					m_bankroll += iter->get()->get_chip_value();
-					m_current_bet = 0;
-					m_last_bet = 0;
+					m_current_bet -= iter->get()->get_chip_value();
 					m_bets.erase(iter);
 
-					iter = m_bets.begin();
-					if (iter == m_bets.end())
-						break;
+					// if bet is removed, the size of container also changes to -1
+					--current;
 				} // if match
-			} // for all bets
-		} // if not empty
+			}
+			// wether size changed or not move iter to next element not yet processed
+			iter = m_bets.begin() + current;
+		} // for
+		if (m_bets.size())
+		{
+			m_last_bet = m_bets.back()->get_chip_value();
+		}
+		else // last chip from the table has been removed
+		{
+			m_last_bet = 0;
+		}
+
+		if (m_debug)
+			print();
 	}
 
 #ifdef _MSC_VER

@@ -37,7 +37,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 #include <memory>
-#include <unordered_set> // type_set
+#include <vector>
+//#include <unordered_set> // type_set
 
 namespace roulette
 {
@@ -243,7 +244,8 @@ namespace roulette
 	};
 
 	// single type declaring a set of numbers in roulette
-	typedef const std::unordered_set<unsigned> type_raw_set;
+	//typedef const std::unordered_set<unsigned> type_raw_set;
+	typedef const std::vector<unsigned> type_raw_set;
 
 	// shared pointer to the const set is shared between objects
 	typedef std::shared_ptr<type_raw_set> type_set;

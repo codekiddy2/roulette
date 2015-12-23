@@ -209,7 +209,7 @@ namespace roulette
 
 			if (number_set)
 			{
-				type_raw_set::iterator iter = number_set->begin();
+				type_raw_set::const_iterator iter = number_set->begin();
 
 				if (number_set->size() > 8) // let layout show 8 numbers in a row
 				{
