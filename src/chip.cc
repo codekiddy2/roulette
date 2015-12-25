@@ -28,6 +28,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "pch.hh"
 #include "chip.hh"
 #include "main.hh"
+#include "engine.hh"
 
 namespace roulette
 {
@@ -41,8 +42,10 @@ namespace roulette
 #endif // _MSC_VER
 
 
-	Chip::Chip(const EChip chip_value) :
+	Chip::Chip(Engine* p_engine, const EChip chip_value) :
 		BaseControl("Chip"),
+		m_value(static_cast<unsigned>(chip_value)),
+		mp_engine(p_engine),
 		refIcon(get_pixbuf(chip_value))
 	{
 		set_has_window(true);
@@ -50,7 +53,7 @@ namespace roulette
 
 		// Make this Chip a drag source
 		std::vector<Gtk::TargetEntry> this_source;
-		Gtk::TargetEntry entry(std::to_string(static_cast<unsigned>(chip_value)),
+		Gtk::TargetEntry entry(std::to_string(m_value),
 			Gtk::TargetFlags::TARGET_OTHER_WIDGET, static_cast<guint>(chip_value));
 
 		dnd_targets.push_back(entry);
@@ -81,53 +84,56 @@ namespace roulette
 
 	void Chip::on_drag_begin(const Glib::RefPtr<Gdk::DragContext>& context)
 	{
+		if (m_debug)
+		{
+			print("INFO: drag begin");
+			print("Source  Chip", true);
+			print("seting up drag icon", true);
+			print();
+		}
+
 		context->set_icon(refIcon, // the GdkPixbuf to use as the drag icon.
 			refIcon->get_width() / 2, // the X offset within widget of the hotspot.
 			refIcon->get_height() / 2); // the Y offset within widget of the hotspot.
-
-		if (m_debug)
-		{
-			print("Chip::on_drag_begin()");
-			print("context->set_icon()", true);
-		}
 	}
 
 
 	void Chip::on_drag_data_get(const Glib::RefPtr<Gdk::DragContext>& /*context*/,
 		Gtk::SelectionData& selection_data, guint info, guint time)
 	{
-		// TODO: make use of selection data
-		static const int format = 8;
-
-		selection_data.set(selection_data.get_target(), format, nullptr, 0);
+		selection_data.set(selection_data.get_target(), format, reinterpret_cast<const guint8*>(mp_engine), sizeof(Engine));
 
 		if (m_debug)
 		{
-			print("INFO: Chip::on_drag_data_get()");
+			print("INFO: providing drag info");
+			print("Source: Chip", true);
 			print("target: ", true);
 			print(selection_data.get_target());
 			print("pointer: ", true);
-			print(selection_data.get_data(), true);
+			print(selection_data.get_data());
 			print("length: ", true);
-			print(selection_data.get_length(), true);
+			print(selection_data.get_length());
 			print("format = ", true);
-			print(static_cast<int>(format), true);
+			print(static_cast<int>(format));
 			print("info = ", true);
-			print(static_cast<int>(info), true);
+			print(static_cast<int>(info));
 			print("time = ", true);
-			print(static_cast<int>(time), true);
+			print(static_cast<int>(time));
+			print();
 
 			if (selection_data.set_pixbuf(refIcon))
 			{
 				Glib::RefPtr<const Gdk::Pixbuf> temp = selection_data.get_pixbuf();
 				print("pixbuf size = ", true);
 				print(temp->get_byte_length());
+				print();
 			}
 			else
 			{
-				print("WARNING: get_pixbuf() did not return a pixbuf", true);
-				print("INFO: if targets include image = ", true);
+				print("WARNING: get_pixbuf() did not return a pixbuf");
+				print("if targets include image = ", true);
 				print(selection_data.targets_include_image(false));
+				print();
 			}
 		}
 	}
@@ -137,8 +143,11 @@ namespace roulette
 	{
 		if (m_debug)
 		{
-			print("Chip::on_drag_end()");
+			print("INFO: drag ended");
+			print("Source: Chip", true);
+			print();
 		}
+
 		// TODO: implement on_drag_end functionality
 		return Gtk::Widget::on_drag_end(context);
 	}

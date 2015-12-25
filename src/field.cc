@@ -36,11 +36,13 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
+// std
 #include "pch.hh"
 #include "field.hh"
 #include "table.hh"
 #include "main.hh"
 #include "color.hh"
+#include "engine.hh"
 
 namespace roulette
 {
@@ -93,7 +95,7 @@ namespace roulette
 	// and then emit signal to neighboring fields so that they do the same
 	// neighborng fields will adjust chip x y in signal handlers instead.
 	// last parameter is used to avoid re-emiting signals on window resize.
-	void Field::calculate_points(type_chip chip, bool emit /*= true*/)
+	EBet Field::calculate_points(type_chip chip, bool emit /*= true*/)
 	{
 		Gtk::Allocation alloc = get_allocation();
 		Gdk::Point& point = chip->second;
@@ -118,31 +120,26 @@ namespace roulette
 		switch (m_index)
 		{
 		case roulette::EField::Number0:
-		{
-			// TODO: move to global scope, used in signal handlers too (check ??)
-			const int split1	= static_cast<int>(height * .167); // rounded up
-			const int street1 = static_cast<int>(height * .334); // rounded up
-			const int split2	= static_cast<int>(height * .5);
-			const int street2 = static_cast<int>(height * .667); // rounded up
-			const int split3	= static_cast<int>(height * .834); // rounded up
-			const int basket	= height;
-
-			const int check = width / 5; // was	*.125 not rounded up
-
-			const int check_street1 = street1 - check;
-			const int check_split2 = split2 - check;
-			const int check_street2 = street2 - check;
-			const int check_split3 = split3 - check;
-			const int check_basket = basket - check;
-
-			if (x < right) // no chip drawing signal
-			{
-				// TODO: making type_set for single number is not smart
-				mp_table->signal_bet.emit(make_shared<Bet>(EBet::StraightUp, chip,
-					make_shared<type_raw_set>(type_raw_set{ static_cast<unsigned>(m_index) })));
-			}
+			if (x < right)
+				return EBet::StraightUp; // no chip drawing signal	
 			else // x > right
 			{
+				// TODO: move to global scope, used in signal handlers too (check ??)
+				const int split1	= static_cast<int>(height * .167); // rounded up
+				const int street1 = static_cast<int>(height * .334); // rounded up
+				const int split2	= static_cast<int>(height * .5);
+				const int street2 = static_cast<int>(height * .667); // rounded up
+				const int split3	= static_cast<int>(height * .834); // rounded up
+				const int basket	= height;
+
+				const int check = width / 5; // was	*.125 not rounded up
+
+				const int check_street1 = street1 - check;
+				const int check_split2 = split2 - check;
+				const int check_street2 = street2 - check;
+				const int check_split3 = split3 - check;
+				const int check_basket = basket - check;
+
 				point.set_x(width);
 				if (y < check_street1)
 				{
@@ -175,8 +172,7 @@ namespace roulette
 					point.set_y(basket);
 					if (emit) signal_bet_basket.emit(m_index, chip);
 				}
-			}
-		}
+			} // x > right
 		break;
 		case roulette::EField::Number3:
 			if (x < left)
@@ -199,21 +195,12 @@ namespace roulette
 				}
 				else if (emit) signal_bet_right.emit(m_index, chip);
 			}
-			else // x == cx
+			else if (y > down) // x == cx
 			{
-				if (y > down)
-				{
-					point.set_y(height);
-					if (emit) signal_bet_bottom.emit(m_index, chip);
-				}
-				else // y == cy
-				{
-					// cx, cy -> no chip drawing signal
-					// TODO: making type_set for single number is not smart
-					if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::StraightUp, chip,
-						make_shared<type_raw_set>(type_raw_set{ static_cast<unsigned>(m_index) })));
-				}
+				point.set_y(height);
+				if (emit) signal_bet_bottom.emit(m_index, chip);
 			}
+			else return EBet::StraightUp; // cx, cy -> no chip drawing signal
 			break;
 		case roulette::EField::Number34:
 		case roulette::EField::Number35:
@@ -232,26 +219,17 @@ namespace roulette
 				}
 				else if (emit) signal_bet_left.emit(m_index, chip);
 			}
-			else // x == cx
+			else if (y < top) // x == cx
 			{
-				if (y < top)
-				{
-					point.set_y(0);
-					if (emit) signal_bet_top.emit(m_index, chip);
-				}
-				else if (y > down)
-				{
-					point.set_y(height);
-					if (emit) signal_bet_bottom.emit(m_index, chip);
-				}
-				else // y == cy
-				{
-					// cx, cy -> no chip drawing signal
-					// TODO: making type_set for single number is not smart
-					if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::StraightUp, chip,
-						make_shared<type_raw_set>(type_raw_set{ static_cast<unsigned>(m_index) })));
-				}
+				point.set_y(0);
+				if (emit) signal_bet_top.emit(m_index, chip);
 			}
+			else if (y > down)
+			{
+				point.set_y(height);
+				if (emit) signal_bet_bottom.emit(m_index, chip);
+			}
+			else return EBet::StraightUp; // cx, cy -> no chip drawing signal
 			break;
 		case roulette::EField::Number36:
 			if (x < left)
@@ -264,60 +242,53 @@ namespace roulette
 				}
 				else if (emit) signal_bet_left.emit(m_index, chip);
 			}
-			else // x == cx
+			else if (y > down) // x == cx
 			{
-				if (y > down)
-				{
-					point.set_y(height);
-					if (emit) signal_bet_bottom.emit(m_index, chip);
-				}
-				else // y == cy
-				{
-					// cx, cy -> no chip drawing signal
-					// TODO: making type_set for single number is not smart
-					if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::StraightUp, chip,
-						make_shared<type_raw_set>(type_raw_set{ static_cast<unsigned>(m_index) })));
-				}
+				point.set_y(height);
+				if (emit) signal_bet_bottom.emit(m_index, chip);
 			}
+			else return EBet::StraightUp; // cx, cy -> no chip drawing signal
 			break;
 		case roulette::EField::Number00:
 			break;
+		case roulette::EField::Red:
+		case roulette::EField::Black:
+		case roulette::EField::Even:
+		case roulette::EField::Odd:
+		case roulette::EField::High:
+		case roulette::EField::Low:
 		case roulette::EField::Column1:
-			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Column1, chip, Column1));
-			break;
 		case roulette::EField::Column2:
-			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Column2, chip, Column2));
-			break;
 		case roulette::EField::Column3:
-			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Column3, chip, Column3));
-			break;
+			return static_cast<EBet>(m_index); // WARNING: this is supposed to be same enum number defined in sets.hh
 		case roulette::EField::Dozen1:
 		case roulette::EField::Dozen2:
 		case roulette::EField::Dozen3:
-		{
-			const int line1	= 0;
-			const int street1 = static_cast<int>(width * .126); // rounded up
-			const int line2	= static_cast<int>(width * .25);
-			const int street2	= static_cast<int>(width * .376); // rounded up
-			const int line3	= static_cast<int>(width * .5);
-			const int street3 = static_cast<int>(width * .626); // rounded up
-			const int line4	= static_cast<int>(width * .75);
-			const int street4 = static_cast<int>(width * .876); // rounded up
-			const int line5	= width;
-
-			const int check = static_cast<int>(width	* .0625);
-
-			const int check_street1 = street1 - check;
-			const int check_line2	= line2 - check;
-			const int check_street2 = street2 - check;
-			const int check_line3	= line3 - check;
-			const int check_street3 = street3 - check;
-			const int check_line4	= line4 - check;
-			const int check_street4 = street4 - check;
-			const int check_line5	= line5 - check;
-
-			if (y < top)
+			if (y > top)
+				return static_cast<EBet>(m_index); // WARNING: this is supposed to be same enum number defined in sets.hh
+			else // line or street bet
 			{
+				const int line1	= 0;
+				const int street1 = static_cast<int>(width * .126); // rounded up
+				const int line2	= static_cast<int>(width * .25);
+				const int street2	= static_cast<int>(width * .376); // rounded up
+				const int line3	= static_cast<int>(width * .5);
+				const int street3 = static_cast<int>(width * .626); // rounded up
+				const int line4	= static_cast<int>(width * .75);
+				const int street4 = static_cast<int>(width * .876); // rounded up
+				const int line5	= width;
+
+				const int check = static_cast<int>(width	* .0625);
+
+				const int check_street1 = street1 - check;
+				const int check_line2	= line2 - check;
+				const int check_street2 = street2 - check;
+				const int check_line3	= line3 - check;
+				const int check_street3 = street3 - check;
+				const int check_line4	= line4 - check;
+				const int check_street4 = street4 - check;
+				const int check_line5	= line5 - check;
+
 				point.set_y(0);
 				if (x < check_street1)
 				{
@@ -363,47 +334,19 @@ namespace roulette
 				{
 					point.set_x(line5);
 					if (emit) signal_bet_line5.emit(m_index, chip);
-				}
-			}
-			else // y > top
-			{
-				if (emit) m_index == EField::Dozen1 ?
-					mp_table->signal_bet.emit(make_shared<Bet>(EBet::Dozen1, chip, Dozen1)) :
-					m_index == EField::Dozen2 ?
-					mp_table->signal_bet.emit(make_shared<Bet>(EBet::Dozen2, chip, Dozen2)) :
-					mp_table->signal_bet.emit(make_shared<Bet>(EBet::Dozen3, chip, Dozen3));
-			} // if
-		} // case dozen
+				} // else if (y < top)
 			break;
-		case roulette::EField::Red:
-			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Red, chip, Red));
-			break;
-		case roulette::EField::Black:
-			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Black, chip, Black));
-			break;
-		case roulette::EField::Even:
-			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Even, chip, Even));
-			break;
-		case roulette::EField::Odd:
-			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Odd, chip, Odd));
-			break;
-		case roulette::EField::High:
-			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::High, chip, High));
-			break;
-		case roulette::EField::Low:
-			if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::Low, chip, Low));
-			break;
+			} // else line or street bet
 		case roulette::EField::Dummy1:
 			if (x > right && y < top / 2)
 			{
 				point.set_x(width);
 				point.set_y(0);
 				if (emit) signal_bet_basket.emit(m_index, chip);
-				break;
+				return EBet::Corner0;
 			}
 		case roulette::EField::Dummy2:
 		case roulette::EField::Dummy3:
-			point.set_x(0); // this value indicates a drop will not be accepted
 			break;
 		case roulette::EField::Number1:
 		case roulette::EField::Number2:
@@ -467,29 +410,24 @@ namespace roulette
 				}
 				else if (emit) signal_bet_right.emit(m_index, chip);
 			}
-			else // x == cx
+			else if (y < top && (which_column(m_index) != 3)) // x == cx
 			{
-				if (y < top && (which_column(m_index) != 3))
-				{
-					point.set_y(0);
-					if (emit) signal_bet_top.emit(m_index, chip);
-				}
-				else if (y > down)
-				{
-					point.set_y(height);
-					if (emit) signal_bet_bottom.emit(m_index, chip);
-				}
-				else // y == cy, x = cx
-				{
-					// TODO: making type_set for single number is not smart
-					if (emit) mp_table->signal_bet.emit(make_shared<Bet>(EBet::StraightUp, chip,
-						make_shared<type_raw_set>(type_raw_set{ static_cast<unsigned>(m_index) })));
-				}
+				point.set_y(0);
+				if (emit) signal_bet_top.emit(m_index, chip);
 			}
+			else if (y > down)
+			{
+				point.set_y(height);
+				if (emit) signal_bet_bottom.emit(m_index, chip);
+			}
+			else return EBet::StraightUp; // y == cy, x = cx
 			break;
 		default:
 			error_handler(error("calculate_points -> missing case statement"));
 		} // switch
+
+		// the bet is undefined, it will be defined in signal handlers
+		return EBet::UNDEFINED;
 	} // calculate_points
 
 	bool Field::on_clicked(GdkEventButton* button_event)
@@ -672,7 +610,8 @@ namespace roulette
 			if (m_debug)
 			{
 				print("INFO: drop refused");
-				print("Source: Field::on_drag_drop", true);
+				print("Source: Field", true);
+				print("Reason: invalid target", true);
 				print();
 			} // if debug
 
@@ -688,48 +627,138 @@ namespace roulette
 	}
 	
 	void Field::on_drag_data_received(const Glib::RefPtr<Gdk::DragContext>& context,
-		int x, int y, const Gtk::SelectionData& /*selection_data*/, guint info, guint time)
+		int x, int y, const Gtk::SelectionData& selection_data, guint info, guint time)
 	{
-		// TODO: make use of selection data
-		type_chip_pair chip_pair = make_pair(static_cast<EChip>(info), Gdk::Point(x, y));
-		type_chip chip = make_shared<type_chip_pair>(chip_pair);
-		
-		// chip will now be modified and emited to the engine and neighboring
-		// fields for drawing and bet placing
-		// owner of the chip shared pointer will be engine and it should not be reused ?
-		calculate_points(chip);
-
-		if (info == static_cast<unsigned>(EChip::Eraser))
+		// chips can't be drawn on dummy2 
+		if (m_index != EField::Dummy2)
 		{
-			// clear all chips where the eraser has been dropped
-			clear(chip->second);
-			context->drag_finish(false, false, time);
-			return refGdkWindow->invalidate(false);
-		}
-
-		// if dummy's x is zero then dropped chips won't be drawn on it.
-		if ((m_index == EField::Dummy1 || m_index == EField::Dummy2) && (!chip->second.get_x()))
-		{
-			if (m_debug)
+			if (selection_data.get_format() == format)
 			{
-				print("INFO: drop refused");
-				print("Source: Field::on_drag_data_received", true);
-				print();
-			} // if debug
+				int length = selection_data.get_length();
 
-			return context->drag_finish(true, false, time);
-		}
+				if (length == sizeof(Engine))
+				{
+					const Engine* p_engine = reinterpret_cast<const Engine*>(selection_data.get_data(length));
 
-		if (m_debug)
-		{
-			print("INFO: chip dorpped");
-			print("Source: Field", true);
-			print("Field index: ", true);
-			print(m_index);
-			print();
-		}
-		m_chips.push_back(chip);
-		return context->drag_finish(false, false, time);
+					if (p_engine)
+					{
+						// make chip, we need a chip regardless of bankroll status
+						type_chip chip = make_shared<type_chip_pair>(make_pair(static_cast<EChip>(info), Gdk::Point(x, y)));
+
+						if (p_engine->get_bankroll() >= info)
+						{
+							// if bankroll is OK calculate chip drop zone
+							EBet bet = calculate_points(chip);
+
+							// refuse drop on dummy, accept if bet is Corner0 -> 0,1,2,3
+							if ((m_index == EField::Dummy1) && (bet != EBet::Corner0))
+							{
+								if (m_debug)
+								{
+									print("INFO: drop refused");
+									print("Source: Field", true);
+									print("Reason: invalid target", true);
+									print();
+								} // if debug
+
+								return context->drag_finish(true, false, time);
+							} // if bad dummy
+
+							if (m_debug)
+							{
+								print("INFO: chip dorpped");
+								print("Source: Field", true);
+								print("Field index: ", true);
+								print(m_index);
+								print();
+							} // if debug
+
+							// if this is eraser don't draw it, just clear existing chips
+							chip->first != EChip::Eraser ?
+								m_chips.push_back(chip) : clear(chip->second);
+
+							type_set p_set = nullptr;
+
+							// TODO: move line and street bets here too
+							switch (bet)
+							{
+							case roulette::EBet::StraightUp:
+								// TODO: making type_set for single number is not smart
+								p_set = make_shared<type_raw_set>(type_raw_set{ static_cast<unsigned>(m_index) });
+								break;
+							case roulette::EBet::Column1:
+								p_set = Column1;
+								break;
+							case roulette::EBet::Column2:
+								p_set = Column2;
+								break;
+							case roulette::EBet::Column3:
+								p_set = Column3;
+								break;
+							case roulette::EBet::Dozen1:
+								p_set = Dozen1;
+								break;
+							case roulette::EBet::Dozen2:
+								p_set = Dozen2;
+								break;
+							case roulette::EBet::Dozen3:
+								p_set = Dozen3;
+								break;
+							case roulette::EBet::Red:
+								p_set = Red;
+								break;
+							case roulette::EBet::Black:
+								p_set = Black;
+								break;
+							case roulette::EBet::Even:
+								p_set = Even;
+								break;
+							case roulette::EBet::Odd:
+								p_set = Odd;
+								break;
+							case roulette::EBet::High:
+								p_set = High;
+								break;
+							case roulette::EBet::Low:
+								p_set = Low;
+								break;
+							default: // the bet is already emited by signal handlers during calculate_points
+								return context->drag_finish(true, false, time);
+							} // switch bet
+
+							// emit bet not emited by signal handlers if limits are not reached
+							if (!mp_table->check_limits(m_chips, chip, bet))
+								mp_table->signal_bet.emit(make_shared<Bet>(bet, chip, p_set));
+						} // if bankroll
+						else if ((m_index == EField::Dummy1) && (calculate_points(chip, false) != EBet::Corner0) && m_debug)
+						{
+							print("INFO: drop refused");
+							print("Source: Field", true);
+							print("Reason: invalid target", true);
+							print();
+						}
+						else // just out of bankroll
+						{
+							mp_table->show_message("Not enough bankroll to place a bet");
+							//Gtk::Window* top_window = dynamic_cast<Gtk::Window*>(get_toplevel());
+
+							//if (top_window->get_is_toplevel())
+							//{
+							//	Gtk::MessageDialog dialog(*top_window, "Information");
+							//	dialog.set_secondary_text("Not enough bankroll to place a bet");
+							//	dialog.set_position(Gtk::WIN_POS_CENTER);
+							//	dialog.run();
+							//} // if is_toplevel
+							//else error_handler(error("ERROR: get_toplevel did not return a top level window"));
+						} // if out of bankroll -> case handled
+					} // if p_engine
+					else error_handler(error("ERROR: p_engine is null"));
+				} // if length of Engine
+				else error_handler(error("ERROR: Engine length mismatch"));
+			} // if format match
+			else error_handler(error("EROOR: format does not match"));
+		} // if not dummy2
+		context->drag_finish(true, false, time);
 	}
 
 	void Field::on_drag_leave(const Glib::RefPtr<Gdk::DragContext>& context, guint time)

@@ -57,6 +57,9 @@ namespace roulette
 	// drag and drop target entry shared by fields and chips
 	extern std::vector<Gtk::TargetEntry> dnd_targets;
 
+	// number of bits in a byte, used by drag and drop
+	extern const int format;
+
 	// type declaring a bet
 	typedef std::shared_ptr<Bet> type_bet;
 
@@ -68,6 +71,9 @@ namespace roulette
 
 	// type declaring a a pair which makes a chip
 	typedef std::pair<const EChip, Gdk::Point> type_chip_pair; // TODO: Bet uses their own typedef
+
+	// type declaring a container of chips
+	typedef std::vector<type_chip> type_chip_container;
 
 	// type declaring a final chip type
 	typedef std::shared_ptr<type_chip_pair> type_chip;

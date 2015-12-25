@@ -41,6 +41,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 // std
 #include <map>
+#include <string>
 #include <memory>
 #include <vector>
 #include <unordered_map>
@@ -48,6 +49,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 // gtkmm
 #include <gtkmm/grid.h>
 #include <sigc++/signal.h>
+#include <gtkmm/messagedialog.h>
 
 namespace roulette
 {
@@ -66,6 +68,15 @@ namespace roulette
 		// constructors
 		Table(const ETable table_type = ETable::European);
 		~Table();
+
+		// set parent for dialog
+		void set_dialog_parent(Gtk::Window* top_window);
+
+		// show messge dialog
+		void show_message(std::string&& message);
+
+		// check if table limits are reached and inform the player
+		bool check_limits(type_chip_container& chips, type_chip& chip, EBet& bet_type);
 
 		// get maximum amount of chips which can be placed for given bet
 		int get_limit(const EBet& bet);
@@ -96,8 +107,8 @@ namespace roulette
 	private:
 		// typedefs
 		typedef std::vector<EBet> type_bet_list;
-		typedef std::map<EBet, int> type_max_container;
-		typedef std::map<EMinimum, short> type_min_container;
+		typedef std::map<EBet, unsigned> type_max_container;
+		typedef std::map<EMinimum, unsigned> type_min_container;
 		typedef std::unordered_map<EField, Field*> type_fields;
 
 		// members
@@ -105,11 +116,11 @@ namespace roulette
 		int m_tablemax;
 		float m_result;
 
-		// SUM of maximum number of all the BetNames that can be placed on a ETable
+		// SUM of of all the Bet types that can be placed on a ETable
 		int m_totalbets;
 
 		// Maximum number of n EBet that can be placed, separated into container.
-		type_max_container m_maxbets;
+		type_max_container m_maxbets; // count of bet types for given table
 		type_bet_list m_blacklist; // unsupported bet list
 		type_min_container m_minimums;	// table minimums
 		type_max_container m_maximums;	// table maximums
@@ -118,6 +129,7 @@ namespace roulette
 
 		/// begin initializer list
 		ETable m_tabletype;
+		Gtk::MessageDialog m_dialog;
 		/// end initializer list
 
 		// deleted

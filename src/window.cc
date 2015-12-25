@@ -52,24 +52,27 @@ namespace roulette
 
 	Window::Window(Glib::RefPtr<Gdk::Pixbuf> refIcon) :
 		IErrorHandler("Window"),
-		m_Chip1(EChip::Chip1),
-		m_Chip5(EChip::Chip5),
-		m_Chip25(EChip::Chip25),
-		m_Chip50(EChip::Chip50),
-		m_Chip100(EChip::Chip100),
-		m_Eraser(EChip::Eraser),
 		m_BtnClose("Close"),
 		m_BtnSpin("Spin"),
 		m_BtnSpin50("Spin 50x"),
 		m_BtnClear("Clear"),
 		mp_engine(new Engine),
-		m_infobar(mp_engine)
+		m_infobar(mp_engine),
+		m_Chip1(mp_engine, EChip::Chip1),
+		m_Chip5(mp_engine, EChip::Chip5),
+		m_Chip25(mp_engine, EChip::Chip25),
+		m_Chip50(mp_engine, EChip::Chip50),
+		m_Chip100(mp_engine, EChip::Chip100),
+		m_Eraser(mp_engine, EChip::Eraser)
 	{
 		// Window options
 		set_title("roulette");
 		set_size_request(500, 300);
 		set_position(Gtk::WIN_POS_CENTER);
 		set_icon(refIcon);
+
+		// set up dialog
+		m_table.set_dialog_parent(this);
 
 		// begin packing
 		add(m_HBoxTop);
@@ -131,9 +134,15 @@ namespace roulette
 		m_table.signal_bet.connect(sigc::mem_fun(*mp_engine, &Engine::place_bet));
 		m_table.signal_bet.connect(sigc::mem_fun(m_infobar, &InfoBar::on_update));
 
-		// engine options
+		// debug options
 		mp_engine->set_debug(true);
-		//m_table.set_debug(true);
+		m_table.set_debug(true);
+		m_Chip1.set_debug(true);
+		m_Chip5.set_debug(true);
+		m_Chip25.set_debug(true);
+		m_Chip50.set_debug(true);
+		//m_Chip100.set_debug(true);
+		m_Eraser.set_debug(true);
 	}
 
 	roulette::Window::~Window()

@@ -53,6 +53,8 @@ namespace roulette
 	// load size x size version from the ico file
 	static int chip_size = 32;
 
+	const int format = 8;
+	
 	vector<Gtk::TargetEntry> dnd_targets;
 
 	bool load_icons();

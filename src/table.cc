@@ -26,6 +26,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
+// roulette
 #include "pch.hh"
 #include "field.hh"
 #include "table.hh"
@@ -45,8 +46,12 @@ namespace roulette
 		IErrorHandler("Table"),
 		m_tablemax(0),
 		m_tabletype(table_type),
+		m_dialog("Information"),
 		m_totalbets(0)
 	{
+		// set up dialog
+		m_dialog.set_position(Gtk::WIN_POS_CENTER);
+
 		set_column_homogeneous(true);
 		set_row_homogeneous(true);
 
@@ -584,6 +589,37 @@ namespace roulette
 		{
 			delete pair.second;
 		}
+	}
+
+	void Table::set_dialog_parent(Gtk::Window* top_window)
+	{
+		m_dialog.set_parent(*top_window);
+	}
+
+	void Table::show_message(std::string&& message)
+	{
+		m_dialog.set_secondary_text(message);
+		m_dialog.run();
+	}
+
+	bool Table::check_limits(type_chip_container& chips, type_chip& chip, EBet& bet_type)
+	{
+		auto limit = m_maximums.find(bet_type)->second;
+		unsigned current_bet = 0;
+
+		for (auto iter : chips)
+		{
+			if (iter->second.equal(chip->second))
+			{
+				current_bet += static_cast<unsigned>(iter->first);
+			}
+		}
+		if (current_bet > limit)
+		{
+			show_message("Limit reached for this bet");
+			return true;
+		}
+		return false;
 	}
 
 #ifdef _MSC_VER

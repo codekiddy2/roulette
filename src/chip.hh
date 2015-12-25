@@ -38,12 +38,14 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 namespace roulette
 {
+	class Engine;
+
 	class Chip final : 
 		public BaseControl
 	{
 	public:
 		// constructors
-		Chip(const EChip chip_value);
+		Chip(Engine* p_engine, const EChip chip_value);
 
 	protected:
 		// Overrides from base_control
@@ -57,6 +59,8 @@ namespace roulette
 
 	private:
 		/// begin initializer list
+		unsigned m_value;
+		Engine* mp_engine;
 		Glib::RefPtr<Gdk::Pixbuf> refIcon;
 		/// end initializer list
 

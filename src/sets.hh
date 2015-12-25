@@ -37,8 +37,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 #include <memory>
-#include <vector>
-//#include <unordered_set> // type_set
+#include <vector> // type_set
 
 namespace roulette
 {
@@ -78,6 +77,7 @@ namespace roulette
 		Split,
 		Street,
 		Corner,
+		Corner0, // 0, 1, 2, 3
 		Line,
 		Neighbor1,
 		Neighbor2,
@@ -92,8 +92,8 @@ namespace roulette
 
 		///<hasSelection>
 		///<fieldNameContinues>
-		Column1 = 38,
-		Column2,
+		Column1 = 38,  // WARNING: from here enum bet the same as enum field
+		Column2,	// this matters in calculate point function
 		Column3,
 		Dozen1,
 		Dozen2,
@@ -103,7 +103,7 @@ namespace roulette
 		Even,
 		Odd,
 		High,
-		Low,
+		Low, // end of warning
 		///</fieldNameContinues>
 
 		Basket,
@@ -204,8 +204,8 @@ namespace roulette
 		Number35,
 		Number36,
 		Number00,
-		Column1,
-		Column2,
+		Column1, // = 38! WARNING: from here enum index the same as enum bet
+		Column2, // this matters in calculate points function
 		Column3,
 		Dozen1,
 		Dozen2,
@@ -215,7 +215,7 @@ namespace roulette
 		Even,
 		Odd,
 		High,
-		Low,
+		Low, // end of warning
 		Dummy1,
 		Dummy2,
 		Dummy3,
@@ -244,7 +244,7 @@ namespace roulette
 	};
 
 	// single type declaring a set of numbers in roulette
-	//typedef const std::unordered_set<unsigned> type_raw_set;
+	// must be vector to preserve numbers order and avoid sorting
 	typedef const std::vector<unsigned> type_raw_set;
 
 	// shared pointer to the const set is shared between objects

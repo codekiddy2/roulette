@@ -31,8 +31,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "main.hh"
 
 // std
-#include <algorithm> // for std::equal
-#include <iostream> // for deubgging
+#include <algorithm>
+using std::equal;
 
 namespace roulette
 {
@@ -47,7 +47,7 @@ namespace roulette
 		IErrorHandler("Engine"),
 		m_current_bet(0),
 		m_last_bet(0),
-		m_bankroll(5000)
+		m_bankroll(500)
 	{
 	}
 
@@ -208,7 +208,7 @@ namespace roulette
 			{
 				// all numbers *including* the order of sequence must match, it's important both number selections are sorted
 				// we achieve this during bet construction in signal handlers while emiting
-				if (std::equal(selection->begin(), selection->end(), iter->get()->get_selection()->begin()))
+				if (equal(selection->begin(), selection->end(), iter->get()->get_selection()->begin()))
 				{
 					if (m_debug)
 					{

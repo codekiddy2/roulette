@@ -77,8 +77,7 @@ namespace roulette
 
 		// typedefs
 		typedef sigc::signal<void, const EField&, type_chip> signal;
-		typedef std::vector<type_chip> type_chip_container;
-
+		
 		// signals emited by number fields only
 		signal signal_bet_top;
 		signal signal_bet_bottom;
@@ -149,7 +148,7 @@ namespace roulette
 		// methods
 		void clear_all();
 		void clear(Gdk::Point& chip_point);
-		void calculate_points(type_chip chip, bool emit = true);
+		EBet calculate_points(type_chip chip, bool emit = true);
 		bool on_clicked(GdkEventButton* button_event);
 		void assign_apperance(EField index);
 		void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int field_width, int field_height);
