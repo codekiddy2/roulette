@@ -57,6 +57,7 @@ namespace roulette
 #endif // _MSC_VER
 
 	class Engine;
+	class Table;
 
 	class InfoBar :
 		public Gtk::DrawingArea,
@@ -64,7 +65,7 @@ namespace roulette
 	{
 	public:
 		// constructors
-		InfoBar(Engine* p_engine);
+		InfoBar(Engine* p_engine, Table* p_table);
 
 		// table will signal a bet and execute this handler
 		// it will also execute this handler in case of clear_all_bets
@@ -79,6 +80,7 @@ namespace roulette
 	private:
 		// members
 		Engine* mp_engine;
+		Table* mp_table;
 		Pango::FontDescription font;
 		Gdk::RGBA m_foreground = Gdk::RGBA("rgb(0, 190, 0)");
 		Gdk::RGBA m_background = Gdk::RGBA("rgb(0, 0, 0)");

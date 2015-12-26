@@ -144,33 +144,63 @@ namespace roulette
 				if (y < check_street1)
 				{
 					point.set_y(split1);
-					if (emit) signal_bet_split1.emit(m_index, chip);
+					if (emit)
+					{
+						if (mp_table->check_limits(m_chips, chip, EBet::Split))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_split1.emit(m_index, chip);
+					}
 					break;
 				}
 				else if (y < check_split2)
 				{
 					point.set_y(street1);
-					if (emit) signal_bet_street1.emit(m_index, chip);
+					if (emit)
+					{
+						if (mp_table->check_limits(m_chips, chip, EBet::Street))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_street1.emit(m_index, chip);
+					}
 				}
 				else if (y < check_street2)
 				{
 					point.set_y(split2);
-					if (emit) signal_bet_split2.emit(m_index, chip);
+					if (emit)
+					{
+						if (mp_table->check_limits(m_chips, chip, EBet::Split))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_split2.emit(m_index, chip);
+					}
 				}
 				else if (y < check_split3)
 				{
 					point.set_y(street2);
-					if (emit) signal_bet_street2.emit(m_index, chip);
+					if (emit)
+					{
+						if (mp_table->check_limits(m_chips, chip, EBet::Street))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_street2.emit(m_index, chip);
+					}
 				}
 				else if (y < check_basket)
 				{
 					point.set_y(split3);
-					if (emit) signal_bet_split3.emit(m_index, chip);
+					if (emit)
+					{
+						if (mp_table->check_limits(m_chips, chip, EBet::Corner))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_split3.emit(m_index, chip);
+					}
 				}
 				else
 				{
 					point.set_y(basket);
-					if (emit) signal_bet_basket.emit(m_index, chip);
+					if (emit)
+					{
+						if (mp_table->check_limits(m_chips, chip, EBet::Basket))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_basket.emit(m_index, chip);
+					}
 				}
 			} // x > right
 		break;
@@ -181,9 +211,19 @@ namespace roulette
 				if (y > down)
 				{
 					point.set_y(height);
-					if (emit) signal_bet_bottom_left.emit(m_index, chip);
+					if (emit)
+					{
+						if (mp_table->check_limits(m_chips, chip, EBet::Corner))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_bottom_left.emit(m_index, chip);
+					}
 				}
-				else if (emit) signal_bet_left.emit(m_index, chip);
+				else if (emit)
+				{
+					if (mp_table->check_limits(m_chips, chip, EBet::Split))
+						return EBet::LIMIT_EXCEEDED;
+					signal_bet_left.emit(m_index, chip);
+				}
 			}
 			else if (x > right)
 			{
@@ -191,14 +231,29 @@ namespace roulette
 				if (y > down)
 				{
 					point.set_y(height);
-					if (emit) signal_bet_bottom_right.emit(m_index, chip);
+					if (emit)
+					{
+						if (mp_table->check_limits(m_chips, chip, EBet::Corner))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_bottom_right.emit(m_index, chip);
+					}
 				}
-				else if (emit) signal_bet_right.emit(m_index, chip);
+				else if (emit)
+				{
+					if (mp_table->check_limits(m_chips, chip, EBet::Split))
+						return EBet::LIMIT_EXCEEDED;
+					signal_bet_right.emit(m_index, chip);
+				}
 			}
 			else if (y > down) // x == cx
 			{
 				point.set_y(height);
-				if (emit) signal_bet_bottom.emit(m_index, chip);
+				if (emit)
+				{
+					if (mp_table->check_limits(m_chips, chip, EBet::Split))
+						return EBet::LIMIT_EXCEEDED;
+					signal_bet_bottom.emit(m_index, chip);
+				}
 			}
 			else return EBet::StraightUp; // cx, cy -> no chip drawing signal
 			break;
@@ -210,24 +265,49 @@ namespace roulette
 				if (y < top)
 				{
 					point.set_y(0);
-					if (emit) signal_bet_top_left.emit(m_index, chip);
+					if (emit)
+					{
+						if (mp_table->check_limits(m_chips, chip, EBet::Corner))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_top_left.emit(m_index, chip);
+					}
 				}
 				else if (y > down)
 				{
 					point.set_y(height);
-					if (emit) signal_bet_bottom_left.emit(m_index, chip);
+					if (emit)
+					{
+						if (mp_table->check_limits(m_chips, chip, EBet::Corner))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_bottom_left.emit(m_index, chip);
+					}
 				}
-				else if (emit) signal_bet_left.emit(m_index, chip);
+				else if (emit)
+				{
+					if (mp_table->check_limits(m_chips, chip, EBet::Split))
+						return EBet::LIMIT_EXCEEDED;
+					signal_bet_left.emit(m_index, chip);
+				}
 			}
 			else if (y < top) // x == cx
 			{
 				point.set_y(0);
-				if (emit) signal_bet_top.emit(m_index, chip);
+				if (emit)
+				{
+					if (mp_table->check_limits(m_chips, chip, EBet::Split))
+						return EBet::LIMIT_EXCEEDED;
+					signal_bet_top.emit(m_index, chip);
+				}
 			}
 			else if (y > down)
 			{
 				point.set_y(height);
-				if (emit) signal_bet_bottom.emit(m_index, chip);
+				if (emit)
+				{
+					if (mp_table->check_limits(m_chips, chip, EBet::Split))
+						return EBet::LIMIT_EXCEEDED;
+					signal_bet_bottom.emit(m_index, chip);
+				}
 			}
 			else return EBet::StraightUp; // cx, cy -> no chip drawing signal
 			break;
@@ -238,14 +318,29 @@ namespace roulette
 				if (y > down)
 				{
 					point.set_y(height);
-					if (emit) signal_bet_bottom_left.emit(m_index, chip);
+					if (emit)
+					{
+						if (mp_table->check_limits(m_chips, chip, EBet::Corner))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_bottom_left.emit(m_index, chip);
+					}
 				}
-				else if (emit) signal_bet_left.emit(m_index, chip);
+				else if (emit)
+				{
+					if (mp_table->check_limits(m_chips, chip, EBet::Split))
+						return EBet::LIMIT_EXCEEDED;
+					signal_bet_left.emit(m_index, chip);
+				}
 			}
 			else if (y > down) // x == cx
 			{
 				point.set_y(height);
-				if (emit) signal_bet_bottom.emit(m_index, chip);
+				if (emit)
+				{
+					if (mp_table->check_limits(m_chips, chip, EBet::Split))
+						return EBet::LIMIT_EXCEEDED;
+					signal_bet_bottom.emit(m_index, chip);
+				}
 			}
 			else return EBet::StraightUp; // cx, cy -> no chip drawing signal
 			break;
@@ -293,47 +388,92 @@ namespace roulette
 				if (x < check_street1)
 				{
 					point.set_x(line1);
-					if (emit) signal_bet_line1.emit(m_index, chip);
+					if (emit)
+					{
+						if (mp_table->check_limits(m_chips, chip, EBet::Corner))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_line1.emit(m_index, chip);
+					}
 				}
 				else if (x < check_line2)
 				{
 					point.set_x(street1);
-					if (emit) signal_bet_street1.emit(m_index, chip);
+					if (emit)
+					{
+						if (mp_table->check_limits(m_chips, chip, EBet::Street))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_street1.emit(m_index, chip);
+					}
 				}
 				else if (x < check_street2)
 				{
 					point.set_x(line2);
-					if (emit) signal_bet_line2.emit(m_index, chip);
+					if (emit)
+					{
+						if (mp_table->check_limits(m_chips, chip, EBet::Line))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_line2.emit(m_index, chip);
+					}
 				}
 				else if (x < check_line3)
 				{
 					point.set_x(street2);
-					if (emit) signal_bet_street2.emit(m_index, chip);
+					if (emit)
+					{
+						if (mp_table->check_limits(m_chips, chip, EBet::Street))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_street2.emit(m_index, chip);
+					}
 				}
 				else if (x < check_street3)
 				{
 					point.set_x(line3);
-					if (emit) signal_bet_line3.emit(m_index, chip);
+					if (emit)
+					{
+						if (mp_table->check_limits(m_chips, chip, EBet::Line))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_line3.emit(m_index, chip);
+					}
 				}
 				else if (x < check_line4)
 				{
 					point.set_x(street3);
-					if (emit) signal_bet_street3.emit(m_index, chip);
+					if (emit)
+					{
+						if (mp_table->check_limits(m_chips, chip, EBet::Street))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_street3.emit(m_index, chip);
+					}
 				}
 				else if (x < check_street4)
 				{
 					point.set_x(line4);
-					if (emit) signal_bet_line4.emit(m_index, chip);
+					if (emit) 
+					{
+						if (mp_table->check_limits(m_chips, chip, EBet::Line))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_line4.emit(m_index, chip);
+					}
 				}
 				else if (x < check_line5 || m_index == EField::Dozen3)  // skip line5 for dozen3
 				{
 					point.set_x(street4);
-					if (emit) signal_bet_street4.emit(m_index, chip);
+					if (emit)
+					{
+						if (mp_table->check_limits(m_chips, chip, EBet::Street))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_street4.emit(m_index, chip);
+					}
 				}
 				else // x > check_line5
 				{
 					point.set_x(line5);
-					if (emit) signal_bet_line5.emit(m_index, chip);
+					if (emit)
+					{
+						if (mp_table->check_limits(m_chips, chip, EBet::Line))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_line5.emit(m_index, chip);
+					}
 				} // else if (y < top)
 			break;
 			} // else line or street bet
@@ -342,7 +482,12 @@ namespace roulette
 			{
 				point.set_x(width);
 				point.set_y(0);
-				if (emit) signal_bet_basket.emit(m_index, chip);
+				if (emit)
+				{
+					if (mp_table->check_limits(m_chips, chip, EBet::Corner))
+						return EBet::LIMIT_EXCEEDED;
+					signal_bet_basket.emit(m_index, chip);
+				}
 				return EBet::Corner0;
 			}
 		case roulette::EField::Dummy2:
@@ -386,14 +531,39 @@ namespace roulette
 				if (y < top && (which_column(m_index) != 3))
 				{
 					point.set_y(0);
-					if (emit) signal_bet_top_left.emit(m_index, chip);
+					if (emit)
+					{
+						if (mp_table->check_limits(m_chips, chip, EBet::Corner))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_top_left.emit(m_index, chip);
+					}
 				}
 				else if (y > down)
 				{
 					point.set_y(height);
-					if (emit) signal_bet_bottom_left.emit(m_index, chip);
+					if (emit)
+					{
+						if (which_column(m_index) == 1) // signal_bet_bottom_left can be either street, Line or Corner
+						{
+							if (m_index == EField::Number1)
+							{
+								if (mp_table->check_limits(m_chips, chip, EBet::Corner))
+									return EBet::LIMIT_EXCEEDED;
+							}
+							if (mp_table->check_limits(m_chips, chip, EBet::Line))
+								return EBet::LIMIT_EXCEEDED;
+						}
+						else if (mp_table->check_limits(m_chips, chip, EBet::Corner))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_bottom_left.emit(m_index, chip);
+					}
 				}
-				else if (emit) signal_bet_left.emit(m_index, chip);
+				else if (emit)
+				{
+					if (mp_table->check_limits(m_chips, chip, EBet::Split))
+						return EBet::LIMIT_EXCEEDED;
+					signal_bet_left.emit(m_index, chip);
+				}
 			}
 			else if (x > right)
 			{
@@ -401,24 +571,59 @@ namespace roulette
 				if (y < top && (which_column(m_index) != 3))
 				{
 					point.set_y(0);
-					if (emit) signal_bet_top_right.emit(m_index, chip);
+					if (emit)
+					{
+						if (mp_table->check_limits(m_chips, chip, EBet::Corner))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_top_right.emit(m_index, chip);
+					}
 				}
 				else if (y > down)
 				{
 					point.set_y(height);
-					if (emit) signal_bet_bottom_right.emit(m_index, chip);
+					if (emit)
+					{
+						if (which_column(m_index) == 1) // signal_bet_bottom_right can be either street or Line
+						{
+							if (mp_table->check_limits(m_chips, chip, EBet::Line))
+								return EBet::LIMIT_EXCEEDED;
+						}
+						else if (mp_table->check_limits(m_chips, chip, EBet::Corner))
+							return EBet::LIMIT_EXCEEDED;
+						signal_bet_bottom_right.emit(m_index, chip);
+					}
 				}
-				else if (emit) signal_bet_right.emit(m_index, chip);
+				else if (emit)
+				{
+					if (mp_table->check_limits(m_chips, chip, EBet::Split))
+						return EBet::LIMIT_EXCEEDED;
+					signal_bet_right.emit(m_index, chip);
+				}
 			}
 			else if (y < top && (which_column(m_index) != 3)) // x == cx
 			{
 				point.set_y(0);
-				if (emit) signal_bet_top.emit(m_index, chip);
+				if (emit)
+				{
+					if (mp_table->check_limits(m_chips, chip, EBet::Split))
+						return EBet::LIMIT_EXCEEDED;
+					signal_bet_top.emit(m_index, chip);
+				}
 			}
 			else if (y > down)
 			{
 				point.set_y(height);
-				if (emit) signal_bet_bottom.emit(m_index, chip);
+				if (emit)
+				{
+					if (which_column(m_index) == 1) // signal_bet_bottom can be either street or split
+					{
+						if (mp_table->check_limits(m_chips, chip, EBet::Street))
+							return EBet::LIMIT_EXCEEDED;
+					}
+					else if (mp_table->check_limits(m_chips, chip, EBet::Split))
+						return EBet::LIMIT_EXCEEDED;
+					signal_bet_bottom.emit(m_index, chip);
+				}
 			}
 			else return EBet::StraightUp; // y == cy, x = cx
 			break;
@@ -645,9 +850,25 @@ namespace roulette
 						// make chip, we need a chip regardless of bankroll status
 						type_chip chip = make_shared<type_chip_pair>(make_pair(static_cast<EChip>(info), Gdk::Point(x, y)));
 
+						// check bankroll
 						if (p_engine->get_bankroll() >= info)
 						{
-							// if bankroll is OK calculate chip drop zone
+							// check table limit
+							if ((p_engine->get_bet() + info) > mp_table->get_table_limit())
+							{
+								Gtk::Window* top_window = dynamic_cast<Gtk::Window*>(get_toplevel());
+
+								if (top_window->get_is_toplevel())
+								{
+									Gtk::MessageDialog dialog(*top_window, "Information");
+									dialog.set_secondary_text("Table limit exceeded");
+									dialog.set_position(Gtk::WIN_POS_CENTER);
+									dialog.run();
+									return context->drag_finish(true, false, time);
+								} // if is_toplevel
+								else error_handler(error("ERROR: get_toplevel did not return a top level window"));
+							}
+							// if bankroll and table limit is OK calculate chip drop zone
 							EBet bet = calculate_points(chip);
 
 							// refuse drop on dummy, accept if bet is Corner0 -> 0,1,2,3
@@ -663,6 +884,15 @@ namespace roulette
 
 								return context->drag_finish(true, false, time);
 							} // if bad dummy
+
+							// if table or bet limit is reached refuse drop
+							if (bet == EBet::LIMIT_EXCEEDED)
+							{
+								return context->drag_finish(true, false, time);
+							}
+							else if (bet != EBet::UNDEFINED && bet != EBet::Corner0)
+								if (mp_table->check_limits(m_chips, chip, bet))
+									return context->drag_finish(true, false, time);
 
 							if (m_debug)
 							{
@@ -727,8 +957,7 @@ namespace roulette
 							} // switch bet
 
 							// emit bet not emited by signal handlers if limits are not reached
-							if (!mp_table->check_limits(m_chips, chip, bet))
-								mp_table->signal_bet.emit(make_shared<Bet>(bet, chip, p_set));
+							mp_table->signal_bet.emit(make_shared<Bet>(bet, chip, p_set));
 						} // if bankroll
 						else if ((m_index == EField::Dummy1) && (calculate_points(chip, false) != EBet::Corner0) && m_debug)
 						{
@@ -739,17 +968,16 @@ namespace roulette
 						}
 						else // just out of bankroll
 						{
-							mp_table->show_message("Not enough bankroll to place a bet");
-							//Gtk::Window* top_window = dynamic_cast<Gtk::Window*>(get_toplevel());
+							Gtk::Window* top_window = dynamic_cast<Gtk::Window*>(get_toplevel());
 
-							//if (top_window->get_is_toplevel())
-							//{
-							//	Gtk::MessageDialog dialog(*top_window, "Information");
-							//	dialog.set_secondary_text("Not enough bankroll to place a bet");
-							//	dialog.set_position(Gtk::WIN_POS_CENTER);
-							//	dialog.run();
-							//} // if is_toplevel
-							//else error_handler(error("ERROR: get_toplevel did not return a top level window"));
+							if (top_window->get_is_toplevel())
+							{
+								Gtk::MessageDialog dialog(*top_window, "Information");
+								dialog.set_secondary_text("Not enough bankroll to place a bet");
+								dialog.set_position(Gtk::WIN_POS_CENTER);
+								dialog.run();
+							} // if is_toplevel
+							else error_handler(error("ERROR: get_toplevel did not return a top level window"));
 						} // if out of bankroll -> case handled
 					} // if p_engine
 					else error_handler(error("ERROR: p_engine is null"));

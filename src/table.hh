@@ -49,7 +49,6 @@ along with this program. If not, see http://www.gnu.org/licenses.
 // gtkmm
 #include <gtkmm/grid.h>
 #include <sigc++/signal.h>
-#include <gtkmm/messagedialog.h>
 
 namespace roulette
 {
@@ -69,29 +68,29 @@ namespace roulette
 		Table(const ETable table_type = ETable::European);
 		~Table();
 
-		// set parent for dialog
-		void set_dialog_parent(Gtk::Window* top_window);
-
-		// show messge dialog
-		void show_message(std::string&& message);
-
 		// check if table limits are reached and inform the player
-		bool check_limits(type_chip_container& chips, type_chip& chip, EBet& bet_type);
+		bool check_limits(type_chip_container& chips, type_chip& chip, EBet bet_type);
 
 		// get maximum amount of chips which can be placed for given bet
-		int get_limit(const EBet& bet);
+		unsigned get_limit(const EBet& bet);
+
+		// get table miniums
+		unsigned get_minimum(const EMinimum& minimum);
 
 		// TODO: remove this
 		void print_properties() const;
 
 		// set table maximum
-		void set_table_max(const short& limit = 0);
+		void set_table_max(const unsigned& limit = 0);
 
 		// set maximum for bet
-		void set_maximum(const EBet& name, const short& limit);
+		void set_maximum(const EBet& name, const unsigned& limit);
 
 		// set table minimum
-		void set_minimum(const EMinimum& name, const short& minimum);
+		void set_minimum(const EMinimum& name, const unsigned& minimum);
+
+		// return current table maximum
+		inline unsigned get_table_limit() const;
 
 		// return table type, european, american...
 		inline ETable get_table_type() const;
@@ -113,7 +112,8 @@ namespace roulette
 
 		// members
 		type_fields m_fields;
-		int m_tablemax;
+		unsigned m_tablemax; // maximum amount of chips possible which can be put on the table
+		unsigned m_tablelimit;  // limit of the above
 		float m_result;
 
 		// SUM of of all the Bet types that can be placed on a ETable
@@ -148,6 +148,11 @@ namespace roulette
 	ETable Table::get_table_type() const
 	{
 		return m_tabletype;
+	}
+
+	unsigned Table::get_table_limit() const
+	{
+		return m_tablelimit;
 	}
 
 #ifdef _MSC_VER

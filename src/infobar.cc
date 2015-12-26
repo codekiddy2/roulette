@@ -29,9 +29,12 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "pch.hh"
 #include "infobar.hh"
 #include "engine.hh"
+#include "table.hh"
 
 // std
 #include <string>
+using std::to_string;
+
 #include <utility>
 
 namespace roulette
@@ -45,32 +48,39 @@ namespace roulette
 	using std::to_string;
 	using std::make_pair;
 
-	InfoBar::InfoBar(Engine* p_engine) :
+	InfoBar::InfoBar(Engine* p_engine, Table* p_table) :
 		IErrorHandler("InfoBar"),
-		mp_engine(p_engine)
+		mp_engine(p_engine),
+		mp_table(p_table)
 	{
 		// InfoBar properties
 		set_size_request(500, 100);
 		font.set_family("Arial");
 
+		// status
 		m_layouts.insert(make_pair(ELayout::Bankroll, create_pango_layout("Bankroll\t" + to_string(mp_engine->get_bankroll()))));
 		m_layouts.insert(make_pair(ELayout::TotalBet, create_pango_layout("Total Bet")));
 		m_layouts.insert(make_pair(ELayout::LastBet, create_pango_layout("Last bet")));
 		m_layouts.insert(make_pair(ELayout::Numbers, create_pango_layout("Numbers")));
+		// limits
+		m_layouts.insert(make_pair(ELayout::InsideMin, create_pango_layout("Inside min\t\t" + to_string(mp_table->get_minimum(EMinimum::Inside)))));
+		m_layouts.insert(make_pair(ELayout::OutsideMin, create_pango_layout("Outside min\t" + to_string(mp_table->get_minimum(EMinimum::Outside)))));
+		m_layouts.insert(make_pair(ELayout::TableMin, create_pango_layout("Table min\t\t" + to_string(mp_table->get_minimum(EMinimum::Table)))));
+		m_layouts.insert(make_pair(ELayout::TableMax, create_pango_layout("Table max\t\t" + to_string(mp_table->get_table_limit()))));
 		// inside bets
-		m_layouts.insert(make_pair(ELayout::Inside, create_pango_layout("Inside bets")));
-		m_layouts.insert(make_pair(ELayout::Straight, create_pango_layout("Straight\t\t35 to 1")));
-		m_layouts.insert(make_pair(ELayout::Split, create_pango_layout("Split\t\t\t17 to 1")));
-		m_layouts.insert(make_pair(ELayout::Street, create_pango_layout("Street\t\t11 to 1")));
-		m_layouts.insert(make_pair(ELayout::Corner, create_pango_layout("Corner\t\t8 to 1")));
-		m_layouts.insert(make_pair(ELayout::Line, create_pango_layout("Line\t\t\t5 to 1")));
+		m_layouts.insert(make_pair(ELayout::Inside, create_pango_layout("Inside bets\tpays\t\tlimit")));
+		m_layouts.insert(make_pair(ELayout::Straight, create_pango_layout("Straight\t\t35 to 1\t" + to_string(mp_table->get_limit(EBet::StraightUp)))));
+		m_layouts.insert(make_pair(ELayout::Split, create_pango_layout("Split\t\t\t17 to 1\t" + to_string(mp_table->get_limit(EBet::Split)))));
+		m_layouts.insert(make_pair(ELayout::Street, create_pango_layout("Street\t\t11 to 1\t" + to_string(mp_table->get_limit(EBet::Street)))));
+		m_layouts.insert(make_pair(ELayout::Corner, create_pango_layout("Corner\t\t8 to 1\t" + to_string(mp_table->get_limit(EBet::Corner)))));
+		m_layouts.insert(make_pair(ELayout::Line, create_pango_layout("Line\t\t\t5 to 1\t" + to_string(mp_table->get_limit(EBet::Line)))));
 		// outside bets
-		m_layouts.insert(make_pair(ELayout::Outside, create_pango_layout("Outside bets")));
-		m_layouts.insert(make_pair(ELayout::Dozen, create_pango_layout("Dozen\t\t2 to 1")));
-		m_layouts.insert(make_pair(ELayout::High_Low, create_pango_layout("High/Low\t\t1 to 1")));
-		m_layouts.insert(make_pair(ELayout::Red_Black, create_pango_layout("Red/Black\t\t1 to 1")));
-		m_layouts.insert(make_pair(ELayout::Even_Odd, create_pango_layout("Even/Odd\t\t1 to 1")));
-		m_layouts.insert(make_pair(ELayout::Column, create_pango_layout("Column\t\t2 to 1")));
+		m_layouts.insert(make_pair(ELayout::Outside, create_pango_layout("Outside bets\tpays\t\tlimit")));
+		m_layouts.insert(make_pair(ELayout::Dozen, create_pango_layout("Dozen\t\t2 to 1\t" + to_string(mp_table->get_limit(EBet::Dozen1)))));
+		m_layouts.insert(make_pair(ELayout::High_Low, create_pango_layout("High/Low\t\t1 to 1\t" + to_string(mp_table->get_limit(EBet::High)))));
+		m_layouts.insert(make_pair(ELayout::Red_Black, create_pango_layout("Red/Black\t\t1 to 1\t" + to_string(mp_table->get_limit(EBet::Red)))));
+		m_layouts.insert(make_pair(ELayout::Even_Odd, create_pango_layout("Even/Odd\t\t1 to 1\t" + to_string(mp_table->get_limit(EBet::Even)))));
+		m_layouts.insert(make_pair(ELayout::Column, create_pango_layout("Column\t\t2 to 1\t" + to_string(mp_table->get_limit(EBet::Column1)))));
 
 		for (auto pair : m_layouts)
 		{
@@ -116,14 +126,23 @@ namespace roulette
 		const int outside_bets_y = 0;
 		const int dozen_x = width / 4;
 		const int dozen_y = text_height;
-		const int low_high_x = width / 4;
-		const int low_high_y = text_height * 2;
+		const int column_x = width / 4;
+		const int column_y = text_height * 2;
 		const int red_black_x = width / 4;
 		const int red_black_y = text_height * 3;
 		const int odd_even_x = width / 4;
 		const int odd_even_y = text_height * 4;
-		const int column_x = width / 4;
-		const int column_y = text_height * 5;
+		const int low_high_x = width / 4;
+		const int low_high_y = text_height * 5;
+		// table limits
+		const int inside_min_x = width / 2;
+		const int inside_min_y = 0;
+		const int outside_min_x = width / 2;
+		const int outside_min_y = text_height;
+		const int tablemin_x = width / 2;
+		const int tablemin_y = text_height * 2;
+		const int tablemax_x = width / 2;
+		const int tablemax_y = text_height * 3;
 		// bankroll and bet
 		const int bankroll_x = static_cast<int>(width * .70);
 		const int bankroll_y = 0;
@@ -157,14 +176,23 @@ namespace roulette
 		m_layouts.find(ELayout::Outside)->second->show_in_cairo_context(cr);
 		cr->move_to(dozen_x, dozen_y);
 		m_layouts.find(ELayout::Dozen)->second->show_in_cairo_context(cr);
+		cr->move_to(column_x, column_y);
+		m_layouts.find(ELayout::Column)->second->show_in_cairo_context(cr);
 		cr->move_to(low_high_x, low_high_y);
 		m_layouts.find(ELayout::High_Low)->second->show_in_cairo_context(cr);
 		cr->move_to(red_black_x, red_black_y);
 		m_layouts.find(ELayout::Red_Black)->second->show_in_cairo_context(cr);
 		cr->move_to(odd_even_x, odd_even_y);
 		m_layouts.find(ELayout::Even_Odd)->second->show_in_cairo_context(cr);
-		cr->move_to(column_x, column_y);
-		m_layouts.find(ELayout::Column)->second->show_in_cairo_context(cr);
+		// table minimums
+		cr->move_to(inside_min_x, inside_min_y);
+		m_layouts.find(ELayout::InsideMin)->second->show_in_cairo_context(cr);
+		cr->move_to(outside_min_x, outside_min_y);
+		m_layouts.find(ELayout::OutsideMin)->second->show_in_cairo_context(cr);
+		cr->move_to(tablemin_x, tablemin_y);
+		m_layouts.find(ELayout::TableMin)->second->show_in_cairo_context(cr);
+		cr->move_to(tablemax_x, tablemax_y);
+		m_layouts.find(ELayout::TableMax)->second->show_in_cairo_context(cr);
 		// bankrol and bet 
 		cr->move_to(bankroll_x, bankroll_y);
 		m_layouts.find(ELayout::Bankroll)->second->show_in_cairo_context(cr);

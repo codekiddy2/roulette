@@ -150,6 +150,7 @@ namespace roulette
 		FinalesACheval710,
 		FinalesACheval811,
 		FinalesACheval912,
+		LIMIT_EXCEEDED,
 		///</hasSelection>
 	};
 
@@ -241,6 +242,10 @@ namespace roulette
 		Red_Black,
 		Even_Odd,
 		Column,
+		InsideMin, // inside bets minimum
+		OutsideMin, // Outside bets minimum
+		TableMin,
+		TableMax,
 	};
 
 	// single type declaring a set of numbers in roulette

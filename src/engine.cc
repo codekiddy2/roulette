@@ -47,7 +47,7 @@ namespace roulette
 		IErrorHandler("Engine"),
 		m_current_bet(0),
 		m_last_bet(0),
-		m_bankroll(500)
+		m_bankroll(2000)
 	{
 	}
 

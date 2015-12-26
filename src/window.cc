@@ -57,7 +57,8 @@ namespace roulette
 		m_BtnSpin50("Spin 50x"),
 		m_BtnClear("Clear"),
 		mp_engine(new Engine),
-		m_infobar(mp_engine),
+		mp_table(new Table),
+		m_infobar(mp_engine, mp_table),
 		m_Chip1(mp_engine, EChip::Chip1),
 		m_Chip5(mp_engine, EChip::Chip5),
 		m_Chip25(mp_engine, EChip::Chip25),
@@ -71,9 +72,6 @@ namespace roulette
 		set_position(Gtk::WIN_POS_CENTER);
 		set_icon(refIcon);
 
-		// set up dialog
-		m_table.set_dialog_parent(this);
-
 		// begin packing
 		add(m_HBoxTop);
 
@@ -84,7 +82,7 @@ namespace roulette
 
 		// PACKING from top to bottom
 		m_VBoxArea.pack_start(m_infobar, Gtk::PACK_SHRINK);
-		m_VBoxArea.pack_start(m_table, Gtk::PACK_EXPAND_WIDGET);
+		m_VBoxArea.pack_start(*mp_table, Gtk::PACK_EXPAND_WIDGET);
 		m_VBoxArea.pack_start(m_HBoxControls, Gtk::PACK_SHRINK);
 		m_VBoxArea.show_all();
 
@@ -125,18 +123,18 @@ namespace roulette
 		mp_engine->signal_spin.connect(sigc::mem_fun(m_history, &History::set_result));
 
 		/// in this order
-		m_table.signal_clear_all.connect(sigc::mem_fun(*mp_engine, &Engine::clear_all_bets));
-		m_table.signal_clear_all.connect(
+		mp_table->signal_clear_all.connect(sigc::mem_fun(*mp_engine, &Engine::clear_all_bets));
+		mp_table->signal_clear_all.connect(
 			sigc::bind( // bind nullptr, InfoBar does not use this argument
 				sigc::mem_fun(m_infobar, &InfoBar::on_update), nullptr));
 
 		/// in this order
-		m_table.signal_bet.connect(sigc::mem_fun(*mp_engine, &Engine::place_bet));
-		m_table.signal_bet.connect(sigc::mem_fun(m_infobar, &InfoBar::on_update));
+		mp_table->signal_bet.connect(sigc::mem_fun(*mp_engine, &Engine::place_bet));
+		mp_table->signal_bet.connect(sigc::mem_fun(m_infobar, &InfoBar::on_update));
 
 		// debug options
 		mp_engine->set_debug(true);
-		m_table.set_debug(true);
+		mp_table->set_debug(true);
 		m_Chip1.set_debug(true);
 		m_Chip5.set_debug(true);
 		m_Chip25.set_debug(true);
@@ -148,6 +146,7 @@ namespace roulette
 	roulette::Window::~Window()
 	{
 		delete mp_engine;
+		delete mp_table;
 	}
 
 	// close app
@@ -160,7 +159,7 @@ namespace roulette
 	// spin single number
 	bool Window::on_button_spin(GdkEventButton* /*button_event*/)
 	{
-		mp_engine->spin(m_table.get_table_type());
+		mp_engine->spin(mp_table->get_table_type());
 		return true;
 	}
 
@@ -177,7 +176,7 @@ namespace roulette
 	// clear all chips from the table
 	bool Window::on_button_clear(GdkEventButton* /*button_event*/)
 	{
-		m_table.signal_clear_all.emit();
+		mp_table->signal_clear_all.emit();
 		return true;
 	}
 

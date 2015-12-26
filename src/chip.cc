@@ -120,21 +120,6 @@ namespace roulette
 			print("time = ", true);
 			print(static_cast<int>(time));
 			print();
-
-			if (selection_data.set_pixbuf(refIcon))
-			{
-				Glib::RefPtr<const Gdk::Pixbuf> temp = selection_data.get_pixbuf();
-				print("pixbuf size = ", true);
-				print(temp->get_byte_length());
-				print();
-			}
-			else
-			{
-				print("WARNING: get_pixbuf() did not return a pixbuf");
-				print("if targets include image = ", true);
-				print(selection_data.targets_include_image(false));
-				print();
-			}
 		}
 	}
 

@@ -78,9 +78,8 @@ namespace roulette
 		Control m_BtnSpin50;
 		Control m_BtnClear;
 
-		// engine must be constructed before infobar and chips
+		// engine must be constructed before infobar, table and chips
 		Engine* mp_engine;
-		InfoBar m_infobar;
 		// Chips must be constructed before Table because
 		// Chips initialize Gtk::TargetEntry used by Field objects for DND
 		Chip m_Chip1;
@@ -89,9 +88,11 @@ namespace roulette
 		Chip m_Chip50;
 		Chip m_Chip100;
 		Chip m_Eraser;
+
+		Table* mp_table;
+		InfoBar m_infobar;
 		/// end of initializer list
 
-		Table m_table;
 		History m_history;
 
 		// deleted

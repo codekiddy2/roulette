@@ -31,6 +31,9 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "field.hh"
 #include "table.hh"
 
+// gtkmm
+#include <gtkmm/messagedialog.h>
+
 namespace roulette
 {
 
@@ -580,7 +583,22 @@ namespace roulette
 		m_maximums.insert(make_pair(EBet::High, 400));
 		m_maximums.insert(make_pair(EBet::Low, 400));
 
-		set_table_max();
+		// calculate table max (maximum amount of chips possible)
+		m_tablemax = 0;
+		m_maxiter = m_maxbets.begin();
+
+		for (auto btMax = m_maximums.begin(); btMax != m_maximums.end(); ++m_maxiter, ++btMax)
+		{
+			m_tablemax += m_maxiter->second * btMax->second;
+		}
+
+		// standard limit is 50 times Straightup limit
+		auto iter = m_maximums.find(EBet::StraightUp);
+		if (iter != m_maximums.end())
+		{
+			m_tablelimit = iter->second * 50;
+		}
+		else error_handler(error("iterator out of range"));
 	}
 
 	Table::~Table()
@@ -591,21 +609,14 @@ namespace roulette
 		}
 	}
 
-	void Table::set_dialog_parent(Gtk::Window* top_window)
+	bool Table::check_limits(type_chip_container& chips, type_chip& chip, EBet bet_type)
 	{
-		m_dialog.set_parent(*top_window);
-	}
-
-	void Table::show_message(std::string&& message)
-	{
-		m_dialog.set_secondary_text(message);
-		m_dialog.run();
-	}
-
-	bool Table::check_limits(type_chip_container& chips, type_chip& chip, EBet& bet_type)
-	{
-		auto limit = m_maximums.find(bet_type)->second;
-		unsigned current_bet = 0;
+		auto limit = m_maximums.find(bet_type);
+		if (limit == m_maximums.end())
+		{
+			error_handler(error("limit for this bet type not defined"));
+		}
+		unsigned current_bet = static_cast<unsigned>(chip->first);
 
 		for (auto iter : chips)
 		{
@@ -614,9 +625,19 @@ namespace roulette
 				current_bet += static_cast<unsigned>(iter->first);
 			}
 		}
-		if (current_bet > limit)
+
+		if (current_bet > limit->second)
 		{
-			show_message("Limit reached for this bet");
+			Gtk::Window* top_window = dynamic_cast<Gtk::Window*>(get_toplevel());
+
+			if (top_window->get_is_toplevel())
+			{
+				Gtk::MessageDialog dialog(*top_window, "Information");
+				dialog.set_secondary_text("Limit reached for this bet");
+				dialog.set_position(Gtk::WIN_POS_CENTER);
+				dialog.run();
+			} // if is_toplevel
+			else error_handler(error("get_toplevel did not return a top level window"));
 			return true;
 		}
 		return false;
@@ -636,27 +657,42 @@ namespace roulette
 		}
 	}
 
-	void Table::set_table_max(const short& limit /*= 0*/)
+	void Table::set_table_max(const unsigned& limit /*= 0*/)
 	{
-		if (limit > get_limit(EBet::Red))
+		Gtk::Window* top_window = dynamic_cast<Gtk::Window*>(get_toplevel());
+
+		if (top_window->get_is_toplevel())
 		{
-			m_tablemax = limit;
-			return;
-		}
+			Gtk::MessageDialog dialog(*top_window, "Table limit");
+			dialog.set_position(Gtk::WIN_POS_CENTER);
 
-		if (limit) // if limit is not 0
-			limit > 0 ?
-			error_handler(error("CTable -> SetTableMax -> Table max smaler then even oney bet")) :
-			error_handler(error("CTable -> SetMinimum -> Table limit too low"));
-
-		// if limit is zero it will be calculated according to maximum bets possible
-		m_tablemax = 0;
-		m_maxiter = m_maxbets.begin();
-
-		for (auto btMax = m_maximums.begin(); btMax != m_maximums.end(); ++m_maxiter, ++btMax)
-		{
-			m_tablemax += m_maxiter->second * btMax->second;
-		}
+			if (limit > m_tablemax)
+			{
+				dialog.set_secondary_text("Limit too high");
+				dialog.run();
+				return;
+			}
+			else if (limit < 0)
+			{
+				dialog.set_secondary_text("Limit can't be negative");
+				dialog.run();
+				return;
+			}
+			auto iter = m_maximums.find(EBet::Red);
+			if (iter != m_maximums.end())
+			{
+				if (limit < iter->second)
+				{
+					dialog.set_secondary_text("Limit can't be smaller than even oney bet");
+					dialog.run();
+				}
+			}
+			else
+			{
+				m_tablelimit = limit;
+			}
+		} // if is_toplevel
+		else error_handler(error("ERROR: get_toplevel did not return a top level window"));
 	}
 
 	void Table::print_properties() const
@@ -712,7 +748,7 @@ namespace roulette
 		cout << "EvenMoney	" << m_maximums.at(EBet::Red) << endl;
 	}
 
-	int Table::get_limit(const EBet& name)
+	unsigned Table::get_limit(const EBet& name)
 	{
 		if ((m_maxiter = m_maximums.find(name)) == m_maximums.end())
 			error_handler(error("Table -> get_limit -> iterator out of range"));
@@ -720,7 +756,17 @@ namespace roulette
 		return m_maxiter->second;
 	}
 
-	void Table::set_minimum(const EMinimum& name, const short& minimum)
+	unsigned Table::get_minimum(const EMinimum & minimum)
+	{
+		auto iter = m_minimums.find(minimum);
+		if (iter == m_minimums.end())
+		{
+			error_handler(error("Table -> get_minimum -> minimum not found"));
+		}
+		return iter->second;
+	}
+
+	void Table::set_minimum(const EMinimum& name, const unsigned& minimum)
 	{
 		if (name == EMinimum::Table && (minimum < 0))
 			error_handler(error("Table -> set_minimum -> Table minimum less then 0"));
@@ -729,7 +775,7 @@ namespace roulette
 			error_handler(error("Table -> set_minimum -> Bet minimum less then 1"));
 	}
 
-	void Table::set_maximum(const EBet& name, const short& limit)
+	void Table::set_maximum(const EBet& name, const unsigned& limit)
 	{
 		(m_maxiter = m_maximums.find(name)) != m_maximums.end() ? m_maxiter->second = limit :
 			error_handler(error("Table -> set_maximum -> Iterator out of range"));
