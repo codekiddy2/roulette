@@ -53,6 +53,8 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
+	class Table;
+
 	class Engine final :
 		public IErrorHandler
 	{
@@ -70,7 +72,7 @@ namespace roulette
 		void clear_all_bets();
 
 		// get total value of bets placed
-		inline unsigned get_bet() const;
+		inline unsigned get_current_bet() const;
 
 		// get current player bankroll
 		inline unsigned get_bankroll() const;
@@ -81,8 +83,16 @@ namespace roulette
 		// get numbers on which the bet has been placed
 		inline type_set get_numbers() const;
 
+		// place last bets again
+		void rebet();
+
+		// double all bets
+		bool double_bets(Table* p_table);
+
 		// signal the spin
-		sigc::signal1<void, int> signal_spin;
+		sigc::signal1<void, unsigned> signal_spin;
+
+		sigc::signal1<void, type_bet> signal_rebet;
 
 	private:
 		// clear a single bet from the engine store
@@ -90,9 +100,11 @@ namespace roulette
 
 		// members
 		type_bet_container m_bets;
+		type_bet_container m_bets_saved;
 		static boost::random::random_device m_rng;
 
 		/// begin initializer list
+		bool m_spin_in_progress;
 		unsigned m_current_bet;
 		unsigned m_last_bet;
 		unsigned m_bankroll;
@@ -116,7 +128,7 @@ namespace roulette
 		return m_bankroll;
 	}
 
-	unsigned Engine::get_bet() const
+	unsigned Engine::get_current_bet() const
 	{
 		return m_current_bet;
 	}

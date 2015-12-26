@@ -52,10 +52,11 @@ namespace roulette
 
 	Window::Window(Glib::RefPtr<Gdk::Pixbuf> refIcon) :
 		IErrorHandler("Window"),
-		m_BtnClose("Close"),
+		m_BtnRebet("Rebet"),
+		m_Btn_x2("X2"),
 		m_BtnSpin("Spin"),
-		m_BtnSpin50("Spin 50x"),
 		m_BtnClear("Clear"),
+		m_BtnClose("Close"),
 		mp_engine(new Engine),
 		mp_table(new Table),
 		m_infobar(mp_engine, mp_table),
@@ -97,8 +98,9 @@ namespace roulette
 		m_Controlset.set_spacing(0);
 		m_Controlset.set_border_width(0);
 		m_Controlset.pack_end(m_BtnClear, Gtk::PACK_SHRINK);
+		m_Controlset.pack_end(m_BtnRebet, Gtk::PACK_SHRINK);
 		m_Controlset.pack_end(m_BtnSpin, Gtk::PACK_SHRINK);
-		m_Controlset.pack_end(m_BtnSpin50, Gtk::PACK_SHRINK);
+		m_Controlset.pack_end(m_Btn_x2, Gtk::PACK_SHRINK);
 		m_Controlset.pack_end(m_BtnClose, Gtk::PACK_SHRINK);
 		m_Controlset.show_all();
 
@@ -116,11 +118,14 @@ namespace roulette
 		// signals for this window
 		m_BtnClose.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_close));
 		m_BtnSpin.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_spin));
-		m_BtnSpin50.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_spin50));
+		m_Btn_x2.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_x2));
 		m_BtnClear.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_clear));
+		m_BtnRebet.signal_button_press_event().connect(sigc::mem_fun(*this, &Window::on_button_rebet));
 
 		// signals connecting objects constructed by window
+		/// in this order
 		mp_engine->signal_spin.connect(sigc::mem_fun(m_history, &History::set_result));
+		mp_engine->signal_rebet.connect(sigc::mem_fun(m_infobar, &InfoBar::on_update));
 
 		/// in this order
 		mp_table->signal_clear_all.connect(sigc::mem_fun(*mp_engine, &Engine::clear_all_bets));
@@ -159,16 +164,22 @@ namespace roulette
 	// spin single number
 	bool Window::on_button_spin(GdkEventButton* /*button_event*/)
 	{
+		m_BtnRebet.set_sensitive(true);
 		mp_engine->spin(mp_table->get_table_type());
+		mp_table->signal_clear_all.emit();
 		return true;
 	}
 
 	// sping 50 times
-	bool Window::on_button_spin50(GdkEventButton* button_event)
+	bool Window::on_button_x2(GdkEventButton* /*button_event*/)
 	{
-		for (size_t i = 0; i < 50; i++)
+		if (mp_engine->double_bets(mp_table))
 		{
-			on_button_spin(button_event);
+			Gtk::MessageDialog dialog(*this, "Information");
+			dialog.set_secondary_text("Limit exceeded");
+			dialog.set_position(Gtk::WIN_POS_CENTER);
+			dialog.run();
+			return false;
 		}
 		return true;
 	}
@@ -177,6 +188,22 @@ namespace roulette
 	bool Window::on_button_clear(GdkEventButton* /*button_event*/)
 	{
 		mp_table->signal_clear_all.emit();
+		return true;
+	}
+
+	bool Window::on_button_rebet(GdkEventButton* /*button_event*/)
+	{
+		m_BtnRebet.set_sensitive(false);
+		if (mp_engine->get_current_bet() > mp_engine->get_bankroll())
+		{
+			Gtk::MessageDialog dialog(*this, "Information");
+			dialog.set_secondary_text("Not enough bankroll to rebet");
+			dialog.set_position(Gtk::WIN_POS_CENTER);
+			dialog.run();
+			return false;
+		}
+		mp_table->signal_rebet.emit();
+		mp_engine->rebet();
 		return true;
 	}
 

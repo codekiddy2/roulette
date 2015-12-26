@@ -78,11 +78,13 @@ namespace roulette
 		m_font.set_family("Arial");
 		m_layout->set_font_description(m_font);
 
-		mp_table->signal_clear_all.connect(sigc::mem_fun(*this, &Field::clear_all));
-
 		// Make Field a drop target
 		drag_dest_set(dnd_targets, Gtk::DestDefaults::DEST_DEFAULT_ALL, Gdk::DragAction::ACTION_COPY);
+
+		// signals
+		mp_table->signal_clear_all.connect(sigc::mem_fun(*this, &Field::clear_all));
 		signal_button_press_event().connect(sigc::mem_fun(*this, &Field::on_clicked));
+		mp_table->signal_rebet.connect(sigc::mem_fun(*this, &Field::on_signal_rebet));
 	}
 
 #ifdef _MSC_VER
@@ -639,24 +641,29 @@ namespace roulette
 	{
 		if (button_event->type == GdkEventType::GDK_DOUBLE_BUTTON_PRESS)
 		{
-			type_chip_pair chip_pair = make_pair(EChip::Eraser, Gdk::Point(0, 0));
-			type_chip chip = make_shared<type_chip_pair>(chip_pair);
+			if (!m_chips.empty())
+			{
+				type_chip_pair chip_pair = make_pair(EChip::Eraser, Gdk::Point(0, 0));
+				type_chip chip = make_shared<type_chip_pair>(chip_pair);
 
-			signal_bet_bottom.emit(m_index, chip);
-			signal_bet_top.emit(m_index, chip);
-			signal_bet_left.emit(m_index, chip);
-			signal_bet_right.emit(m_index, chip);
-			signal_bet_bottom_left.emit(m_index, chip);
-			signal_bet_bottom_right.emit(m_index, chip);
-			signal_bet_top_left.emit(m_index, chip);
-			signal_bet_top_right.emit(m_index, chip);
+				signal_bet_bottom.emit(m_index, chip);
+				signal_bet_top.emit(m_index, chip);
+				signal_bet_left.emit(m_index, chip);
+				signal_bet_right.emit(m_index, chip);
+				signal_bet_bottom_left.emit(m_index, chip);
+				signal_bet_bottom_right.emit(m_index, chip);
+				signal_bet_top_left.emit(m_index, chip);
+				signal_bet_top_right.emit(m_index, chip);
 
-			mp_table->signal_bet.emit(make_shared<Bet>(EBet::StraightUp, chip,
-				make_shared<type_raw_set>(type_raw_set{ static_cast<unsigned>(m_index) })));
+				mp_table->signal_bet.emit(make_shared<Bet>(EBet::StraightUp, chip,
+					make_shared<type_raw_set>(type_raw_set{ static_cast<unsigned>(m_index) })));
 
-			clear_all();
-			refGdkWindow->invalidate(false);
-			return true;
+				clear_all();
+				m_chips_saved = m_chips;
+				refGdkWindow->invalidate(false);
+				return true;
+			}
+			else return false;
 		}
 		else return false;
 	}
@@ -739,7 +746,7 @@ namespace roulette
 					print(m_index);
 					print();
 				} // if debug
-
+				m_chips_saved = m_chips;
 				m_chips.clear();
 				refGdkWindow->invalidate(false);
 			}
@@ -771,6 +778,7 @@ namespace roulette
 			} // if not end
 			iter = m_chips.begin() + i;
 		} // for
+		m_chips_saved = m_chips;
 		return refGdkWindow->invalidate(false);
 	}
 
@@ -854,7 +862,7 @@ namespace roulette
 						if (p_engine->get_bankroll() >= info)
 						{
 							// check table limit
-							if ((p_engine->get_bet() + info) > mp_table->get_table_limit())
+							if ((p_engine->get_current_bet() + info) > mp_table->get_table_limit())
 							{
 								Gtk::Window* top_window = dynamic_cast<Gtk::Window*>(get_toplevel());
 

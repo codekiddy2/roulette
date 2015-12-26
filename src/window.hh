@@ -62,8 +62,9 @@ namespace roulette
 		// methods
 		bool on_button_close(GdkEventButton* button_event);
 		bool on_button_spin(GdkEventButton* button_event);
-		bool on_button_spin50(GdkEventButton* button_event);
+		bool on_button_x2(GdkEventButton* button_event);
 		bool on_button_clear(GdkEventButton* button_event);
+		bool on_button_rebet(GdkEventButton* button_event);
 
 		// members
 		Gtk::HBox m_HBoxTop;
@@ -73,10 +74,11 @@ namespace roulette
 		Gtk::ButtonBox m_Controlset;
 
 		/// begin initializer list
-		Control m_BtnClose;
+		Control m_BtnRebet;
+		Control m_Btn_x2;
 		Control m_BtnSpin;
-		Control m_BtnSpin50;
 		Control m_BtnClear;
+		Control m_BtnClose;
 
 		// engine must be constructed before infobar, table and chips
 		Engine* mp_engine;

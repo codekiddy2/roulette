@@ -109,6 +109,7 @@ namespace roulette
 
 		// methods
 		inline const EField& get_index() const;
+		inline void on_signal_rebet();
 
 		// signal handlers
 		void on_signal_bet_bottom(const EField& sender, type_chip chip);
@@ -155,6 +156,7 @@ namespace roulette
 
 		// members
 		type_chip_container m_chips;
+		type_chip_container m_chips_saved;
 		Pango::FontDescription m_font;
 		Glib::RefPtr<Pango::Layout> m_layout;
 
@@ -180,6 +182,15 @@ namespace roulette
 	const EField& Field::get_index() const
 	{
 		return m_index;
+	}
+
+	inline void Field::on_signal_rebet()
+	{
+		if (!m_chips_saved.empty())
+		{
+			m_chips = m_chips_saved;
+			refGdkWindow->invalidate(false);
+		}
 	}
 
 #ifdef _MSC_VER

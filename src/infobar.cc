@@ -218,7 +218,7 @@ namespace roulette
 		result = m_layouts.find(ELayout::TotalBet);
 		if (result != m_layouts.end())
 		{
-			result->second->set_text("TotalBet\t" + to_string(mp_engine->get_bet()));
+			result->second->set_text("TotalBet\t" + to_string(mp_engine->get_current_bet()));
 		}
 		else error_handler(error("on_signal_bet -> layout not found"));
 

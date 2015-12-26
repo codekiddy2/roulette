@@ -96,10 +96,13 @@ namespace roulette
 		inline ETable get_table_type() const;
 		
 		// clear all chips from the table
-		sigc::signal<void> signal_clear_all;
+		sigc::signal0<void> signal_clear_all;
 
 		// fields emit bet signals to engine and inforbar
-		sigc::signal<void, type_bet> signal_bet;
+		sigc::signal1<void, type_bet> signal_bet;
+
+		// redraw last chips
+		sigc::signal0<void> signal_rebet;
 
 		void set_debug(bool debug) override;
 
@@ -129,7 +132,6 @@ namespace roulette
 
 		/// begin initializer list
 		ETable m_tabletype;
-		Gtk::MessageDialog m_dialog;
 		/// end initializer list
 
 		// deleted

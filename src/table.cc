@@ -49,12 +49,8 @@ namespace roulette
 		IErrorHandler("Table"),
 		m_tablemax(0),
 		m_tabletype(table_type),
-		m_dialog("Information"),
 		m_totalbets(0)
 	{
-		// set up dialog
-		m_dialog.set_position(Gtk::WIN_POS_CENTER);
-
 		set_column_homogeneous(true);
 		set_row_homogeneous(true);
 

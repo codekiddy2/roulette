@@ -29,10 +29,12 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "pch.hh"
 #include "engine.hh"
 #include "main.hh"
+#include "table.hh"
 
 // std
 #include <algorithm>
 using std::equal;
+using std::find;
 
 namespace roulette
 {
@@ -45,6 +47,7 @@ namespace roulette
 
 	Engine::Engine() :
 		IErrorHandler("Engine"),
+		m_spin_in_progress(false),
 		m_current_bet(0),
 		m_last_bet(0),
 		m_bankroll(2000)
@@ -155,6 +158,168 @@ namespace roulette
 			static type_dist dist(0, static_cast<int>(EuropeanWheel->size()));
 			int result = dist(Engine::m_rng);
 
+			unsigned win = 0;
+			type_set current = nullptr;
+
+			for (auto iter : m_bets)
+			{
+				current = iter->get_selection();
+				auto const_iter = find(current->begin(), current->end(), result);
+				if (const_iter != current->end())
+				{
+					switch (iter->get_id())
+					{
+					case roulette::EBet::UNDEFINED:
+						break;
+					case roulette::EBet::StraightUp:
+						win = iter->get_chip_value() * 36;
+						break;
+					case roulette::EBet::Split:
+						win = iter->get_chip_value() * 18;
+						break;
+					case roulette::EBet::Street:
+						win = iter->get_chip_value() * 11;
+						break;
+					case roulette::EBet::Corner:
+						win = iter->get_chip_value() * 9;
+						break;
+					case roulette::EBet::Corner0:
+						break;
+					case roulette::EBet::Line:
+						win = iter->get_chip_value() * 6;
+						break;
+					case roulette::EBet::Neighbor1:
+						break;
+					case roulette::EBet::Neighbor2:
+						break;
+					case roulette::EBet::Neighbor3:
+						break;
+					case roulette::EBet::Neighbor4:
+						break;
+					case roulette::EBet::Neighbor5:
+						break;
+					case roulette::EBet::Maximus13:
+						break;
+					case roulette::EBet::Maximus3436:
+						break;
+					case roulette::EBet::MaximusColumn2:
+						break;
+					case roulette::EBet::MaximusColumn13:
+						break;
+					case roulette::EBet::Column1:
+					case roulette::EBet::Column2:
+					case roulette::EBet::Column3:
+					case roulette::EBet::Dozen1:
+					case roulette::EBet::Dozen2:
+					case roulette::EBet::Dozen3:
+						win = iter->get_chip_value() * 3;
+						break;
+					case roulette::EBet::Red:
+					case roulette::EBet::Black:
+					case roulette::EBet::Even:
+					case roulette::EBet::Odd:
+					case roulette::EBet::High:
+					case roulette::EBet::Low:
+						win = iter->get_chip_value() * 2;
+						break;
+					case roulette::EBet::Basket:
+						break;
+					case roulette::EBet::Maximus00:
+						break;
+					case roulette::EBet::Maximus0:
+						break;
+					case roulette::EBet::Maximus2:
+						break;
+					case roulette::EBet::Maximus35:
+						break;
+					case roulette::EBet::VoisinsDeZero:
+						break;
+					case roulette::EBet::TriesDuCylindre:
+						break;
+					case roulette::EBet::OrphelinsEnPlen:
+						break;
+					case roulette::EBet::OrphelinsACheval:
+						break;
+					case roulette::EBet::Jeu0:
+						break;
+					case roulette::EBet::Jeu79:
+						break;
+					case roulette::EBet::RedSplits:
+						break;
+					case roulette::EBet::BlackSplits:
+						break;
+					case roulette::EBet::Snake:
+						break;
+					case roulette::EBet::FinalesEnPlen0:
+						break;
+					case roulette::EBet::FinalesEnPlen1:
+						break;
+					case roulette::EBet::FinalesEnPlen2:
+						break;
+					case roulette::EBet::FinalesEnPlen3:
+						break;
+					case roulette::EBet::FinalesEnPlen4:
+						break;
+					case roulette::EBet::FinalesEnPlen5:
+						break;
+					case roulette::EBet::FinalesEnPlen6:
+						break;
+					case roulette::EBet::FinalesEnPlen7:
+						break;
+					case roulette::EBet::FinalesEnPlen8:
+						break;
+					case roulette::EBet::FinalesEnPlen9:
+						break;
+					case roulette::EBet::FinalesACheval01:
+						break;
+					case roulette::EBet::FinalesACheval12:
+						break;
+					case roulette::EBet::FinalesACheval23:
+						break;
+					case roulette::EBet::FinalesACheval34:
+						break;
+					case roulette::EBet::FinalesACheval45:
+						break;
+					case roulette::EBet::FinalesACheval56:
+						break;
+					case roulette::EBet::FinalesACheval67:
+						break;
+					case roulette::EBet::FinalesACheval78:
+						break;
+					case roulette::EBet::FinalesACheval89:
+						break;
+					case roulette::EBet::FinalesACheval910:
+						break;
+					case roulette::EBet::FinalesACheval03:
+						break;
+					case roulette::EBet::FinalesACheval14:
+						break;
+					case roulette::EBet::FinalesACheval25:
+						break;
+					case roulette::EBet::FinalesACheval36:
+						break;
+					case roulette::EBet::FinalesACheval47:
+						break;
+					case roulette::EBet::FinalesACheval58:
+						break;
+					case roulette::EBet::FinalesACheval69:
+						break;
+					case roulette::EBet::FinalesACheval710:
+						break;
+					case roulette::EBet::FinalesACheval811:
+						break;
+					case roulette::EBet::FinalesACheval912:
+						break;
+					case roulette::EBet::LIMIT_EXCEEDED:
+						break;
+					default:
+						break;
+					} // switch bet type
+				} // if number is winning
+			} // for all bets
+
+			m_bankroll += win;
+			m_spin_in_progress = true;
 			signal_spin.emit(result);
 			break;
 		}
@@ -173,13 +338,18 @@ namespace roulette
 	{
 		if (!m_bets.empty())
 		{
-			for (auto bet : m_bets)
+			if (m_spin_in_progress)
+			{
+				m_spin_in_progress = false;
+			}
+			else for (auto bet : m_bets)
 			{
 				m_bankroll += bet->get_chip_value();
 			}
 
 			m_current_bet = 0;
 			m_last_bet = 0;
+			m_bets_saved = m_bets;
 			m_bets.clear();
 
 			if (m_debug)
@@ -245,8 +415,76 @@ namespace roulette
 			m_last_bet = 0;
 		}
 
+		m_bets_saved = m_bets;
+
 		if (m_debug)
 			print();
+	}
+
+	void Engine::rebet()
+	{
+		for (auto iter : m_bets_saved)
+		{
+			place_bet(iter);
+		}
+		signal_rebet.emit(nullptr);
+	}
+
+	bool Engine::double_bets(Table* p_table)
+	{
+		unsigned total = 0;
+		for (auto iter : m_bets)
+		{
+			total += iter->get_chip_value();
+			if (total > p_table->get_table_limit() || total > m_bankroll)
+			{
+				return true;
+			}
+		}
+
+		type_bet_container temp;
+
+		for (auto main = m_bets.begin(); main != m_bets.end(); ++main)
+		{
+			unsigned main_value = main->get()->get_chip_value();
+			auto main_bet = main->get()->get_id();
+			auto main_selection = main->get()->get_selection();
+
+			for (auto iter = main + 1; iter != m_bets.end(); ++iter)
+			{
+				unsigned iter_value = iter->get()->get_chip_value();
+				auto iter_bet = iter->get()->get_id();
+				auto iter_selection = iter->get()->get_selection();
+				
+				// if Bet types (id's) and thus the amount of numbers do not match then std::equal will not work as expected,
+				// for example split bet 1,2 will be treated same as bet column2 which is 1,2,3... by std::equal
+				if (main_bet == iter_bet)
+				{
+					// all numbers *including* the order of sequence must match, it's important both number selections are sorted
+					// we achieve this during bet construction in signal handlers while emiting
+					if (equal(main_selection->begin(), main_selection->end(), iter_selection->begin()))
+					{
+						main_value += iter_value;
+						if (main_value > p_table->get_limit(main_bet))
+							return true;
+						else
+						{
+							temp.push_back(*iter);
+						}
+					} // if same selection
+				} // if same id
+				else if (iter_value > p_table->get_limit(main_bet))
+				{
+					return true;
+				}
+				else
+				{
+					temp.push_back(*iter);
+				}
+			} // for
+		}
+		m_bets.insert(m_bets.end(), temp.begin(), temp.end());
+		return false;
 	}
 
 #ifdef _MSC_VER
@@ -254,3 +492,44 @@ namespace roulette
 #endif // _MSC_VER
 
 } // namespace roulette
+
+//
+//switch (main_bet)
+//{
+//case roulette::EBet::StraightUp:
+//	break;
+//case roulette::EBet::Split:
+//	break;
+//case roulette::EBet::Street:
+//	break;
+//case roulette::EBet::Corner:
+//	break;
+//case roulette::EBet::Line:
+//	break;
+//case roulette::EBet::Column1:
+//	break;
+//case roulette::EBet::Column2:
+//	break;
+//case roulette::EBet::Column3:
+//	break;
+//case roulette::EBet::Dozen1:
+//	break;
+//case roulette::EBet::Dozen2:
+//	break;
+//case roulette::EBet::Dozen3:
+//	break;
+//case roulette::EBet::Red:
+//	break;
+//case roulette::EBet::Black:
+//	break;
+//case roulette::EBet::Even:
+//	break;
+//case roulette::EBet::Odd:
+//	break;
+//case roulette::EBet::High:
+//	break;
+//case roulette::EBet::Low:
+//	break;
+//default:
+//	break;
+//}

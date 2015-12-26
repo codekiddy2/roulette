@@ -109,8 +109,8 @@ namespace roulette
 			print("Source: Chip", true);
 			print("target: ", true);
 			print(selection_data.get_target());
-			print("pointer: ", true);
-			print(selection_data.get_data());
+			//print("pointer: ", true);
+			//print(selection_data.get_data());
 			print("length: ", true);
 			print(selection_data.get_length());
 			print("format = ", true);
