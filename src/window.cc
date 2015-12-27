@@ -125,6 +125,7 @@ namespace roulette
 		// signals connecting objects constructed by window
 		/// in this order
 		mp_engine->signal_spin.connect(sigc::mem_fun(m_history, &History::set_result));
+		mp_engine->signal_spin.connect(sigc::mem_fun(*mp_table, &Table::on_signal_spin));
 		mp_engine->signal_rebet.connect(sigc::mem_fun(m_infobar, &InfoBar::on_update));
 
 		/// in this order
@@ -170,7 +171,7 @@ namespace roulette
 		return true;
 	}
 
-	// sping 50 times
+	// double all bets
 	bool Window::on_button_x2(GdkEventButton* /*button_event*/)
 	{
 		if (mp_engine->double_bets(mp_table))
@@ -191,6 +192,7 @@ namespace roulette
 	// clear all chips from the table
 	bool Window::on_button_clear(GdkEventButton* /*button_event*/)
 	{
+		m_BtnRebet.set_sensitive(true);
 		mp_table->signal_clear_all.emit();
 		return true;
 	}
@@ -206,6 +208,7 @@ namespace roulette
 			dialog.run();
 			return false;
 		}
+		mp_table->signal_clear_all.emit();
 		mp_table->signal_rebet.emit();
 		mp_engine->rebet();
 		return true;

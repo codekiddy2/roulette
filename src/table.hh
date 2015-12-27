@@ -69,7 +69,7 @@ namespace roulette
 		~Table();
 
 		// check if table limits are reached and inform the player
-		bool check_limits(type_chip_container& chips, type_chip& chip, EBet bet_type);
+		bool check_limits(type_chip_container& chips, type_chip& chip);
 
 		// get maximum amount of chips which can be placed for given bet
 		unsigned get_limit(const EBet& bet);
@@ -94,6 +94,9 @@ namespace roulette
 
 		// return table type, european, american...
 		inline ETable get_table_type() const;
+
+		// call on_signal_spin for all fields
+		void on_signal_spin(unsigned result);
 		
 		// clear all chips from the table
 		sigc::signal0<void> signal_clear_all;

@@ -57,6 +57,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <cairomm/context.h>
 #include <sigc++/sigc++.h>
 #include <gdkmm/event.h> // GdkEventButton
+#include <gtkmm/tooltip.h>
 
 namespace roulette
 {
@@ -110,6 +111,7 @@ namespace roulette
 		// methods
 		inline const EField& get_index() const;
 		inline void on_signal_rebet();
+		inline void on_signal_spin(unsigned result);
 
 		// signal handlers
 		void on_signal_bet_bottom(const EField& sender, type_chip chip);
@@ -149,7 +151,7 @@ namespace roulette
 		// methods
 		void clear_all();
 		void clear(Gdk::Point& chip_point);
-		EBet calculate_points(type_chip chip, bool emit = true);
+		void calculate_points(type_chip chip, bool emit = true);
 		bool on_clicked(GdkEventButton* button_event);
 		void assign_apperance(EField index);
 		void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int field_width, int field_height);
@@ -166,6 +168,7 @@ namespace roulette
 		Table* mp_table;
 		EField m_index;
 		/// end initializer list
+		
 
 		// deleted
 		Field(const Field&) = delete;
@@ -192,6 +195,11 @@ namespace roulette
 			m_chips = m_chips_saved;
 			refGdkWindow->invalidate(false);
 		}
+	}
+
+	void Field::on_signal_spin(unsigned /*result*/)
+	{
+		m_chips_saved = m_chips;
 	}
 
 #ifdef _MSC_VER

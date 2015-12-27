@@ -320,6 +320,7 @@ namespace roulette
 
 			m_bankroll += win;
 			m_spin_in_progress = true;
+			m_bets_saved = m_bets;
 			signal_spin.emit(result);
 			break;
 		}
@@ -349,7 +350,6 @@ namespace roulette
 
 			m_current_bet = 0;
 			m_last_bet = 0;
-			m_bets_saved = m_bets;
 			m_bets.clear();
 
 			if (m_debug)
@@ -415,7 +415,7 @@ namespace roulette
 			m_last_bet = 0;
 		}
 
-		m_bets_saved = m_bets;
+		/*m_bets_saved = m_bets;*/
 
 		if (m_debug)
 			print();
@@ -433,10 +433,11 @@ namespace roulette
 	bool Engine::double_bets(Table* p_table)
 	{
 		unsigned total = 0;
+		unsigned table_limit = p_table->get_table_limit();
 		for (auto iter : m_bets)
 		{
 			total += iter->get_chip_value() * 2;
-			if (total > p_table->get_table_limit() || total > m_bankroll)
+			if (total > table_limit || total > m_bankroll)
 			{
 				return true;
 			}
@@ -466,7 +467,7 @@ namespace roulette
 					// we achieve this during bet construction in signal handlers while emiting
 					if (equal(main_selection->begin(), main_selection->end(), iter_selection->begin()))
 					{
-						// if duplicate value for same bet (on same field) if grater than limit for the field
+						// if duplicate value for same bet (on same field) is grater than limit for the field
 						main_value += iter_value;
 						if (main_value > p_table->get_limit(main_bet))
 							return true;

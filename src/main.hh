@@ -37,6 +37,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 // std
 #include <vector>
 #include <memory>
+#include <tuple>
 
 // gtkmm
 #include <gdkmm/types.h> // Gdk::Point
@@ -70,13 +71,13 @@ namespace roulette
 	typedef Glib::RefPtr<Gdk::Pixbuf> type_chip_icon;
 
 	// type declaring a a pair which makes a chip
-	typedef std::pair<const EChip, Gdk::Point> type_chip_pair; // TODO: Bet uses their own typedef
+	typedef std::tuple<const EChip, Gdk::Point, EBet> type_chip_tuple; // TODO: Bet uses their own typedef
+
+	// type declaring a final chip type
+	typedef std::shared_ptr<type_chip_tuple> type_chip;
 
 	// type declaring a container of chips
 	typedef std::vector<type_chip> type_chip_container;
-
-	// type declaring a final chip type
-	typedef std::shared_ptr<type_chip_pair> type_chip;
 
 	// return chip pixbuf associated with the chip enum
 	type_chip_icon get_pixbuf(EChip ref);

@@ -31,6 +31,10 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "field.hh"
 #include "table.hh"
 
+// std
+#include <tuple>
+using std::get;
+
 // gtkmm
 #include <gtkmm/messagedialog.h>
 
@@ -605,25 +609,28 @@ namespace roulette
 		}
 	}
 
-	bool Table::check_limits(type_chip_container& chips, type_chip& chip, EBet bet_type)
+	bool Table::check_limits(type_chip_container& chips, type_chip& chip)
 	{
-		auto limit = m_maximums.find(bet_type);
+		auto limit = m_maximums.find(get<2>(*chip));
 		if (limit == m_maximums.end())
 		{
 			error_handler(error("limit for this bet type not defined"));
 		}
-		unsigned current_bet = static_cast<unsigned>(chip->first);
+		unsigned current_bet = static_cast<unsigned>(get<0>(*chip));
 
 		for (auto iter : chips)
 		{
-			if (iter->second.equal(chip->second))
+			// we need to compare points, since there are 4 splits or corners inside a field.
+			if (get<1>(*iter).equal(get<1>(*chip)))
 			{
-				current_bet += static_cast<unsigned>(iter->first);
+				current_bet += static_cast<unsigned>(get<0>(*iter));
 			}
 		}
 
 		if (current_bet > limit->second)
 		{
+			get<2>(*chip) = EBet::LIMIT_EXCEEDED;
+
 			Gtk::Window* top_window = dynamic_cast<Gtk::Window*>(get_toplevel());
 
 			if (top_window->get_is_toplevel())
@@ -644,6 +651,14 @@ namespace roulette
 
 #pragma region
 #endif // _MSC_VER
+
+	void Table::on_signal_spin(unsigned result)
+	{
+		for (auto iter : m_fields)
+		{
+			iter.second->on_signal_spin(result);
+		}
+	}
 
 	void Table::set_debug(bool debug)
 	{

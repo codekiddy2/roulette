@@ -37,6 +37,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <iostream>
 #include <vector>	// due to and Childs_t
 #include <memory>
+#include <tuple>
 
 #include <gdkmm/types.h> // Gdk::Point
 #include <gdkmm/pixbuf.h>
@@ -47,10 +48,10 @@ along with this program. If not, see http://www.gnu.org/licenses.
 namespace roulette
 {
 	// type declaring a a pair which makes a chip
-	typedef std::pair<const EChip, Gdk::Point> type_chip_pair;
+	typedef std::tuple<const EChip, Gdk::Point, EBet> type_chip_tuple;
 
 	// type declaring a final chip type
-	typedef std::shared_ptr<type_chip_pair> type_chip;
+	typedef std::shared_ptr<type_chip_tuple> type_chip;
 
 	//typedef std::vector<unsigned> type_selection; // numbers selected for the bet (ALSO DEFINED AS type_set !)
 
@@ -67,8 +68,7 @@ namespace roulette
 		//	Bet* parent = nullptr
 		//	);
 
-		Bet(/*const*/ EBet bet,
-			/*const*/ type_chip chip,
+		Bet(/*const*/ type_chip chip,
 			type_set selection = nullptr
 			);
 
@@ -84,7 +84,6 @@ namespace roulette
 
 	private:
 		// new constructor
-		EBet m_bet;
 		type_chip m_chip;
 		type_set mp_set;
 		//boost::uuids::uuid m_uuid;
@@ -157,7 +156,7 @@ namespace roulette
 	};
 	EBet Bet::get_id() const
 	{
-		return m_bet;
+		return std::get<2>(*m_chip);
 	}
 
 	type_chip Bet::get_chip() const
@@ -172,7 +171,7 @@ namespace roulette
 
 	unsigned Bet::get_chip_value() const
 	{
-		return static_cast<unsigned>(m_chip->first);
+		return static_cast<unsigned>(std::get<0>(*m_chip));
 	}
 
 #ifdef _MSC_VER

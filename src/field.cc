@@ -58,6 +58,9 @@ namespace roulette
 	using std::shared_ptr;
 	using std::make_pair;
 	using std::pair;
+	using std::make_tuple;
+	using std::tuple;
+	using std::get;
 
 	extern std::vector<Gtk::TargetEntry> dnd_targets;
 	
@@ -97,10 +100,10 @@ namespace roulette
 	// and then emit signal to neighboring fields so that they do the same
 	// neighborng fields will adjust chip x y in signal handlers instead.
 	// last parameter is used to avoid re-emiting signals on window resize.
-	EBet Field::calculate_points(type_chip chip, bool emit /*= true*/)
+	void Field::calculate_points(type_chip chip, bool emit /*= true*/)
 	{
 		Gtk::Allocation alloc = get_allocation();
-		Gdk::Point& point = chip->second;
+		Gdk::Point& point = get<1>(*chip);
 		
 		const int x = point.get_x();
 		const int y = point.get_y();
@@ -118,12 +121,13 @@ namespace roulette
 		// default is center (ex: StraightUp)
 		point.set_x(cx);
 		point.set_y(cy);
+		get<2>(*chip) = EBet::StraightUp;
 
 		switch (m_index)
 		{
 		case roulette::EField::Number0:
-			if (x < right)
-				return EBet::StraightUp; // no chip drawing signal	
+			if (x < right)  // no chip drawing signal
+				mp_table->check_limits(m_chips, chip);
 			else // x > right
 			{
 				// TODO: move to global scope, used in signal handlers too (check ??)
@@ -148,20 +152,19 @@ namespace roulette
 					point.set_y(split1);
 					if (emit)
 					{
-						if (mp_table->check_limits(m_chips, chip, EBet::Split))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_split1.emit(m_index, chip);
+						get<2>(*chip) = EBet::Split;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_split1.emit(m_index, chip);
 					}
-					break;
 				}
 				else if (y < check_split2)
 				{
 					point.set_y(street1);
 					if (emit)
 					{
-						if (mp_table->check_limits(m_chips, chip, EBet::Street))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_street1.emit(m_index, chip);
+						get<2>(*chip) = EBet::Street;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_street1.emit(m_index, chip);
 					}
 				}
 				else if (y < check_street2)
@@ -169,9 +172,9 @@ namespace roulette
 					point.set_y(split2);
 					if (emit)
 					{
-						if (mp_table->check_limits(m_chips, chip, EBet::Split))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_split2.emit(m_index, chip);
+						get<2>(*chip) = EBet::Split;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_split2.emit(m_index, chip);
 					}
 				}
 				else if (y < check_split3)
@@ -179,9 +182,9 @@ namespace roulette
 					point.set_y(street2);
 					if (emit)
 					{
-						if (mp_table->check_limits(m_chips, chip, EBet::Street))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_street2.emit(m_index, chip);
+						get<2>(*chip) = EBet::Street;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_street2.emit(m_index, chip);
 					}
 				}
 				else if (y < check_basket)
@@ -189,9 +192,9 @@ namespace roulette
 					point.set_y(split3);
 					if (emit)
 					{
-						if (mp_table->check_limits(m_chips, chip, EBet::Corner))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_split3.emit(m_index, chip);
+						get<2>(*chip) = EBet::Split;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_split3.emit(m_index, chip);
 					}
 				}
 				else
@@ -199,13 +202,13 @@ namespace roulette
 					point.set_y(basket);
 					if (emit)
 					{
-						if (mp_table->check_limits(m_chips, chip, EBet::Basket))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_basket.emit(m_index, chip);
+						get<2>(*chip) = EBet::Corner;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_basket.emit(m_index, chip);
 					}
 				}
 			} // x > right
-		break;
+			break;
 		case roulette::EField::Number3:
 			if (x < left)
 			{
@@ -215,16 +218,16 @@ namespace roulette
 					point.set_y(height);
 					if (emit)
 					{
-						if (mp_table->check_limits(m_chips, chip, EBet::Corner))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_bottom_left.emit(m_index, chip);
+						get<2>(*chip) = EBet::Street;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_bottom_left.emit(m_index, chip);
 					}
 				}
 				else if (emit)
 				{
-					if (mp_table->check_limits(m_chips, chip, EBet::Split))
-						return EBet::LIMIT_EXCEEDED;
-					signal_bet_left.emit(m_index, chip);
+					get<2>(*chip) = EBet::Split;
+					if (!mp_table->check_limits(m_chips, chip))
+						signal_bet_left.emit(m_index, chip);
 				}
 			}
 			else if (x > right)
@@ -235,16 +238,16 @@ namespace roulette
 					point.set_y(height);
 					if (emit)
 					{
-						if (mp_table->check_limits(m_chips, chip, EBet::Corner))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_bottom_right.emit(m_index, chip);
+						get<2>(*chip) = EBet::Corner;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_bottom_right.emit(m_index, chip);
 					}
 				}
 				else if (emit)
 				{
-					if (mp_table->check_limits(m_chips, chip, EBet::Split))
-						return EBet::LIMIT_EXCEEDED;
-					signal_bet_right.emit(m_index, chip);
+					get<2>(*chip) = EBet::Split;
+					if (!mp_table->check_limits(m_chips, chip))
+						signal_bet_right.emit(m_index, chip);
 				}
 			}
 			else if (y > down) // x == cx
@@ -252,14 +255,66 @@ namespace roulette
 				point.set_y(height);
 				if (emit)
 				{
-					if (mp_table->check_limits(m_chips, chip, EBet::Split))
-						return EBet::LIMIT_EXCEEDED;
-					signal_bet_bottom.emit(m_index, chip);
+					get<2>(*chip) = EBet::Split;
+					if (!mp_table->check_limits(m_chips, chip))
+						signal_bet_bottom.emit(m_index, chip);
 				}
 			}
-			else return EBet::StraightUp; // cx, cy -> no chip drawing signal
+			else mp_table->check_limits(m_chips, chip); // cx, cy -> no chip drawing signal
 			break;
 		case roulette::EField::Number34:
+			if (x < left)
+			{
+				point.set_x(0);
+				if (y < top)
+				{
+					point.set_y(0);
+					if (emit)
+					{
+						get<2>(*chip) = EBet::Corner;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_top_left.emit(m_index, chip);
+					}
+				}
+				else if (y > down)
+				{
+					point.set_y(height);
+					if (emit)
+					{
+						get<2>(*chip) = EBet::Line;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_bottom_left.emit(m_index, chip);
+					}
+				}
+				else if (emit)
+				{
+					get<2>(*chip) = EBet::Split;
+					if (!mp_table->check_limits(m_chips, chip))
+						signal_bet_left.emit(m_index, chip);
+				}
+			}
+			else if (y < top) // x == cx
+			{
+				point.set_y(0);
+				if (emit)
+				{
+					get<2>(*chip) = EBet::Split;
+					if (!mp_table->check_limits(m_chips, chip))
+						signal_bet_top.emit(m_index, chip);
+				}
+			}
+			else if (y > down)
+			{
+				point.set_y(height);
+				if (emit)
+				{
+					get<2>(*chip) = EBet::Street;
+					if (!mp_table->check_limits(m_chips, chip))
+						signal_bet_bottom.emit(m_index, chip);
+				}
+			}
+			else mp_table->check_limits(m_chips, chip); // cx, cy -> no chip drawing signal
+			break;
 		case roulette::EField::Number35:
 			if (x < left)
 			{
@@ -269,9 +324,9 @@ namespace roulette
 					point.set_y(0);
 					if (emit)
 					{
-						if (mp_table->check_limits(m_chips, chip, EBet::Corner))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_top_left.emit(m_index, chip);
+						get<2>(*chip) = EBet::Corner;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_top_left.emit(m_index, chip);
 					}
 				}
 				else if (y > down)
@@ -279,16 +334,16 @@ namespace roulette
 					point.set_y(height);
 					if (emit)
 					{
-						if (mp_table->check_limits(m_chips, chip, EBet::Corner))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_bottom_left.emit(m_index, chip);
+						get<2>(*chip) = EBet::Corner;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_bottom_left.emit(m_index, chip);
 					}
 				}
 				else if (emit)
 				{
-					if (mp_table->check_limits(m_chips, chip, EBet::Split))
-						return EBet::LIMIT_EXCEEDED;
-					signal_bet_left.emit(m_index, chip);
+					get<2>(*chip) = EBet::Split;
+					if (!mp_table->check_limits(m_chips, chip))
+						signal_bet_left.emit(m_index, chip);
 				}
 			}
 			else if (y < top) // x == cx
@@ -296,9 +351,9 @@ namespace roulette
 				point.set_y(0);
 				if (emit)
 				{
-					if (mp_table->check_limits(m_chips, chip, EBet::Split))
-						return EBet::LIMIT_EXCEEDED;
-					signal_bet_top.emit(m_index, chip);
+					get<2>(*chip) = EBet::Split;
+					if (!mp_table->check_limits(m_chips, chip))
+						signal_bet_top.emit(m_index, chip);
 				}
 			}
 			else if (y > down)
@@ -306,12 +361,12 @@ namespace roulette
 				point.set_y(height);
 				if (emit)
 				{
-					if (mp_table->check_limits(m_chips, chip, EBet::Split))
-						return EBet::LIMIT_EXCEEDED;
-					signal_bet_bottom.emit(m_index, chip);
+					get<2>(*chip) = EBet::Split;
+					if (!mp_table->check_limits(m_chips, chip))
+						signal_bet_bottom.emit(m_index, chip);
 				}
 			}
-			else return EBet::StraightUp; // cx, cy -> no chip drawing signal
+			else mp_table->check_limits(m_chips, chip); // cx, cy -> no chip drawing signal
 			break;
 		case roulette::EField::Number36:
 			if (x < left)
@@ -322,16 +377,16 @@ namespace roulette
 					point.set_y(height);
 					if (emit)
 					{
-						if (mp_table->check_limits(m_chips, chip, EBet::Corner))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_bottom_left.emit(m_index, chip);
+						get<2>(*chip) = EBet::Corner;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_bottom_left.emit(m_index, chip);
 					}
 				}
 				else if (emit)
 				{
-					if (mp_table->check_limits(m_chips, chip, EBet::Split))
-						return EBet::LIMIT_EXCEEDED;
-					signal_bet_left.emit(m_index, chip);
+					get<2>(*chip) = EBet::Split;
+					if (!mp_table->check_limits(m_chips, chip))
+						signal_bet_left.emit(m_index, chip);
 				}
 			}
 			else if (y > down) // x == cx
@@ -339,12 +394,12 @@ namespace roulette
 				point.set_y(height);
 				if (emit)
 				{
-					if (mp_table->check_limits(m_chips, chip, EBet::Split))
-						return EBet::LIMIT_EXCEEDED;
-					signal_bet_bottom.emit(m_index, chip);
+					get<2>(*chip) = EBet::Split;
+					if (!mp_table->check_limits(m_chips, chip))
+						signal_bet_bottom.emit(m_index, chip);
 				}
 			}
-			else return EBet::StraightUp; // cx, cy -> no chip drawing signal
+			else mp_table->check_limits(m_chips, chip); // cx, cy -> no chip drawing signal
 			break;
 		case roulette::EField::Number00:
 			break;
@@ -357,12 +412,17 @@ namespace roulette
 		case roulette::EField::Column1:
 		case roulette::EField::Column2:
 		case roulette::EField::Column3:
-			return static_cast<EBet>(m_index); // WARNING: this is supposed to be same enum number defined in sets.hh
+			get<2>(*chip) = static_cast<EBet>(m_index);  // WARNING: this is supposed to be same enum number defined in sets.hh
+			mp_table->check_limits(m_chips, chip);
+			break;
 		case roulette::EField::Dozen1:
 		case roulette::EField::Dozen2:
 		case roulette::EField::Dozen3:
 			if (y > top)
-				return static_cast<EBet>(m_index); // WARNING: this is supposed to be same enum number defined in sets.hh
+			{
+				get<2>(*chip) = static_cast<EBet>(m_index);  // WARNING: this is supposed to be same enum number defined in sets.hh
+				mp_table->check_limits(m_chips, chip);
+			}
 			else // line or street bet
 			{
 				const int line1	= 0;
@@ -392,9 +452,18 @@ namespace roulette
 					point.set_x(line1);
 					if (emit)
 					{
-						if (mp_table->check_limits(m_chips, chip, EBet::Corner))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_line1.emit(m_index, chip);
+						if (m_index == EField::Dozen1)
+						{
+							get<2>(*chip) = EBet::Corner;
+							if (!mp_table->check_limits(m_chips, chip))
+								signal_bet_line1.emit(m_index, chip);
+						}
+						else
+						{
+							get<2>(*chip) = EBet::Line;
+							if (!mp_table->check_limits(m_chips, chip))
+								signal_bet_line1.emit(m_index, chip);
+						}
 					}
 				}
 				else if (x < check_line2)
@@ -402,9 +471,9 @@ namespace roulette
 					point.set_x(street1);
 					if (emit)
 					{
-						if (mp_table->check_limits(m_chips, chip, EBet::Street))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_street1.emit(m_index, chip);
+						get<2>(*chip) = EBet::Street;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_street1.emit(m_index, chip);
 					}
 				}
 				else if (x < check_street2)
@@ -412,9 +481,9 @@ namespace roulette
 					point.set_x(line2);
 					if (emit)
 					{
-						if (mp_table->check_limits(m_chips, chip, EBet::Line))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_line2.emit(m_index, chip);
+						get<2>(*chip) = EBet::Line;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_line2.emit(m_index, chip);
 					}
 				}
 				else if (x < check_line3)
@@ -422,9 +491,9 @@ namespace roulette
 					point.set_x(street2);
 					if (emit)
 					{
-						if (mp_table->check_limits(m_chips, chip, EBet::Street))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_street2.emit(m_index, chip);
+						get<2>(*chip) = EBet::Street;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_street2.emit(m_index, chip);
 					}
 				}
 				else if (x < check_street3)
@@ -432,9 +501,9 @@ namespace roulette
 					point.set_x(line3);
 					if (emit)
 					{
-						if (mp_table->check_limits(m_chips, chip, EBet::Line))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_line3.emit(m_index, chip);
+						get<2>(*chip) = EBet::Line;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_line3.emit(m_index, chip);
 					}
 				}
 				else if (x < check_line4)
@@ -442,9 +511,9 @@ namespace roulette
 					point.set_x(street3);
 					if (emit)
 					{
-						if (mp_table->check_limits(m_chips, chip, EBet::Street))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_street3.emit(m_index, chip);
+						get<2>(*chip) = EBet::Street;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_street3.emit(m_index, chip);
 					}
 				}
 				else if (x < check_street4)
@@ -452,9 +521,9 @@ namespace roulette
 					point.set_x(line4);
 					if (emit) 
 					{
-						if (mp_table->check_limits(m_chips, chip, EBet::Line))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_line4.emit(m_index, chip);
+						get<2>(*chip) = EBet::Line;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_line4.emit(m_index, chip);
 					}
 				}
 				else if (x < check_line5 || m_index == EField::Dozen3)  // skip line5 for dozen3
@@ -462,9 +531,9 @@ namespace roulette
 					point.set_x(street4);
 					if (emit)
 					{
-						if (mp_table->check_limits(m_chips, chip, EBet::Street))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_street4.emit(m_index, chip);
+						get<2>(*chip) = EBet::Street;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_street4.emit(m_index, chip);
 					}
 				}
 				else // x > check_line5
@@ -472,31 +541,200 @@ namespace roulette
 					point.set_x(line5);
 					if (emit)
 					{
-						if (mp_table->check_limits(m_chips, chip, EBet::Line))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_line5.emit(m_index, chip);
+						get<2>(*chip) = EBet::Line;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_line5.emit(m_index, chip);
 					}
 				} // else if (y < top)
-			break;
 			} // else line or street bet
+			break;
 		case roulette::EField::Dummy1:
 			if (x > right && y < top / 2)
 			{
 				point.set_x(width);
 				point.set_y(0);
+				get<2>(*chip) = EBet::Corner;
 				if (emit)
 				{
-					if (mp_table->check_limits(m_chips, chip, EBet::Corner))
-						return EBet::LIMIT_EXCEEDED;
-					signal_bet_basket.emit(m_index, chip);
+					if (!mp_table->check_limits(m_chips, chip))
+						signal_bet_basket.emit(m_index, chip);
 				}
-				return EBet::Corner0;
 			}
 		case roulette::EField::Dummy2:
 		case roulette::EField::Dummy3:
 			break;
 		case roulette::EField::Number1:
+			if (x < left)
+			{
+				point.set_x(0);
+				if (y < top)
+				{
+					point.set_y(0);
+					if (emit)
+					{
+						get<2>(*chip) = EBet::Street;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_top_left.emit(m_index, chip);
+					}
+				}
+				else if (y > down)
+				{
+					point.set_y(height);
+					if (emit)
+					{
+						get<2>(*chip) = EBet::Corner;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_bottom_left.emit(m_index, chip);
+					}
+				}
+				else if (emit)
+				{
+					get<2>(*chip) = EBet::Split;
+					if (!mp_table->check_limits(m_chips, chip))
+						signal_bet_left.emit(m_index, chip);
+				}
+			}
+			else if (x > right)
+			{
+				point.set_x(width);
+				if (y < top)
+				{
+					point.set_y(0);
+					if (emit)
+					{
+						get<2>(*chip) = EBet::Corner;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_top_right.emit(m_index, chip);
+					}
+				}
+				else if (y > down)
+				{
+					point.set_y(height);
+					if (emit)
+					{
+						get<2>(*chip) = EBet::Line;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_bottom_right.emit(m_index, chip);
+					}
+				}
+				else if (emit)
+				{
+					get<2>(*chip) = EBet::Split;
+					if (!mp_table->check_limits(m_chips, chip))
+						signal_bet_right.emit(m_index, chip);
+				}
+			}
+			else if (y < top) // x == cx
+			{
+				point.set_y(0);
+				if (emit)
+				{
+					get<2>(*chip) = EBet::Split;
+					if (!mp_table->check_limits(m_chips, chip))
+						signal_bet_top.emit(m_index, chip);
+				}
+			}
+			else if (y > down)
+			{
+				point.set_y(height);
+				if (emit)
+				{
+					get<2>(*chip) = EBet::Street;
+					if (!mp_table->check_limits(m_chips, chip))
+						signal_bet_bottom.emit(m_index, chip);
+				}
+			}
+			else
+			{
+				mp_table->check_limits(m_chips, chip); // y == cy, x = cx
+			}
+			break;
 		case roulette::EField::Number2:
+			if (x < left)
+			{
+				point.set_x(0);
+				if (y < top)
+				{
+					point.set_y(0);
+					if (emit)
+					{
+						get<2>(*chip) = EBet::Street;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_top_left.emit(m_index, chip);
+					}
+				}
+				else if (y > down)
+				{
+					point.set_y(height);
+					if (emit)
+					{
+						get<2>(*chip) = EBet::Street;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_bottom_left.emit(m_index, chip);
+					}
+				}
+				else if (emit)
+				{
+					get<2>(*chip) = EBet::Split;
+					if (!mp_table->check_limits(m_chips, chip))
+						signal_bet_left.emit(m_index, chip);
+				}
+			}
+			else if (x > right)
+			{
+				point.set_x(width);
+				if (y < top)
+				{
+					point.set_y(0);
+					if (emit)
+					{
+						get<2>(*chip) = EBet::Corner;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_top_right.emit(m_index, chip);
+					}
+				}
+				else if (y > down)
+				{
+					point.set_y(height);
+					if (emit)
+					{
+						get<2>(*chip) = EBet::Corner;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_bottom_right.emit(m_index, chip);
+					}
+				}
+				else if (emit)
+				{
+					get<2>(*chip) = EBet::Split;
+					if (!mp_table->check_limits(m_chips, chip))
+						signal_bet_right.emit(m_index, chip);
+				}
+			}
+			else if (y < top) // x == cx
+			{
+				point.set_y(0);
+				if (emit)
+				{
+					get<2>(*chip) = EBet::Split;
+					if (!mp_table->check_limits(m_chips, chip))
+						signal_bet_top.emit(m_index, chip);
+				}
+			}
+			else if (y > down)
+			{
+				point.set_y(height);
+				if (emit)
+				{
+					get<2>(*chip) = EBet::Split;
+					if (!mp_table->check_limits(m_chips, chip))
+						signal_bet_bottom.emit(m_index, chip);
+				}
+			}
+			else
+			{
+				mp_table->check_limits(m_chips, chip); // y == cy, x = cx
+			}
+			break;
 		case roulette::EField::Number4:
 		case roulette::EField::Number5:
 		case roulette::EField::Number6:
@@ -535,9 +773,9 @@ namespace roulette
 					point.set_y(0);
 					if (emit)
 					{
-						if (mp_table->check_limits(m_chips, chip, EBet::Corner))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_top_left.emit(m_index, chip);
+						get<2>(*chip) = EBet::Corner;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_top_left.emit(m_index, chip);
 					}
 				}
 				else if (y > down)
@@ -545,26 +783,25 @@ namespace roulette
 					point.set_y(height);
 					if (emit)
 					{
-						if (which_column(m_index) == 1) // signal_bet_bottom_left can be either street, Line or Corner
+						if (which_column(m_index) == 1) // signal_bet_bottom_left can be either street, Line
 						{
-							if (m_index == EField::Number1)
-							{
-								if (mp_table->check_limits(m_chips, chip, EBet::Corner))
-									return EBet::LIMIT_EXCEEDED;
-							}
-							if (mp_table->check_limits(m_chips, chip, EBet::Line))
-								return EBet::LIMIT_EXCEEDED;
+							get<2>(*chip) = EBet::Line;
+							if (!mp_table->check_limits(m_chips, chip))
+								signal_bet_bottom_left.emit(m_index, chip);
 						}
-						else if (mp_table->check_limits(m_chips, chip, EBet::Corner))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_bottom_left.emit(m_index, chip);
+						else
+						{
+							get<2>(*chip) = EBet::Corner;
+							if (!mp_table->check_limits(m_chips, chip))
+								signal_bet_bottom_left.emit(m_index, chip);
+						}
 					}
 				}
 				else if (emit)
 				{
-					if (mp_table->check_limits(m_chips, chip, EBet::Split))
-						return EBet::LIMIT_EXCEEDED;
-					signal_bet_left.emit(m_index, chip);
+					get<2>(*chip) = EBet::Split;
+					if (!mp_table->check_limits(m_chips, chip))
+						signal_bet_left.emit(m_index, chip);
 				}
 			}
 			else if (x > right)
@@ -575,9 +812,9 @@ namespace roulette
 					point.set_y(0);
 					if (emit)
 					{
-						if (mp_table->check_limits(m_chips, chip, EBet::Corner))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_top_right.emit(m_index, chip);
+						get<2>(*chip) = EBet::Corner;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_top_right.emit(m_index, chip);
 					}
 				}
 				else if (y > down)
@@ -587,19 +824,23 @@ namespace roulette
 					{
 						if (which_column(m_index) == 1) // signal_bet_bottom_right can be either street or Line
 						{
-							if (mp_table->check_limits(m_chips, chip, EBet::Line))
-								return EBet::LIMIT_EXCEEDED;
+							get<2>(*chip) = EBet::Line;
+							if (!mp_table->check_limits(m_chips, chip))
+								signal_bet_bottom_right.emit(m_index, chip);
 						}
-						else if (mp_table->check_limits(m_chips, chip, EBet::Corner))
-							return EBet::LIMIT_EXCEEDED;
-						signal_bet_bottom_right.emit(m_index, chip);
+						else
+						{
+							get<2>(*chip) = EBet::Corner;
+							if (!mp_table->check_limits(m_chips, chip))
+								signal_bet_bottom_right.emit(m_index, chip);
+						}
 					}
 				}
 				else if (emit)
 				{
-					if (mp_table->check_limits(m_chips, chip, EBet::Split))
-						return EBet::LIMIT_EXCEEDED;
-					signal_bet_right.emit(m_index, chip);
+					get<2>(*chip) = EBet::Split;
+					if (!mp_table->check_limits(m_chips, chip))
+						signal_bet_right.emit(m_index, chip);
 				}
 			}
 			else if (y < top && (which_column(m_index) != 3)) // x == cx
@@ -607,9 +848,9 @@ namespace roulette
 				point.set_y(0);
 				if (emit)
 				{
-					if (mp_table->check_limits(m_chips, chip, EBet::Split))
-						return EBet::LIMIT_EXCEEDED;
-					signal_bet_top.emit(m_index, chip);
+					get<2>(*chip) = EBet::Split;
+					if (!mp_table->check_limits(m_chips, chip))
+						signal_bet_top.emit(m_index, chip);
 				}
 			}
 			else if (y > down)
@@ -619,22 +860,26 @@ namespace roulette
 				{
 					if (which_column(m_index) == 1) // signal_bet_bottom can be either street or split
 					{
-						if (mp_table->check_limits(m_chips, chip, EBet::Street))
-							return EBet::LIMIT_EXCEEDED;
+						get<2>(*chip) = EBet::Street;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_bottom.emit(m_index, chip);
 					}
-					else if (mp_table->check_limits(m_chips, chip, EBet::Split))
-						return EBet::LIMIT_EXCEEDED;
-					signal_bet_bottom.emit(m_index, chip);
+					else
+					{
+						get<2>(*chip) = EBet::Split;
+						if (!mp_table->check_limits(m_chips, chip))
+							signal_bet_bottom.emit(m_index, chip);
+					}
 				}
 			}
-			else return EBet::StraightUp; // y == cy, x = cx
+			else
+			{
+				mp_table->check_limits(m_chips, chip); // y == cy, x = cx
+			}
 			break;
 		default:
 			error_handler(error("calculate_points -> missing case statement"));
 		} // switch
-
-		// the bet is undefined, it will be defined in signal handlers
-		return EBet::UNDEFINED;
 	} // calculate_points
 
 	bool Field::on_clicked(GdkEventButton* button_event)
@@ -643,8 +888,8 @@ namespace roulette
 		{
 			if (!m_chips.empty())
 			{
-				type_chip_pair chip_pair = make_pair(EChip::Eraser, Gdk::Point(0, 0));
-				type_chip chip = make_shared<type_chip_pair>(chip_pair);
+				type_chip_tuple chip_tuple = make_tuple(EChip::Eraser, Gdk::Point(0, 0), EBet::UNDEFINED);
+				type_chip chip = make_shared<type_chip_tuple>(chip_tuple);
 
 				signal_bet_bottom.emit(m_index, chip);
 				signal_bet_top.emit(m_index, chip);
@@ -655,7 +900,7 @@ namespace roulette
 				signal_bet_top_left.emit(m_index, chip);
 				signal_bet_top_right.emit(m_index, chip);
 
-				mp_table->signal_bet.emit(make_shared<Bet>(EBet::StraightUp, chip,
+				mp_table->signal_bet.emit(make_shared<Bet>(chip,
 					make_shared<type_raw_set>(type_raw_set{ static_cast<unsigned>(m_index) })));
 
 				clear_all();
@@ -746,7 +991,6 @@ namespace roulette
 					print(m_index);
 					print();
 				} // if debug
-				m_chips_saved = m_chips;
 				m_chips.clear();
 				refGdkWindow->invalidate(false);
 			}
@@ -762,7 +1006,7 @@ namespace roulette
 
 		for (size_t i = 1; i <= m_chips.size(); ++i)
 		{
-			if (iter->get()->second.equal(chip_point))
+			if (get<1>(*iter->get()).equal(chip_point))
 			{
 				if (m_debug)
 				{
@@ -778,7 +1022,7 @@ namespace roulette
 			} // if not end
 			iter = m_chips.begin() + i;
 		} // for
-		m_chips_saved = m_chips;
+		/*m_chips_saved = m_chips;*/
 		return refGdkWindow->invalidate(false);
 	}
 
@@ -856,14 +1100,119 @@ namespace roulette
 					if (p_engine)
 					{
 						// make chip, we need a chip regardless of bankroll status
-						type_chip chip = make_shared<type_chip_pair>(make_pair(static_cast<EChip>(info), Gdk::Point(x, y)));
+						type_chip chip = make_shared<type_chip_tuple>(make_tuple(static_cast<EChip>(info), Gdk::Point(x, y), EBet::UNDEFINED));
 
 						// check bankroll
-						if (p_engine->get_bankroll() >= info)
+						if (info <= p_engine->get_bankroll())
 						{
 							// check table limit
-							if ((p_engine->get_current_bet() + info) > mp_table->get_table_limit())
+							if ((info + p_engine->get_current_bet()) <= mp_table->get_table_limit())
 							{
+								// if bankroll and table limit is OK calculate chip drop zone and check bet limit
+								calculate_points(chip);
+
+								// refuse drop on dummy, accept if bet is Corner0 -> 0,1,2,3
+								if ((m_index == EField::Dummy1) && (get<2>(*chip) != EBet::Corner))
+								{
+									if (m_debug)
+									{
+										print("INFO: drop refused");
+										print("Source: Field", true);
+										print("Reason: invalid target", true);
+										print();
+									} // if debug
+
+									return context->drag_finish(true, false, time);
+								} // if bad dummy
+
+								// if bet limit is reached refuse drop
+								if (get<2>(*chip) != EBet::LIMIT_EXCEEDED)
+								{
+									if (m_debug)
+									{
+										print("INFO: chip dorpped");
+										print("Source: Field", true);
+										print("Field index: ", true);
+										print(m_index);
+										print();
+									} // if debug
+
+									// if this is eraser don't draw it, just clear existing chips
+									get<0>(*chip) != EChip::Eraser ?
+										m_chips.push_back(chip) : clear(get<1>(*chip));
+
+									type_set p_set = nullptr;
+
+									// TODO: move line and street bets here too
+									switch (get<2>(*chip))
+									{
+									case roulette::EBet::StraightUp:
+										// TODO: making type_set for single number is not smart
+										p_set = make_shared<type_raw_set>(type_raw_set{ static_cast<unsigned>(m_index) });
+										break;
+									case roulette::EBet::Column1:
+										p_set = Column1;
+										break;
+									case roulette::EBet::Column2:
+										p_set = Column2;
+										break;
+									case roulette::EBet::Column3:
+										p_set = Column3;
+										break;
+									case roulette::EBet::Dozen1:
+										p_set = Dozen1;
+										break;
+									case roulette::EBet::Dozen2:
+										p_set = Dozen2;
+										break;
+									case roulette::EBet::Dozen3:
+										p_set = Dozen3;
+										break;
+									case roulette::EBet::Red:
+										p_set = Red;
+										break;
+									case roulette::EBet::Black:
+										p_set = Black;
+										break;
+									case roulette::EBet::Even:
+										p_set = Even;
+										break;
+									case roulette::EBet::Odd:
+										p_set = Odd;
+										break;
+									case roulette::EBet::High:
+										p_set = High;
+										break;
+									case roulette::EBet::Low:
+										p_set = Low;
+										break;
+									default: // the bet is already emited by signal handlers during calculate_points
+										return context->drag_finish(true, false, time);
+									} // switch bet
+
+									// emit bet not emited by signal handlers if limits are not reached
+									mp_table->signal_bet.emit(make_shared<Bet>(chip, p_set));
+								} // if betlimit not exceeded
+							} // if tablelimit
+							else
+							{
+								if (m_index == EField::Dummy1)
+								{
+									calculate_points(chip, false);
+
+									if (get<2>(*chip) != EBet::Corner)
+									{
+										if (m_debug)
+										{
+											print("INFO: drop refused");
+											print("Source: Field", true);
+											print("Reason: invalid target", true);
+											print();
+										}
+										return context->drag_finish(true, false, time);
+									}
+								}
+
 								Gtk::Window* top_window = dynamic_cast<Gtk::Window*>(get_toplevel());
 
 								if (top_window->get_is_toplevel())
@@ -875,107 +1224,27 @@ namespace roulette
 									return context->drag_finish(true, false, time);
 								} // if is_toplevel
 								else error_handler(error("ERROR: get_toplevel did not return a top level window"));
-							}
-							// if bankroll and table limit is OK calculate chip drop zone
-							EBet bet = calculate_points(chip);
-
-							// refuse drop on dummy, accept if bet is Corner0 -> 0,1,2,3
-							if ((m_index == EField::Dummy1) && (bet != EBet::Corner0))
-							{
-								if (m_debug)
-								{
-									print("INFO: drop refused");
-									print("Source: Field", true);
-									print("Reason: invalid target", true);
-									print();
-								} // if debug
-
-								return context->drag_finish(true, false, time);
-							} // if bad dummy
-
-							// if table or bet limit is reached refuse drop
-							if (bet == EBet::LIMIT_EXCEEDED)
-							{
-								return context->drag_finish(true, false, time);
-							}
-							else if (bet != EBet::UNDEFINED && bet != EBet::Corner0)
-								if (mp_table->check_limits(m_chips, chip, bet))
-									return context->drag_finish(true, false, time);
-
-							if (m_debug)
-							{
-								print("INFO: chip dorpped");
-								print("Source: Field", true);
-								print("Field index: ", true);
-								print(m_index);
-								print();
-							} // if debug
-
-							// if this is eraser don't draw it, just clear existing chips
-							chip->first != EChip::Eraser ?
-								m_chips.push_back(chip) : clear(chip->second);
-
-							type_set p_set = nullptr;
-
-							// TODO: move line and street bets here too
-							switch (bet)
-							{
-							case roulette::EBet::StraightUp:
-								// TODO: making type_set for single number is not smart
-								p_set = make_shared<type_raw_set>(type_raw_set{ static_cast<unsigned>(m_index) });
-								break;
-							case roulette::EBet::Column1:
-								p_set = Column1;
-								break;
-							case roulette::EBet::Column2:
-								p_set = Column2;
-								break;
-							case roulette::EBet::Column3:
-								p_set = Column3;
-								break;
-							case roulette::EBet::Dozen1:
-								p_set = Dozen1;
-								break;
-							case roulette::EBet::Dozen2:
-								p_set = Dozen2;
-								break;
-							case roulette::EBet::Dozen3:
-								p_set = Dozen3;
-								break;
-							case roulette::EBet::Red:
-								p_set = Red;
-								break;
-							case roulette::EBet::Black:
-								p_set = Black;
-								break;
-							case roulette::EBet::Even:
-								p_set = Even;
-								break;
-							case roulette::EBet::Odd:
-								p_set = Odd;
-								break;
-							case roulette::EBet::High:
-								p_set = High;
-								break;
-							case roulette::EBet::Low:
-								p_set = Low;
-								break;
-							default: // the bet is already emited by signal handlers during calculate_points
-								return context->drag_finish(true, false, time);
-							} // switch bet
-
-							// emit bet not emited by signal handlers if limits are not reached
-							mp_table->signal_bet.emit(make_shared<Bet>(bet, chip, p_set));
+							} // if tablelimit -> case handled
 						} // if bankroll
-						else if ((m_index == EField::Dummy1) && (calculate_points(chip, false) != EBet::Corner0) && m_debug)
-						{
-							print("INFO: drop refused");
-							print("Source: Field", true);
-							print("Reason: invalid target", true);
-							print();
-						}
 						else // just out of bankroll
 						{
+							if (m_index == EField::Dummy1)
+							{
+								calculate_points(chip, false);
+
+								if (get<2>(*chip) != EBet::Corner)
+								{
+									if (m_debug)
+									{
+										print("INFO: drop refused");
+										print("Source: Field", true);
+										print("Reason: invalid target", true);
+										print();
+									}
+									return context->drag_finish(true, false, time);
+								}
+							}
+
 							Gtk::Window* top_window = dynamic_cast<Gtk::Window*>(get_toplevel());
 
 							if (top_window->get_is_toplevel())
@@ -1033,8 +1302,8 @@ namespace roulette
 		// draw neighboring chips
 		for (size_t i = 0; i < m_chips.size(); i++)
 		{
-			Glib::RefPtr<Gdk::Pixbuf> pixbuf = get_pixbuf(m_chips.at(i)->first);
-			Gdk::Point point = m_chips.at(i)->second;
+			Glib::RefPtr<Gdk::Pixbuf> pixbuf = get_pixbuf(get<0>(*m_chips.at(i)));
+			Gdk::Point point = get<1>(*m_chips.at(i));
 
 			const int x = point.get_x();
 			const int y = point.get_y();
@@ -1069,7 +1338,7 @@ namespace roulette
 		unsigned result = 0;
 		for (auto iter : m_chips)
 		{
-			result += static_cast<unsigned>(iter->first);
+			result += static_cast<unsigned>(get<0>(*iter));
 		}
 	}
 
@@ -1086,7 +1355,7 @@ namespace roulette
 	// TODO: check why need to check for gdkwindow, why throws
 	void Field::on_signal_bet_bottom(const EField& sender, type_chip chip)
 	{
-		Gdk::Point point = chip->second;
+		Gdk::Point point = get<1>(*chip);
 		Gtk::Allocation alloc = get_allocation();
 		point.set_x(static_cast<int>(alloc.get_width() * .5));
 		point.set_y(alloc.get_height());
@@ -1138,25 +1407,25 @@ namespace roulette
 				error_handler(error("on_signal_bet_bottom -> case statement missing"));
 			} // switch m_index
 			if (!p_set) error_handler(error("on_signal_bet_bottom -> p_set is nullptr"));
-			mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip, p_set));
+			mp_table->signal_bet.emit(make_shared<Bet>(chip, p_set));
 		} // if sender is dozen
 		else
 		{
 			// sender is number from column below, therefore their number is this fields' number - 1
 			unsigned neighbor_number = static_cast<unsigned>(m_index) - 1;
 			mp_table->signal_bet.emit(make_shared<Bet>(
-				EBet::Split, chip, make_shared<type_raw_set>(
+				chip, make_shared<type_raw_set>(
 					type_raw_set{ neighbor_number, static_cast<unsigned>(m_index) })));
 		}
 
-		if (chip->first == EChip::Eraser)
+		if (get<0>(*chip) == EChip::Eraser)
 		{
 			clear(point);
 			return;
 		}
 
-		type_chip_pair chip_pair = make_pair(chip->first, point);
-		type_chip chip_copy = make_shared<type_chip_pair>(chip_pair);
+		type_chip_tuple chip_tuple = make_tuple(get<0>(*chip), point, get<2>(*chip));
+		type_chip chip_copy = make_shared<type_chip_tuple>(chip_tuple);
 		m_chips.push_back(chip_copy);
 
 		if(refGdkWindow)
@@ -1165,7 +1434,7 @@ namespace roulette
 
 	void Field::on_signal_bet_top(const EField& sender, type_chip chip)
 	{
-		Gdk::Point point = chip->second;
+		Gdk::Point point = get<1>(*chip);
 		Gtk::Allocation alloc = get_allocation();
 		const int width = alloc.get_width();
 		point.set_x(static_cast<int>(width * .5));
@@ -1240,25 +1509,25 @@ namespace roulette
 				error_handler(error("on_signal_bet_top -> case statement missing"));
 			} // switch sender
 			if (!p_set) error_handler(error("on_signal_bet_top -> p_set is nullptr"));
-			mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip, p_set));
+			mp_table->signal_bet.emit(make_shared<Bet>(chip, p_set));
 		} // if dozen
 		else
 		{
 			// sender is number from column above, therefore their number is this fields' number + 1
 			unsigned neighbor_number = static_cast<unsigned>(m_index) + 1;
 			mp_table->signal_bet.emit(make_shared<Bet>(
-				EBet::Split, chip, make_shared<type_raw_set>(
+				chip, make_shared<type_raw_set>(
 					type_raw_set{ static_cast<unsigned>(m_index), neighbor_number })));
 		}
 
-		if (chip->first == EChip::Eraser)
+		if (get<0>(*chip) == EChip::Eraser)
 		{
 			clear(point);
 			return;
 		}
 
-		type_chip_pair chip_pair = make_pair(chip->first, point);
-		type_chip chip_copy = make_shared<type_chip_pair>(chip_pair);
+		type_chip_tuple chip_tuple = make_tuple(get<0>(*chip), point, get<2>(*chip));
+		type_chip chip_copy = make_shared<type_chip_tuple>(chip_tuple);
 		m_chips.push_back(chip_copy);
 
 		if (refGdkWindow)
@@ -1267,7 +1536,7 @@ namespace roulette
 
 	void Field::on_signal_bet_left(const EField& /*sender*/, type_chip chip)
 	{
-		Gdk::Point point = chip->second;
+		Gdk::Point point = get<1>(*chip);
 		Gtk::Allocation alloc = get_allocation();
 		point.set_x(0);
 		point.set_y(static_cast<int>(alloc.get_height() * .5));
@@ -1277,24 +1546,24 @@ namespace roulette
 			// sender is number from the left, therefore their number is this fields' number - 3
 			unsigned neighbor_number = static_cast<unsigned>(m_index) - 3;
 			mp_table->signal_bet.emit(make_shared<Bet>(
-				EBet::Split, chip, make_shared<type_raw_set>(
+				chip, make_shared<type_raw_set>(
 					type_raw_set{ neighbor_number, static_cast<unsigned>(m_index) })));
 		}
 		else // this is number 1 or 2 and neighbor is 0
 		{
 			mp_table->signal_bet.emit(make_shared<Bet>(
-				EBet::Split, chip, make_shared<type_raw_set>(
+				chip, make_shared<type_raw_set>(
 					type_raw_set{ 0, static_cast<unsigned>(m_index) })));
 		}
 
-		if (chip->first == EChip::Eraser)
+		if (get<0>(*chip) == EChip::Eraser)
 		{
 			clear(point);
 			return;
 		}
 
-		type_chip_pair chip_pair = make_pair(chip->first, point);
-		type_chip chip_copy = make_shared<type_chip_pair>(chip_pair);
+		type_chip_tuple chip_tuple = make_tuple(get<0>(*chip), point, get<2>(*chip));
+		type_chip chip_copy = make_shared<type_chip_tuple>(chip_tuple);
 		m_chips.push_back(chip_copy);
 
 		if (refGdkWindow)
@@ -1303,7 +1572,7 @@ namespace roulette
 
 	void Field::on_signal_bet_right(const EField& sender, type_chip chip)
 	{
-		Gdk::Point point = chip->second;
+		Gdk::Point point = get<1>(*chip);
 		Gtk::Allocation alloc = get_allocation();
 		point.set_x(alloc.get_width());
 		point.set_y(static_cast<int>(alloc.get_height() * .5));
@@ -1321,7 +1590,7 @@ namespace roulette
 			}
 			// sender is either 1, 2 or 3 so we need to adjust on which numbers the bet is placed (0 and sender)
 			mp_table->signal_bet.emit(make_shared<Bet>(
-				EBet::Split, chip, make_shared<type_raw_set>(
+				chip, make_shared<type_raw_set>(
 					type_raw_set{ static_cast<unsigned>(m_index), static_cast<unsigned>(sender) })));
 		}
 		else if (m_index <= EField::Number36)
@@ -1329,18 +1598,18 @@ namespace roulette
 			// sender is number from the right, therefore their number is this fields' number + 3
 			unsigned neighbor_number = static_cast<unsigned>(m_index) + 3;
 			mp_table->signal_bet.emit(make_shared<Bet>(
-				EBet::Split, chip, make_shared<type_raw_set>(
+				chip, make_shared<type_raw_set>(
 					type_raw_set{ static_cast<unsigned>(m_index), neighbor_number })));
 		}
 
-		if (chip->first == EChip::Eraser)
+		if (get<0>(*chip) == EChip::Eraser)
 		{
 			clear(point);
 			return;
 		}
 
-		type_chip_pair chip_pair = make_pair(chip->first, point);
-		type_chip chip_copy = make_shared<type_chip_pair>(chip_pair);
+		type_chip_tuple chip_tuple = make_tuple(get<0>(*chip), point, get<2>(*chip));
+		type_chip chip_copy = make_shared<type_chip_tuple>(chip_tuple);
 		m_chips.push_back(chip_copy);
 
 		if (refGdkWindow)
@@ -1350,7 +1619,7 @@ namespace roulette
 	void Field::on_signal_bet_top_right(const EField& sender, type_chip chip)
 	{
 		type_set p_set = nullptr; // global
-		Gdk::Point point = chip->second;
+		Gdk::Point point = get<1>(*chip);
 		Gtk::Allocation alloc = get_allocation();
 		const int width = alloc.get_width();
 		point.set_x(width);
@@ -1372,11 +1641,11 @@ namespace roulette
 			{
 			case EField::Number1:
 				point.set_y(static_cast<int>(alloc.get_height() * .667)); // rounded up
-				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip, Street01));
+				mp_table->signal_bet.emit(make_shared<Bet>(chip, Street01));
 				break;
 			case EField::Number2:
 				point.set_y(static_cast<int>(alloc.get_height() * .334)); // rounded up
-				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip, Street02));
+				mp_table->signal_bet.emit(make_shared<Bet>(chip, Street02));
 			}
 		}
 		// if signal is sent from first column to dozens we need to figure out on which numbers is line bet placed
@@ -1460,12 +1729,12 @@ namespace roulette
 				error_handler(error("on_signal_bet_top_right -> case statement missing"));
 			} // switch sender
 			if (!p_set) error_handler(error("on_signal_bet_top_right -> p_set is nullptr"));
-			mp_table->signal_bet.emit(make_shared<Bet>(EBet::Line, chip, p_set));
+			mp_table->signal_bet.emit(make_shared<Bet>(chip, p_set));
 		} // if dozen
 		// TODO: temp check
 		else if ((m_index == EField::Dummy1) && (sender == EField::Dozen1)) // Corner0
 		{
-			mp_table->signal_bet.emit(make_shared<Bet>(EBet::Corner, chip, Corner0));
+			mp_table->signal_bet.emit(make_shared<Bet>(chip, Corner0));
 		}
 		else if((sender != EField::Number0) && (sender != EField::Number1)) // signal is received from column 2 or 3 (corner bets)
 		{
@@ -1473,19 +1742,19 @@ namespace roulette
 			unsigned neighbor2 = static_cast<unsigned>(m_index) + 3;
 			unsigned neighbor3 = static_cast<unsigned>(m_index) + 4;
 			p_set = make_shared<type_raw_set>(type_raw_set{static_cast<unsigned>(m_index), neighbor1, neighbor2, neighbor3});
-			mp_table->signal_bet.emit(make_shared<Bet>(EBet::Corner, chip, p_set));
+			mp_table->signal_bet.emit(make_shared<Bet>(chip, p_set));
 		}
 	// signal will be emited by dozen2, skip re-emiting
 	dozen_2_will_emit_this_bet:
 
-		if (chip->first == EChip::Eraser)
+		if (get<0>(*chip) == EChip::Eraser)
 		{
 			clear(point);
 			return;
 		}
 
-		type_chip_pair chip_pair = make_pair(chip->first, point);
-		type_chip chip_copy = make_shared<type_chip_pair>(chip_pair);
+		type_chip_tuple chip_tuple = make_tuple(get<0>(*chip), point, get<2>(*chip));
+		type_chip chip_copy = make_shared<type_chip_tuple>(chip_tuple);
 		m_chips.push_back(chip_copy);
 
 		if (refGdkWindow)
@@ -1495,7 +1764,7 @@ namespace roulette
 	void Field::on_signal_bet_top_left(const EField& sender, type_chip chip)
 	{
 		type_set p_set = nullptr; // global
-		Gdk::Point point = chip->second;
+		Gdk::Point point = get<1>(*chip);
 		Gtk::Allocation alloc = get_allocation();
 		const int width = alloc.get_width();
 		point.set_x(0);
@@ -1596,14 +1865,14 @@ namespace roulette
 			if (!p_set) error_handler(error("on_signal_bet_top_left -> p_set is nullptr"));
 			// this is either corner bet (0, 1, 2, 3) or line bet.
 			((sender == EField::Number1) || (sender == EField::Number0) || (sender == EField::Dummy1)) ?
-				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Corner, chip, p_set)) :
-			mp_table->signal_bet.emit(make_shared<Bet>(EBet::Line, chip, p_set));
+				mp_table->signal_bet.emit(make_shared<Bet>(chip, p_set)) :
+			mp_table->signal_bet.emit(make_shared<Bet>(chip, p_set));
 		} // if dozen
 		else if (sender == EField::Number0)
 		{
 			m_index == EField::Number1 ?
-				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip, Street01)) :
-				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip, Street02)); // m_index == Efield::Number2
+				mp_table->signal_bet.emit(make_shared<Bet>(chip, Street01)) :
+				mp_table->signal_bet.emit(make_shared<Bet>(chip, Street02)); // m_index == Efield::Number2
 		}
 		// signal is received from column 2 or 3 (corner bets)
 		else if(static_cast<unsigned>(sender) == (static_cast<unsigned>(m_index) - 3) )
@@ -1612,20 +1881,20 @@ namespace roulette
 			unsigned neighbor2 = static_cast<unsigned>(m_index) - 2;
 			unsigned neighbor3 = static_cast<unsigned>(m_index) + 1;
 			p_set = make_shared<type_raw_set>(type_raw_set{ neighbor1, neighbor2, static_cast<unsigned>(m_index), neighbor3 });
-			mp_table->signal_bet.emit(make_shared<Bet>(EBet::Corner, chip, p_set));
+			mp_table->signal_bet.emit(make_shared<Bet>(chip, p_set));
 		}
 
 	// signal will be emited by dozen2, skip re-emiting
 	dozen_2_will_emit_this_bet:
 
-		if (chip->first == EChip::Eraser)
+		if (get<0>(*chip) == EChip::Eraser)
 		{
 			clear(point);
 			return;
 		}
 
-		type_chip_pair chip_pair = make_pair(chip->first, point);
-		type_chip chip_copy = make_shared<type_chip_pair>(chip_pair);
+		type_chip_tuple chip_tuple = make_tuple(get<0>(*chip), point, get<2>(*chip));
+		type_chip chip_copy = make_shared<type_chip_tuple>(chip_tuple);
 		m_chips.push_back(chip_copy);
 
 		if (refGdkWindow)
@@ -1634,7 +1903,7 @@ namespace roulette
 
 	void Field::on_signal_bet_bottom_right(const EField& sender, type_chip chip)
 	{
-		Gdk::Point point = chip->second;
+		Gdk::Point point = get<1>(*chip);
 		Gtk::Allocation alloc = get_allocation();
 		point.set_x(alloc.get_width());
 		point.set_y(alloc.get_height());
@@ -1645,22 +1914,22 @@ namespace roulette
 			{
 			case EField::Number2:
 				point.set_y(static_cast<int>(alloc.get_height() * .667)); // rounded up
-				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip, Street01));
+				mp_table->signal_bet.emit(make_shared<Bet>(chip, Street01));
 				break;
 			case EField::Number3:
 				point.set_y(static_cast<int>(alloc.get_height() *.334)); // rounded up
-				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Street, chip, Street02));
+				mp_table->signal_bet.emit(make_shared<Bet>(chip, Street02));
 			}
 		}
 
-		if (chip->first == EChip::Eraser)
+		if (get<0>(*chip) == EChip::Eraser)
 		{
 			clear(point);
 			return;
 		}
 
-		type_chip_pair chip_pair = make_pair(chip->first, point);
-		type_chip chip_copy = make_shared<type_chip_pair>(chip_pair);
+		type_chip_tuple chip_tuple = make_tuple(get<0>(*chip), point, get<2>(*chip));
+		type_chip chip_copy = make_shared<type_chip_tuple>(chip_tuple);
 		m_chips.push_back(chip_copy);
 
 		if (refGdkWindow)
@@ -1669,7 +1938,7 @@ namespace roulette
 
 	void Field::on_signal_bet_bottom_left(const EField& sender, type_chip chip)
 	{
-		Gdk::Point point = chip->second;
+		Gdk::Point point = get<1>(*chip);
 		Gtk::Allocation alloc = get_allocation();
 		point.set_x(0);
 		point.set_y(alloc.get_height());
@@ -1725,20 +1994,20 @@ namespace roulette
 				error_handler(error("on_signal_bet_bottom_left -> p_set is nullptr"));
 
 			if (m_index != EField::Number1)
-				mp_table->signal_bet.emit(make_shared<Bet>(EBet::Line, chip, p_set));
+				mp_table->signal_bet.emit(make_shared<Bet>(chip, p_set));
 		} // if sender is dozen
 
 	// signal will be emited by dozen2, skip re-emiting
 	dozen_2_will_emit_this_bet:
 
-		if (chip->first == EChip::Eraser)
+		if (get<0>(*chip) == EChip::Eraser)
 		{
 			clear(point);
 			return;
 		}
 
-		type_chip_pair chip_pair = make_pair(chip->first, point);
-		type_chip chip_copy = make_shared<type_chip_pair>(chip_pair);
+		type_chip_tuple chip_tuple = make_tuple(get<0>(*chip), point, get<2>(*chip));
+		type_chip chip_copy = make_shared<type_chip_tuple>(chip_tuple);
 		m_chips.push_back(chip_copy);
 
 		if (refGdkWindow)
