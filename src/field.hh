@@ -153,6 +153,7 @@ namespace roulette
 		bool on_clicked(GdkEventButton* button_event);
 		void assign_apperance(EField index);
 		void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int field_width, int field_height);
+		void place_chip(type_chip chip);
 
 		// members
 		type_chip_container m_chips;

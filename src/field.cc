@@ -1064,6 +1064,15 @@ namespace roulette
 		m_layout->show_in_cairo_context(cr);
 	}
 
+	void Field::place_chip(type_chip chip)
+	{
+		unsigned result = 0;
+		for (auto iter : m_chips)
+		{
+			result += static_cast<unsigned>(iter->first);
+		}
+	}
+
 #ifdef _MSC_VER
 #pragma endregion drawing
 

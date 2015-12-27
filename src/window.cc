@@ -181,7 +181,11 @@ namespace roulette
 			dialog.run();
 			return false;
 		}
-		return true;
+		else
+		{
+			m_infobar.on_update(nullptr);
+			return true;
+		}
 	}
 
 	// clear all chips from the table

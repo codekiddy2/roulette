@@ -435,7 +435,7 @@ namespace roulette
 		unsigned total = 0;
 		for (auto iter : m_bets)
 		{
-			total += iter->get_chip_value();
+			total += iter->get_chip_value() * 2;
 			if (total > p_table->get_table_limit() || total > m_bankroll)
 			{
 				return true;
@@ -446,13 +446,15 @@ namespace roulette
 
 		for (auto main = m_bets.begin(); main != m_bets.end(); ++main)
 		{
-			unsigned main_value = main->get()->get_chip_value();
+			unsigned main_value = main->get()->get_chip_value() * 2;
 			auto main_bet = main->get()->get_id();
 			auto main_selection = main->get()->get_selection();
+			temp.push_back(*main);
 
+			// check how many same bets there are, and sum their duplicate value
 			for (auto iter = main + 1; iter != m_bets.end(); ++iter)
 			{
-				unsigned iter_value = iter->get()->get_chip_value();
+				unsigned iter_value = iter->get()->get_chip_value() * 2;
 				auto iter_bet = iter->get()->get_id();
 				auto iter_selection = iter->get()->get_selection();
 				
@@ -464,26 +466,28 @@ namespace roulette
 					// we achieve this during bet construction in signal handlers while emiting
 					if (equal(main_selection->begin(), main_selection->end(), iter_selection->begin()))
 					{
+						// if duplicate value for same bet (on same field) if grater than limit for the field
 						main_value += iter_value;
 						if (main_value > p_table->get_limit(main_bet))
 							return true;
-						else
-						{
-							temp.push_back(*iter);
-						}
 					} // if same selection
 				} // if same id
-				else if (iter_value > p_table->get_limit(main_bet))
-				{
-					return true;
-				}
-				else
-				{
-					temp.push_back(*iter);
-				}
 			} // for
+			// if checking of same bets passes limits duplicate bet
+			// we need to check limit again for case when there are no other bets, just this one
+			main_value = main->get()->get_chip_value() * 2;
+			if (main_value > p_table->get_limit(main_bet))
+				return true;
+			else
+			{
+				temp.push_back(*main); // duplicate bet
+
+				m_last_bet = main->get()->get_chip_value();
+				m_bankroll -= m_last_bet;
+				m_current_bet += m_last_bet;
+			}
 		}
-		m_bets.insert(m_bets.end(), temp.begin(), temp.end());
+		m_bets.assign(temp.begin(), temp.end());
 		return false;
 	}
 
