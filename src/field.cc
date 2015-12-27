@@ -36,7 +36,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
-// std
+// roulette
 #include "pch.hh"
 #include "field.hh"
 #include "table.hh"
@@ -77,6 +77,8 @@ namespace roulette
 		set_has_window(true);
 		set_events(Gdk::EventMask::ALL_EVENTS_MASK);
 
+		set_has_tooltip();
+
 		assign_apperance(field_index);
 		m_font.set_family("Arial");
 		m_layout->set_font_description(m_font);
@@ -88,6 +90,7 @@ namespace roulette
 		mp_table->signal_clear_all.connect(sigc::mem_fun(*this, &Field::clear_all));
 		signal_button_press_event().connect(sigc::mem_fun(*this, &Field::on_clicked));
 		mp_table->signal_rebet.connect(sigc::mem_fun(*this, &Field::on_signal_rebet));
+		signal_query_tooltip().connect(sigc::mem_fun(*this, &Field::on_query_tooltip));
 	}
 
 #ifdef _MSC_VER
@@ -127,7 +130,7 @@ namespace roulette
 		{
 		case roulette::EField::Number0:
 			if (x < right)  // no chip drawing signal
-				mp_table->check_limits(m_chips, chip);
+				if (emit) mp_table->check_limits(m_chips, chip);
 			else // x > right
 			{
 				// TODO: move to global scope, used in signal handlers too (check ??)
@@ -260,7 +263,7 @@ namespace roulette
 						signal_bet_bottom.emit(m_index, chip);
 				}
 			}
-			else mp_table->check_limits(m_chips, chip); // cx, cy -> no chip drawing signal
+			else if (emit) mp_table->check_limits(m_chips, chip); // cx, cy -> no chip drawing signal
 			break;
 		case roulette::EField::Number34:
 			if (x < left)
@@ -313,7 +316,7 @@ namespace roulette
 						signal_bet_bottom.emit(m_index, chip);
 				}
 			}
-			else mp_table->check_limits(m_chips, chip); // cx, cy -> no chip drawing signal
+			else if (emit) mp_table->check_limits(m_chips, chip); // cx, cy -> no chip drawing signal
 			break;
 		case roulette::EField::Number35:
 			if (x < left)
@@ -366,7 +369,7 @@ namespace roulette
 						signal_bet_bottom.emit(m_index, chip);
 				}
 			}
-			else mp_table->check_limits(m_chips, chip); // cx, cy -> no chip drawing signal
+			else if (emit) mp_table->check_limits(m_chips, chip); // cx, cy -> no chip drawing signal
 			break;
 		case roulette::EField::Number36:
 			if (x < left)
@@ -399,7 +402,7 @@ namespace roulette
 						signal_bet_bottom.emit(m_index, chip);
 				}
 			}
-			else mp_table->check_limits(m_chips, chip); // cx, cy -> no chip drawing signal
+			else if (emit) mp_table->check_limits(m_chips, chip); // cx, cy -> no chip drawing signal
 			break;
 		case roulette::EField::Number00:
 			break;
@@ -413,7 +416,7 @@ namespace roulette
 		case roulette::EField::Column2:
 		case roulette::EField::Column3:
 			get<2>(*chip) = static_cast<EBet>(m_index);  // WARNING: this is supposed to be same enum number defined in sets.hh
-			mp_table->check_limits(m_chips, chip);
+			if (emit) mp_table->check_limits(m_chips, chip);
 			break;
 		case roulette::EField::Dozen1:
 		case roulette::EField::Dozen2:
@@ -421,7 +424,7 @@ namespace roulette
 			if (y > top)
 			{
 				get<2>(*chip) = static_cast<EBet>(m_index);  // WARNING: this is supposed to be same enum number defined in sets.hh
-				mp_table->check_limits(m_chips, chip);
+				if (emit) mp_table->check_limits(m_chips, chip);
 			}
 			else // line or street bet
 			{
@@ -646,7 +649,7 @@ namespace roulette
 			}
 			else
 			{
-				mp_table->check_limits(m_chips, chip); // y == cy, x = cx
+				if (emit) mp_table->check_limits(m_chips, chip); // y == cy, x = cx
 			}
 			break;
 		case roulette::EField::Number2:
@@ -732,7 +735,7 @@ namespace roulette
 			}
 			else
 			{
-				mp_table->check_limits(m_chips, chip); // y == cy, x = cx
+				if (emit) mp_table->check_limits(m_chips, chip); // y == cy, x = cx
 			}
 			break;
 		case roulette::EField::Number4:
@@ -874,7 +877,7 @@ namespace roulette
 			}
 			else
 			{
-				mp_table->check_limits(m_chips, chip); // y == cy, x = cx
+				if (emit) mp_table->check_limits(m_chips, chip); // y == cy, x = cx
 			}
 			break;
 		default:
@@ -1340,6 +1343,24 @@ namespace roulette
 		{
 			result += static_cast<unsigned>(get<0>(*iter));
 		}
+	}
+
+	bool Field::on_query_tooltip(int x, int y, bool /*keyboard_tooltip*/, const Glib::RefPtr<Gtk::Tooltip>& tooltip)
+	{
+		type_chip chip = make_shared<type_chip_tuple>(make_tuple(EChip::Chip1, Gdk::Point(x, y), EBet::UNDEFINED));
+		calculate_points(chip, false);
+		unsigned result = 0;
+
+		for (auto iter : m_chips)
+		{
+			if (get<1>(*iter).equal(get<1>(*chip)))
+			{
+				result += static_cast<unsigned>(get<0>(*iter));
+			}
+		}
+
+		tooltip->set_text("current bet: " + to_string(result));
+		return true;
 	}
 
 #ifdef _MSC_VER

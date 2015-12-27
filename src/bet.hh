@@ -38,6 +38,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <vector>	// due to and Childs_t
 #include <memory>
 #include <tuple>
+#include <string> // used in assign_name
 
 #include <gdkmm/types.h> // Gdk::Point
 #include <gdkmm/pixbuf.h>
@@ -83,45 +84,14 @@ namespace roulette
 		inline type_set get_selection() const; // numbers included in this bet
 
 	private:
-		// new constructor
+
+		// methods
+		void assign_name();
+
+		// members
 		type_chip m_chip;
 		type_set mp_set;
-		//boost::uuids::uuid m_uuid;
-
-#if 0
-		// methods
-		EBet get_id() const; // ID
-		unsigned get_childs() const; // amount of childs
-		unsigned get_numbers() const; // amount of numbers
-		type_selection get_selection() const;
-		unsigned get_number(const unsigned& index) const; // reference number
-		
-		void set_points(Gdk::Point& point);
-		Gdk::Point get_points() const;
-
-		EBet get_child_id(const unsigned& child) const; // ID of a child 
-		unsigned get_child_chip_count(const unsigned& child) const; // amount of chips of a child
-		unsigned get_child_number_count(const unsigned& child) const; // amount of numbers of a child
-		unsigned get_child_number(const unsigned& child, const unsigned& index) const; // reference number of a child
-
-		void print_properties(const bool& childs = false) const;
-
-	private:
-		// typedefs
-		typedef std::vector<std::shared_ptr<Bet>> Childs_t; // each bet has at least 1 child, so this is a "bet container"
-
-		/// begin initilizer list
-		EBet mId;
-		const Bet* mpParent;
-		std::shared_ptr<Childs_t> mpChilds;
-#endif
-
-#if 0
-
-		std::shared_ptr<type_selection> mpSelection;
-		const char* mpName;
 		signed mCoverage;
-		unsigned mChips;
 		float mReturn;
 		float mPayout;
 		float mWin;
@@ -144,16 +114,13 @@ namespace roulette
 		float mBinomialVariance;
 		float mStandardDeviation;
 		float mBinomialStandardDeviation;
-		Gdk::Point m_point;
-		/// end initilizer list
-		
-		// methods
-		void assign_name();
-		void set_part_1(const unsigned& chips);
-		void set_part_2(const ETable& table, const unsigned& nums, const unsigned& chips);
-		void fill_childs(const ETable& table, const std::shared_ptr<type_selection> selection, const int& chips, Gdk::Point point);
-#endif
+		std::string m_name;
 	};
+
+#ifdef _MSC_VER
+#pragma region
+#endif // _MSC_VER
+
 	EBet Bet::get_id() const
 	{
 		return std::get<2>(*m_chip);
@@ -175,9 +142,92 @@ namespace roulette
 	}
 
 #ifdef _MSC_VER
-#pragma region
+#pragma endregion inlines
 #endif // _MSC_VER
+
+} // namespace roulette
+
+  ///<summary>
+  //
+  //	Construction order
+  //
+  //
+  //BetID			(bet identifier)
+  //CheckMemory		(check if numbers container is created by constructor)
+  //ptrParent		(pointer to parent bet/container)
+  //ptrLayouts		(supported tables)
+  //ptrMembers		(ptr to members class)
+  //ptrChilds		(nullptr means bet is SubBet)
+  //ptrNumbers		(first number is 0 or 1 (1 = next are real numbers, 0 = next are random numbers))
+  //
+  //Name			(name of a bet)
+  //
+  //FILL SUBBETS
+  //SET NUMBERS
+  //
+  //Coverage		(numbers covered)
+  //Minimum			(minimum chips allowed)
+  //Maximum			(maximum chips allowed)
+  //Chips			(chips placed / chips lost in 1 spin)
+  //Return			(cips returned if win)
+  //Payout			(payout factor)
+  //Win				(chips paid if win)	NEEDS RESULT FOR CONTAINER BET
+  //Result			(chips paid assuming wining all in a row)
+  //Lose			(chips lost assuming loosing all in a row)
+  //Odds			(odds against wining)
+  //ProbWin
+  //ProbPush
+  //ProbLose
+  //ExpectedReturn	(expected return in one spin)
+  //ExpectedValue	(player edge)
+  //AverageWin		(ratio of win and lose per 1 spin)
+  //
+  //FirstMoment
+  //SecondMoment
+  //ThirdMoment
+  //FourthMoment
+  //
+  //Skewness;
+  //Kurtosis;
+  //BinomialVariance;
+  //BinomStandardDeviation;
+  //Variance;
+  //StandardDeviation;
+  //
+  //
+  ///</summary>
+
 #if 0
+		// methods
+		unsigned get_childs() const; // amount of childs
+		unsigned get_numbers() const; // amount of numbers
+		unsigned get_number(const unsigned& index) const; // reference number
+		
+		void set_points(Gdk::Point& point);
+		Gdk::Point get_points() const;
+
+		EBet get_child_id(const unsigned& child) const; // ID of a child 
+		unsigned get_child_chip_count(const unsigned& child) const; // amount of chips of a child
+		unsigned get_child_number_count(const unsigned& child) const; // amount of numbers of a child
+		unsigned get_child_number(const unsigned& child, const unsigned& index) const; // reference number of a child
+
+		void print_properties(const bool& childs = false) const;
+
+	private:
+		// typedefs
+		typedef std::vector<std::shared_ptr<Bet>> Childs_t; // each bet has at least 1 child, so this is a "bet container"
+
+		/// begin initilizer list
+		const Bet* mpParent;
+		std::shared_ptr<Childs_t> mpChilds;
+		unsigned mChips;
+		Gdk::Point m_point;
+		/// end initilizer list
+		
+		void set_part_1(const unsigned& chips);
+		void set_part_2(const ETable& table, const unsigned& nums, const unsigned& chips);
+		void fill_childs(const ETable& table, const std::shared_ptr<type_selection> selection, const int& chips, Gdk::Point point);
+
 	inline EBet Bet::get_id() const
 	{
 		return mId;
@@ -305,61 +355,7 @@ namespace roulette
 			return 0;
 		}
 	}
-#ifdef _MSC_VER
-#pragma endregion inlines
-#endif // _MSC_VER
 
 #endif
-} // namespace roulette
-
-///<summary>
-//
-//	Construction order
-//
-//
-//BetID			(bet identifier)
-//CheckMemory		(check if numbers container is created by constructor)
-//ptrParent		(pointer to parent bet/container)
-//ptrLayouts		(supported tables)
-//ptrMembers		(ptr to members class)
-//ptrChilds		(nullptr means bet is SubBet)
-//ptrNumbers		(first number is 0 or 1 (1 = next are real numbers, 0 = next are random numbers))
-//
-//Name			(name of a bet)
-//
-//FILL SUBBETS
-//SET NUMBERS
-//
-//Coverage		(numbers covered)
-//Minimum			(minimum chips allowed)
-//Maximum			(maximum chips allowed)
-//Chips			(chips placed / chips lost in 1 spin)
-//Return			(cips returned if win)
-//Payout			(payout factor)
-//Win				(chips paid if win)	NEEDS RESULT FOR CONTAINER BET
-//Result			(chips paid assuming wining all in a row)
-//Lose			(chips lost assuming loosing all in a row)
-//Odds			(odds against wining)
-//ProbWin
-//ProbPush
-//ProbLose
-//ExpectedReturn	(expected return in one spin)
-//ExpectedValue	(player edge)
-//AverageWin		(ratio of win and lose per 1 spin)
-//
-//FirstMoment
-//SecondMoment
-//ThirdMoment
-//FourthMoment
-//
-//Skewness;
-//Kurtosis;
-//BinomialVariance;
-//BinomStandardDeviation;
-//Variance;
-//StandardDeviation;
-//
-//
-///</summary>
 
 #endif // BET_HH

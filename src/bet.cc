@@ -49,6 +49,7 @@ namespace roulette
 	using std::make_shared;
 	using std::move;
 	using std::to_string;
+	using std::get;
 
 	// TODO selection as array
 	//Bet::Bet(const ETable table, const EBet bet, unsigned chip_info, Gdk::Point& point,
@@ -106,10 +107,32 @@ namespace roulette
 	Bet::Bet(/*const*/ type_chip chip, type_set selection) :
 		IErrorHandler("Bet"),
 		m_chip(chip),
-		mp_set(selection)
+		mp_set(selection),
+		mCoverage(1),
+		mReturn(0.f),
+		mPayout(0.f),
+		mWin(0.f),
+		mResult(0.f),
+		mLose(0.f),
+		mOdds(0.f),
+		mProbWin(0.f),
+		mProbPush(0.f),
+		mProbLose(0.f),
+		mExpectedValue(0.f),
+		mExpectedReturn(0.f),
+		mAverageWin(0.f),
+		mFirstMoment(0),
+		mSecondMoment(0),
+		mThirdMoment(0),
+		mFourthMoment(0),
+		mSkewness(0.f),
+		mKurtosis(0.f),
+		mVariance(0.f),
+		mBinomialVariance(0.f),
+		mStandardDeviation(0.f),
+		mBinomialStandardDeviation(0.f)
 	{
-		//static boost::uuids::basic_random_generator<boost::mt19937> generator;
-		//m_uuid = generator();
+		assign_name();
 	}
 
 	Bet::Bet(Bet&& ref) :
@@ -144,6 +167,225 @@ namespace roulette
 			mp_set = ref.mp_set;
 		}
 		return *this;
+	}
+
+	void Bet::assign_name()
+	{
+		switch (get<2>(*m_chip))
+		{
+		case EBet::StraightUp:
+			m_name = "Straight up";
+			break;
+		case EBet::Split:
+			m_name = "Split";
+			break;
+		case EBet::Street:
+			m_name = "Street";
+			break;
+		case EBet::Corner:
+			m_name = "Corner";
+			break;
+		case EBet::Basket:
+			m_name = "Basket";
+			break;
+		case EBet::Line:
+			m_name = "Line";
+			break;
+		case EBet::Column1:
+			m_name = "Column1";
+			break;
+		case EBet::Column2:
+			m_name = "Column2";
+			break;
+		case EBet::Column3:
+			m_name = "Column3";
+			break;
+		case EBet::Dozen1:
+			m_name = "Dozen1";
+			break;
+		case EBet::Dozen2:
+			m_name = "Dozen2";
+			break;
+		case EBet::Dozen3:
+			m_name = "Dozen3";
+			break;
+		case EBet::High:
+			m_name = "High";
+			break;
+		case EBet::Low:
+			m_name = "Low";
+			break;
+		case EBet::Red:
+			m_name = "Red";
+			break;
+		case EBet::Black:
+			m_name = "Black";
+			break;
+		case EBet::Even:
+			m_name = "Even";
+			break;
+		case EBet::Odd:
+			m_name = "Odd";
+			break;
+		case EBet::VoisinsDeZero:
+			m_name = "Voisins de zero";
+			break;
+		case EBet::TriesDuCylindre:
+			m_name = "Tries du cylindre";
+			break;
+		case EBet::OrphelinsEnPlen:
+			m_name = "Orphelins en plen";
+			break;
+		case EBet::OrphelinsACheval:
+			m_name = "Orphelins a Cheval";
+			break;
+		case EBet::Jeu0:
+			m_name = "Jeu 0";
+			break;
+		case EBet::Jeu79:
+			m_name = "Jeu 7/9";
+			break;
+		case EBet::RedSplits:
+			m_name = "Red splits";
+			break;
+		case EBet::BlackSplits:
+			m_name = "Black Splits";
+			break;
+		case EBet::Snake:
+			m_name = "Snake";
+			break;
+		case EBet::Neighbor1:
+			m_name = "Neighbor 1";
+			break;
+		case EBet::Neighbor2:
+			m_name = "Neighbor 2";
+			break;
+		case EBet::Neighbor3:
+			m_name = "Neighbor 3";
+			break;
+		case EBet::Neighbor4:
+			m_name = "Neighbor 4";
+			break;
+		case EBet::Neighbor5:
+			m_name = "Neighbor 5";
+			break;
+		case EBet::FinalesEnPlen0:
+			m_name = "Finales en plen 0";
+			break;
+		case EBet::FinalesEnPlen1:
+			m_name = "Finales en plen 1";
+			break;
+		case EBet::FinalesEnPlen2:
+			m_name = "Finales en plen 2";
+			break;
+		case EBet::FinalesEnPlen3:
+			m_name = "Finales en plen 3";
+			break;
+		case EBet::FinalesEnPlen4:
+			m_name = "Finales en plen 4";
+			break;
+		case EBet::FinalesEnPlen5:
+			m_name = "Finales en plen 5";
+			break;
+		case EBet::FinalesEnPlen6:
+			m_name = "Finales en plen 6";
+			break;
+		case EBet::FinalesEnPlen7:
+			m_name = "Finales en plen 7";
+			break;
+		case EBet::FinalesEnPlen8:
+			m_name = "Finales en plen 8";
+			break;
+		case EBet::FinalesEnPlen9:
+			m_name = "Finales en plen 9";
+			break;
+		case EBet::FinalesACheval01:
+			m_name = "Finales a cheval 0/1";
+			break;
+		case EBet::FinalesACheval12:
+			m_name = "Finales a cheval 1/2";
+			break;
+		case EBet::FinalesACheval23:
+			m_name = "Finales a cheval 2/3";
+			break;
+		case EBet::FinalesACheval34:
+			m_name = "Finales a cheval 3/4";
+			break;
+		case EBet::FinalesACheval45:
+			m_name = "Finales a cheval 4/5";
+			break;
+		case EBet::FinalesACheval56:
+			m_name = "Finales a cheval 5/6";
+			break;
+		case EBet::FinalesACheval67:
+			m_name = "Finales a cheval 6/7";
+			break;
+		case EBet::FinalesACheval78:
+			m_name = "Finales a cheval 7/8";
+			break;
+		case EBet::FinalesACheval89:
+			m_name = "Finales a cheval 8/9";
+			break;
+		case EBet::FinalesACheval910:
+			m_name = "Finales a cheval 9/10";
+			break;
+		case EBet::FinalesACheval03:
+			m_name = "Finales a cheval 0/3";
+			break;
+		case EBet::FinalesACheval14:
+			m_name = "Finales a cheval 1/4";
+			break;
+		case EBet::FinalesACheval25:
+			m_name = "Finales a cheval 2/5";
+			break;
+		case EBet::FinalesACheval36:
+			m_name = "Finales a cheval 3/6";
+			break;
+		case EBet::FinalesACheval47:
+			m_name = "Finales a cheval 4/7";
+			break;
+		case EBet::FinalesACheval58:
+			m_name = "Finales a cheval 5/8";
+			break;
+		case EBet::FinalesACheval69:
+			m_name = "Finales a cheval 6/9";
+			break;
+		case EBet::FinalesACheval710:
+			m_name = "Finales a cheval 7/10";
+			break;
+		case EBet::FinalesACheval811:
+			m_name = "Finales a cheval 8/11";
+			break;
+		case EBet::FinalesACheval912:
+			m_name = "Finales a cheval 9/12";
+			break;
+		case EBet::Maximus0:
+			m_name = "Maximus 0";
+			break;
+		case EBet::Maximus00:
+			m_name = "Maximus 00";
+			break;
+		case EBet::Maximus13:
+			m_name = "Maximus 1/3";
+			break;
+		case EBet::Maximus2:
+			m_name = "Maximus 2";
+			break;
+		case EBet::Maximus35:
+			m_name = "Maximus 35";
+			break;
+		case EBet::Maximus3436:
+			m_name = "Maximus 34, 36";
+			break;
+		case EBet::MaximusColumn2:
+			m_name = "Maximus column 2";
+			break;
+		case EBet::MaximusColumn13:
+			m_name = "Maximus column 13";
+			break;
+		default:
+			error_handler(error("Bet -> assign_name -> Name not found"));
+		}
 	}
 
 #if 0
@@ -237,7 +479,7 @@ namespace roulette
 			//delete mpSelection; // 2.
 			mpSelection = std::move(ref.mpSelection);
 			//ref.mpSelection = nullptr;
-			mpName = ref.mpName;
+			m_name = ref.mpName;
 			mCoverage = ref.mCoverage;
 			mChips = ref.mChips;
 			mReturn = ref.mReturn;
@@ -277,7 +519,7 @@ namespace roulette
 			mpChilds = make_shared<Childs_t>(*ref.mpChilds);
 			//delete mpSelection; // 2.
 			mpSelection = make_shared<type_selection>(*ref.mpSelection);
-			mpName = ref.mpName;
+			m_name = ref.mpName;
 			mCoverage = ref.mCoverage;
 			mChips = ref.mChips;
 			mReturn = ref.mReturn;
@@ -636,224 +878,6 @@ namespace roulette
 				mpChilds->at(i)->print_properties();
 	}
 	
-	void Bet::assign_name()
-	{
-		switch (mId)
-		{
-		case EBet::StraightUp:
-			mpName = "Straight up";
-			break;
-		case EBet::Split:
-			mpName = "Split";
-			break;
-		case EBet::Street:
-			mpName = "Street";
-			break;
-		case EBet::Corner:
-			mpName = "Corner";
-			break;
-		case EBet::Basket:
-			mpName = "Basket";
-			break;
-		case EBet::Line:
-			mpName = "Line";
-			break;
-		case EBet::Column1:
-			mpName = "Column1";
-			break;
-		case EBet::Column2:
-			mpName = "Column2";
-			break;
-		case EBet::Column3:
-			mpName = "Column3";
-			break;
-		case EBet::Dozen1:
-			mpName = "Dozen1";
-			break;
-		case EBet::Dozen2:
-			mpName = "Dozen2";
-			break;
-		case EBet::Dozen3:
-			mpName = "Dozen3";
-			break;
-		case EBet::High:
-			mpName = "High";
-			break;
-		case EBet::Low:
-			mpName = "Low";
-			break;
-		case EBet::Red:
-			mpName = "Red";
-			break;
-		case EBet::Black:
-			mpName = "Black";
-			break;
-		case EBet::Even:
-			mpName = "Even";
-			break;
-		case EBet::Odd:
-			mpName = "Odd";
-			break;
-		case EBet::VoisinsDeZero:
-			mpName = "Voisins de zero";
-			break;
-		case EBet::TriesDuCylindre:
-			mpName = "Tries du cylindre";
-			break;
-		case EBet::OrphelinsEnPlen:
-			mpName = "Orphelins en plen";
-			break;
-		case EBet::OrphelinsACheval:
-			mpName = "Orphelins a Cheval";
-			break;
-		case EBet::Jeu0:
-			mpName = "Jeu 0";
-			break;
-		case EBet::Jeu79:
-			mpName = "Jeu 7/9";
-			break;
-		case EBet::RedSplits:
-			mpName = "Red splits";
-			break;
-		case EBet::BlackSplits:
-			mpName = "Black Splits";
-			break;
-		case EBet::Snake:
-			mpName = "Snake";
-			break;
-		case EBet::Neighbor1:
-			mpName = "Neighbor 1";
-			break;
-		case EBet::Neighbor2:
-			mpName = "Neighbor 2";
-			break;
-		case EBet::Neighbor3:
-			mpName = "Neighbor 3";
-			break;
-		case EBet::Neighbor4:
-			mpName = "Neighbor 4";
-			break;
-		case EBet::Neighbor5:
-			mpName = "Neighbor 5";
-			break;
-		case EBet::FinalesEnPlen0:
-			mpName = "Finales en plen 0";
-			break;
-		case EBet::FinalesEnPlen1:
-			mpName = "Finales en plen 1";
-			break;
-		case EBet::FinalesEnPlen2:
-			mpName = "Finales en plen 2";
-			break;
-		case EBet::FinalesEnPlen3:
-			mpName = "Finales en plen 3";
-			break;
-		case EBet::FinalesEnPlen4:
-			mpName = "Finales en plen 4";
-			break;
-		case EBet::FinalesEnPlen5:
-			mpName = "Finales en plen 5";
-			break;
-		case EBet::FinalesEnPlen6:
-			mpName = "Finales en plen 6";
-			break;
-		case EBet::FinalesEnPlen7:
-			mpName = "Finales en plen 7";
-			break;
-		case EBet::FinalesEnPlen8:
-			mpName = "Finales en plen 8";
-			break;
-		case EBet::FinalesEnPlen9:
-			mpName = "Finales en plen 9";
-			break;
-		case EBet::FinalesACheval01:
-			mpName = "Finales a cheval 0/1";
-			break;
-		case EBet::FinalesACheval12:
-			mpName = "Finales a cheval 1/2";
-			break;
-		case EBet::FinalesACheval23:
-			mpName = "Finales a cheval 2/3";
-			break;
-		case EBet::FinalesACheval34:
-			mpName = "Finales a cheval 3/4";
-			break;
-		case EBet::FinalesACheval45:
-			mpName = "Finales a cheval 4/5";
-			break;
-		case EBet::FinalesACheval56:
-			mpName = "Finales a cheval 5/6";
-			break;
-		case EBet::FinalesACheval67:
-			mpName = "Finales a cheval 6/7";
-			break;
-		case EBet::FinalesACheval78:
-			mpName = "Finales a cheval 7/8";
-			break;
-		case EBet::FinalesACheval89:
-			mpName = "Finales a cheval 8/9";
-			break;
-		case EBet::FinalesACheval910:
-			mpName = "Finales a cheval 9/10";
-			break;
-		case EBet::FinalesACheval03:
-			mpName = "Finales a cheval 0/3";
-			break;
-		case EBet::FinalesACheval14:
-			mpName = "Finales a cheval 1/4";
-			break;
-		case EBet::FinalesACheval25:
-			mpName = "Finales a cheval 2/5";
-			break;
-		case EBet::FinalesACheval36:
-			mpName = "Finales a cheval 3/6";
-			break;
-		case EBet::FinalesACheval47:
-			mpName = "Finales a cheval 4/7";
-			break;
-		case EBet::FinalesACheval58:
-			mpName = "Finales a cheval 5/8";
-			break;
-		case EBet::FinalesACheval69:
-			mpName = "Finales a cheval 6/9";
-			break;
-		case EBet::FinalesACheval710:
-			mpName = "Finales a cheval 7/10";
-			break;
-		case EBet::FinalesACheval811:
-			mpName = "Finales a cheval 8/11";
-			break;
-		case EBet::FinalesACheval912:
-			mpName = "Finales a cheval 9/12";
-			break;
-		case EBet::Maximus0:
-			mpName = "Maximus 0";
-			break;
-		case EBet::Maximus00:
-			mpName = "Maximus 00";
-			break;
-		case EBet::Maximus13:
-			mpName = "Maximus 1/3";
-			break;
-		case EBet::Maximus2:
-			mpName = "Maximus 2";
-			break;
-		case EBet::Maximus35:
-			mpName = "Maximus 35";
-			break;
-		case EBet::Maximus3436:
-			mpName = "Maximus 34, 36";
-			break;
-		case EBet::MaximusColumn2:
-			mpName = "Maximus column 2";
-			break;
-		case EBet::MaximusColumn13:
-			mpName = "Maximus column 13";
-			break;
-		default:
-			throw error("Bet -> assign_name -> Name not found");
-		}
-	}
 	
 	void Bet::set_part_1(const unsigned& chips)
 	{

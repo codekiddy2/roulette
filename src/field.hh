@@ -156,6 +156,7 @@ namespace roulette
 		void assign_apperance(EField index);
 		void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int field_width, int field_height);
 		void place_chip(type_chip chip);
+		bool on_query_tooltip(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
 
 		// members
 		type_chip_container m_chips;
@@ -169,7 +170,6 @@ namespace roulette
 		EField m_index;
 		/// end initializer list
 		
-
 		// deleted
 		Field(const Field&) = delete;
 		Field(const Field&&) = delete;
