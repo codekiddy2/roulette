@@ -35,22 +35,21 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
+// roulette
+#include "types.hh"
+
 // std
 #include <string>
 #include <exception>
 
 namespace roulette
 {
-	// forward declarations
-	enum class EBet : unsigned;
-	enum class EField : unsigned;
-
 	class error final :
 		public std::exception
 	{
 	public:
 		// constructors
-		inline error(const char* description, const short code = 0) noexcept;
+		inline error(const char* description, const uint16 code = 0) noexcept;
 		inline error(const error& ref) noexcept;
 		inline error(error&& ref) noexcept;
 		inline error& operator=(const error& rhs) noexcept;
@@ -58,11 +57,11 @@ namespace roulette
 
 		// methods
 		inline const char* what() const noexcept override;
-		inline short code() const noexcept;
+		inline uint16 code() const noexcept;
 
 	private:
 		// members
-		const short m_code;
+		const uint16 m_code;
 		const char* m_description;
 	};
 
@@ -88,8 +87,8 @@ namespace roulette
 		virtual void print(const char* info, bool newline = false) noexcept;
 		virtual void print(const unsigned char* info, bool newline = false) noexcept;
 		virtual void print(const int&& info, bool newline = false) noexcept;
-		virtual void print(const unsigned int info, bool newline = false) noexcept;
-		virtual void print(const unsigned long long&& info, bool newline = false) noexcept;
+		virtual void print(const uint16 info, bool newline = false) noexcept;
+		virtual void print(const uint64&& info, bool newline = false) noexcept;
 		virtual void print(EField& info, bool newline = false) noexcept;
 		virtual void print(EBet info, bool newline = false) noexcept;
 
@@ -121,7 +120,7 @@ namespace roulette
 		m_debug = debug;
 	}
 
-	error::error(const char* description, const short code) noexcept :
+	error::error(const char* description, const uint16 code) noexcept :
 		m_description(description),
 		m_code(code)
 	{ }
@@ -154,7 +153,7 @@ namespace roulette
 		return m_description;
 	}
 
-	short error::code() const noexcept
+	uint16 error::code() const noexcept
 	{
 		return m_code;
 	}

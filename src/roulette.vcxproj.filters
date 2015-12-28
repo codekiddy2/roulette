@@ -59,6 +59,9 @@
     <ClInclude Include="base_control.hh">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="types.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="table.cc">
@@ -104,6 +107,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="base_control.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="types.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -48,7 +48,6 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <gdkmm/rectangle.h> // Gtk::Allocation
 #include <cairomm/refptr.h>
 #include <cairomm/context.h>
-#include <sigc++/sigc++.h>
 #include <gdkmm/event.h> // GdkEventButton
 #include <gtkmm/tooltip.h>
 
@@ -70,42 +69,39 @@ namespace roulette
 		// constructors
 		Field(EField field_index, Table* p_table);
 
-		// typedefs
-		typedef sigc::signal2<void, const EField&, type_chip> signal;
-		
 		// signals emited by number fields only
-		signal signal_bet_top;
-		signal signal_bet_bottom;
-		signal signal_bet_left;
-		signal signal_bet_right;
-		signal signal_bet_top_right;
-		signal signal_bet_top_left;
-		signal signal_bet_bottom_right;
-		signal signal_bet_bottom_left;
+		type_signal_chip signal_bet_top;
+		type_signal_chip signal_bet_bottom;
+		type_signal_chip signal_bet_left;
+		type_signal_chip signal_bet_right;
+		type_signal_chip signal_bet_top_right;
+		type_signal_chip signal_bet_top_left;
+		type_signal_chip signal_bet_bottom_right;
+		type_signal_chip signal_bet_bottom_left;
 
 		// sinals emited by zero and dozens to number fields
-		signal signal_bet_split1;
-		signal signal_bet_split2;
-		signal signal_bet_split3;
+		type_signal_chip signal_bet_split1;
+		type_signal_chip signal_bet_split2;
+		type_signal_chip signal_bet_split3;
 
-		signal signal_bet_street1; // used by dozens and zero only
-		signal signal_bet_street2; // used by dozens and zero only
-		signal signal_bet_street3; // used by dozens only
-		signal signal_bet_street4; // used by dozens only
+		type_signal_chip signal_bet_street1; // used by dozens and zero only
+		type_signal_chip signal_bet_street2; // used by dozens and zero only
+		type_signal_chip signal_bet_street3; // used by dozens only
+		type_signal_chip signal_bet_street4; // used by dozens only
 
-		signal signal_bet_basket; // used by zero and dozen1 only
+		type_signal_chip signal_bet_basket; // used by zero and dozen1 only
 		
 		// signals used by dozens only
-		signal signal_bet_line1; // used by dozen2 and dozen 3 only
-		signal signal_bet_line2;
-		signal signal_bet_line3;
-		signal signal_bet_line4;
-		signal signal_bet_line5; // not used by dozen1 and dozen2 only
+		type_signal_chip signal_bet_line1; // used by dozen2 and dozen 3 only
+		type_signal_chip signal_bet_line2;
+		type_signal_chip signal_bet_line3;
+		type_signal_chip signal_bet_line4;
+		type_signal_chip signal_bet_line5; // not used by dozen1 and dozen2 only
 
 		// methods
 		void on_signal_rebet();
 		inline const EField get_index() const noexcept;
-		inline void on_signal_spin(unsigned result) noexcept;
+		inline void on_signal_spin(uint16 result) noexcept;
 
 		// signal handlers
 		void on_signal_bet_bottom(const EField& sender, type_chip chip);
@@ -156,7 +152,7 @@ namespace roulette
 		type_chip_container m_chips;
 		type_chip_container m_chips_saved;
 		Pango::FontDescription m_font;
-		Glib::RefPtr<Pango::Layout> m_layout;
+		type_layout m_layout;
 
 		/// begin initializer list
 		Gdk::RGBA m_background;
@@ -182,7 +178,7 @@ namespace roulette
 		return m_index;
 	}
 
-	void Field::on_signal_spin(unsigned /*result*/) noexcept
+	void Field::on_signal_spin(uint16 /*result*/) noexcept
 	{
 		m_chips_saved = m_chips;
 	}

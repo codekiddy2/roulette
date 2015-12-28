@@ -439,7 +439,7 @@ namespace roulette
 #if 0
 
 	// TODO selection as array
-	//Bet::Bet(const ETable table, const EBet bet, unsigned chip_info, Gdk::Point& point,
+	//Bet::Bet(const ETable table, const EBet bet, uint16 chip_info, Gdk::Point& point,
 	//	std::shared_ptr<type_selection> selection, Bet* parent) :
 	//	mId(bet),
 	//	mpParent(parent),
@@ -447,7 +447,7 @@ namespace roulette
 	//	mpSelection(selection),
 	//	mpName(nullptr),
 	//	mCoverage(1),
-	//	mChips(static_cast<unsigned>(chip_info)),
+	//	mChips(static_cast<uint16>(chip_info)),
 	//	mReturn(0.f),
 	//	mPayout(0.f),
 	//	mWin(0.f),
@@ -481,9 +481,9 @@ namespace roulette
 	//		mpChilds = make_shared<Childs_t>();
 	//		mpSelection = make_shared<type_selection>();
 	//		fill_childs(table, selection, mChips, m_point);
-	//		unsigned nums = table > ETable::American ? 37 : static_cast<unsigned>(table);
+	//		uint16 nums = table > ETable::American ? 37 : static_cast<uint16>(table);
 
-	//		for (unsigned i = 0; i < mpChilds->size(); ++i)
+	//		for (uint16 i = 0; i < mpChilds->size(); ++i)
 	//			mpChilds->at(i)->set_part_2(table, nums, mChips);
 
 	//		set_part_1(mChips);
@@ -707,45 +707,45 @@ namespace roulette
 			break;
 
 		case EBet::VoisinsDeZero:
-			for (unsigned i = 0; i < 10; i += 2)
+			for (uint16 i = 0; i < 10; i += 2)
 				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<type_selection>(VoisinsDeZero.find(i), VoisinsDeZero.find(i + 2)), this));
 			mpChilds->push_back(make_shared<Bet>(table, EBet::Street, chips, make_shared<type_selection>(VoisinsDeZero.find(10), VoisinsDeZero.find(13)), this));
 			mpChilds->push_back(make_shared<Bet>(table, EBet::Corner, chips, make_shared<type_selection>(VoisinsDeZero.find(13), VoisinsDeZero.find(17)), this));
 			break;
 		case EBet::TriesDuCylindre:
-			for (unsigned i = 0; i < 12; i += 2)
+			for (uint16 i = 0; i < 12; i += 2)
 				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<type_selection>(TriesDuCylindre.find(i), TriesDuCylindre.find(i + 2)), this));
 			break;
 		case EBet::OrphelinsEnPlen:
-			for (unsigned i = 0; i < 8; ++i)
+			for (uint16 i = 0; i < 8; ++i)
 				mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<type_selection>(OrphelinsEnPlen.find(1), OrphelinsEnPlen.find(i)), this));
 			break;
 		case EBet::OrphelinsACheval:
 			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<type_selection>(OrphelinsACheval.find(1), OrphelinsACheval.find(1)), this));
-			for (unsigned i = 1; i < 8; i += 2)
+			for (uint16 i = 1; i < 8; i += 2)
 				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<type_selection>(OrphelinsACheval.find(i), OrphelinsACheval.find(i + 2)), this));
 			break;
 		case EBet::Jeu0:
 			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<type_selection>(Jeu0.find(1), Jeu0.find(26)), this));
-			for (unsigned i = 1; i < 6; i += 2)
+			for (uint16 i = 1; i < 6; i += 2)
 				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<type_selection>(Jeu0.find(i), Jeu0.find(i + 2)), this));
 			break;
 		case EBet::Jeu79:
 			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<type_selection>(Jeu79.find(1), Jeu79.find(19)), this));
 			mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<type_selection>(Jeu79.find(1), Jeu79.find(27)), this));
-			for (unsigned i = 2; i < 9; i += 2)
+			for (uint16 i = 2; i < 9; i += 2)
 				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<type_selection>(Jeu79.find(i), Jeu79.find(i + 2)), this));
 			break;
 		case EBet::RedSplits:
-			for (unsigned i = 0; i < 4; i += 2)
+			for (uint16 i = 0; i < 4; i += 2)
 				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<type_selection>(RedSplits.begin(), RedSplits.find(i + 2)), this));
 			break;
 		case EBet::BlackSplits:
-			for (unsigned i = 0; i < 14; i += 2)
+			for (uint16 i = 0; i < 14; i += 2)
 				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<type_selection>(BlackSplits.begin(), BlackSplits.find(i + 2)), this));
 			break;
 		case EBet::Snake:
-			for (unsigned i = 0; i < 12; ++i)
+			for (uint16 i = 0; i < 12; ++i)
 				mpChilds->push_back(make_shared<Bet>(table, EBet::StraightUp, chips, make_shared<type_selection>(Snake.begin(), Snake.find(i)), this));
 			break;
 		case EBet::Neighbor1:
@@ -955,22 +955,22 @@ namespace roulette
 		cout << "Covered numbers:" << endl;
 
 		if (mpChilds) // it is parent
-			for (unsigned i = 0; i < mpChilds->size(); ++i)
+			for (uint16 i = 0; i < mpChilds->size(); ++i)
 			{
 				cout << mpChilds->at(i)->mpName << ":" << endl;
-				for (unsigned j = 0; j < mpChilds->at(i)->mpSelection->size(); ++j)
+				for (uint16 j = 0; j < mpChilds->at(i)->mpSelection->size(); ++j)
 					cout << *mpChilds->at(i)->mpSelection->find(j) << endl;
 			}
 
-		else for (unsigned i = 0; i < mpSelection->size(); ++i)
+		else for (uint16 i = 0; i < mpSelection->size(); ++i)
 			cout << *mpSelection->find(i) << endl;
 
 		if (childs)	// print child properties
-			for (unsigned i = 0; i < mpChilds->size(); ++i)
+			for (uint16 i = 0; i < mpChilds->size(); ++i)
 				mpChilds->at(i)->print_properties();
 	}
 	
-	void Bet::set_part_1(const unsigned& chips)
+	void Bet::set_part_1(const uint16& chips)
 	{
 		using std::sort;
 
@@ -978,8 +978,8 @@ namespace roulette
 		 //COVERAGE
 		if (mpSelection->empty())  // it is parent
 		{
-			for (unsigned i = 0; i < mpChilds->size(); ++i)
-				for (unsigned j = 0; j < mpChilds->at(i)->mpSelection->size(); ++j)
+			for (uint16 i = 0; i < mpChilds->size(); ++i)
+				for (uint16 j = 0; j < mpChilds->at(i)->mpSelection->size(); ++j)
 				{
 					mpSelection->insert(*mpChilds->at(i)->mpSelection->find(j));
 				}
@@ -989,7 +989,7 @@ namespace roulette
 
 		if (mpSelection->size())
 		{
-			for (unsigned i = 0; i < mpSelection->size() - 1; ++i)
+			for (uint16 i = 0; i < mpSelection->size() - 1; ++i)
 			{
 				if (mpSelection->find(i) != mpSelection->find(i + 1))
 					++mCoverage;
@@ -999,14 +999,14 @@ namespace roulette
 		// CHIPS
 		if (mpChilds)  // it is parent
 		{
-			for (unsigned i = 0; i < mpChilds->size(); ++i)
+			for (uint16 i = 0; i < mpChilds->size(); ++i)
 				mChips += mpChilds->at(i)->mChips;
 
 			// RETURN
 			float SUMproduct = 0.f;
-			unsigned SUMcoverage = 0;
+			uint16 SUMcoverage = 0;
 
-			for (unsigned i = 0; i < mpChilds->size(); ++i)
+			for (uint16 i = 0; i < mpChilds->size(); ++i)
 			{
 				SUMproduct += mpChilds->at(i)->mCoverage * mpChilds->at(i)->mReturn;
 				SUMcoverage += mpChilds->at(i)->mCoverage;
@@ -1016,7 +1016,7 @@ namespace roulette
 			// PAYOUT
 			SUMproduct = 0.f;
 			SUMcoverage = 0;
-			for (unsigned i = 0; i < mpChilds->size(); ++i)
+			for (uint16 i = 0; i < mpChilds->size(); ++i)
 			{
 				SUMproduct += mpChilds->at(i)->mCoverage * mpChilds->at(i)->mPayout;
 				SUMcoverage += mpChilds->at(i)->mCoverage;
@@ -1118,7 +1118,7 @@ namespace roulette
 		mPayout = floor(36.f / mCoverage - 1);
 	}
 	
-	void Bet::set_part_2(const ETable& table, const unsigned& nums, const unsigned& chips)
+	void Bet::set_part_2(const ETable& table, const uint16& nums, const uint16& chips)
 	{
 		using std::floor;
 		using std::pow;
@@ -1129,7 +1129,7 @@ namespace roulette
 		{
 			float SUMchips = 0.f;
 
-			for (unsigned i = 0; i < mpParent->mpChilds->size(); ++i)
+			for (uint16 i = 0; i < mpParent->mpChilds->size(); ++i)
 				SUMchips += mpParent->mpChilds->at(i)->mChips;
 
 			mWin = mPayout * mChips - (SUMchips - mChips);
@@ -1137,7 +1137,7 @@ namespace roulette
 		}
 		else // it is parent
 		{
-			for (unsigned i = 0; i < mpChilds->size(); ++i)
+			for (uint16 i = 0; i < mpChilds->size(); ++i)
 				mResult += mpChilds->at(i)->mResult;
 
 			mWin = mResult / mCoverage;
@@ -1181,7 +1181,7 @@ namespace roulette
 		// EXPECTED RETURN AND VALUE
 		if (mpChilds) // it is parent
 		{
-			for (unsigned i = 0; i < mpChilds->size(); ++i)
+			for (uint16 i = 0; i < mpChilds->size(); ++i)
 				mExpectedReturn += mpChilds->at(i)->mExpectedReturn;
 
 			mExpectedValue = mExpectedReturn / mChips;

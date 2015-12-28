@@ -106,7 +106,7 @@ namespace roulette
 			refGreenBuffer->end());
 	}
 
-	void History::set_result(unsigned result)
+	void History::set_result(uint16 result)
 	{
 		string red_output, black_output, green_output;
 		string single_space = " ", triple_space = "   ", newline = "\n", tab = "\t";

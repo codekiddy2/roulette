@@ -39,7 +39,7 @@ namespace roulette
 {
 	// forward declarations
 	class Engine;
-	enum class EChip : unsigned;
+	enum class EChip : uint16;
 
 	class Chip final : 
 		public BaseControl
@@ -60,7 +60,7 @@ namespace roulette
 
 	private:
 		/// begin initializer list
-		unsigned m_value;
+		uint16 m_value;
 		Engine* mp_engine;
 		Glib::RefPtr<Gdk::Pixbuf> refIcon;
 		/// end initializer list

@@ -34,9 +34,6 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "error.hh"
 #include "main.hh"
 
-// std
-#include <map>
-
 // gtkmm
 #include <glibmm/refptr.h>
 #include <cairomm/context.h>
@@ -53,9 +50,8 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
-	class Engine;
 	class Table;
-	enum class ELayout : unsigned;
+	class Engine;
 
 	class InfoBar :
 		public Gtk::DrawingArea,
@@ -82,7 +78,7 @@ namespace roulette
 		Pango::FontDescription font;
 		Gdk::RGBA m_foreground = Gdk::RGBA("rgb(0, 190, 0)");
 		Gdk::RGBA m_background = Gdk::RGBA("rgb(0, 0, 0)");
-		std::map<ELayout, Glib::RefPtr<Pango::Layout>> m_layouts;
+		type_layout_container m_layouts;
 		Glib::RefPtr<Gdk::Window> refGdkWindow;
 	};
 

@@ -898,7 +898,7 @@ namespace roulette
 				signal_bet_top_right.emit(m_index, chip);
 
 				mp_table->signal_bet.emit(make_shared<Bet>(chip,
-					make_shared<type_raw_set>(type_raw_set{ static_cast<unsigned>(m_index) })));
+					make_shared<type_raw_set>(type_raw_set{ static_cast<uint16>(m_index) })));
 
 				clear_all();
 				m_chips_saved = m_chips;
@@ -1154,7 +1154,7 @@ namespace roulette
 									{
 									case EBet::StraightUp:
 										// TODO: making type_set for single number is not smart
-										p_set = make_shared<type_raw_set>(type_raw_set{ static_cast<unsigned>(m_index) });
+										p_set = make_shared<type_raw_set>(type_raw_set{ static_cast<uint16>(m_index) });
 										break;
 									case EBet::Column1:
 										p_set = Column1;
@@ -1342,10 +1342,10 @@ namespace roulette
 	void Field::place_chip(type_chip chip)
 	{
 		// TODO: unfinished function
-		unsigned result = 0;
+		uint16 result = 0;
 		for (auto iter : m_chips)
 		{
-			result += static_cast<unsigned>(get<0>(*iter));
+			result += static_cast<uint16>(get<0>(*iter));
 		}
 	}
 
@@ -1353,13 +1353,13 @@ namespace roulette
 	{
 		type_chip chip = make_shared<type_chip_tuple>(make_tuple(EChip::Chip1, Gdk::Point(x, y), EBet::UNDEFINED));
 		calculate_points(chip, false);
-		unsigned result = 0;
+		uint16 result = 0;
 
 		for (auto iter : m_chips)
 		{
 			if (get<1>(*iter).equal(get<1>(*chip)))
 			{
-				result += static_cast<unsigned>(get<0>(*iter));
+				result += static_cast<uint16>(get<0>(*iter));
 			}
 		}
 
@@ -1437,10 +1437,10 @@ namespace roulette
 		else
 		{
 			// sender is number from column below, therefore their number is this fields' number - 1
-			unsigned neighbor_number = static_cast<unsigned>(m_index) - 1;
+			uint16 neighbor_number = static_cast<uint16>(m_index) - 1;
 			mp_table->signal_bet.emit(make_shared<Bet>(
 				chip, make_shared<type_raw_set>(
-					type_raw_set{ neighbor_number, static_cast<unsigned>(m_index) })));
+					type_raw_set{ neighbor_number, static_cast<uint16>(m_index) })));
 		}
 
 		if (get<0>(*chip) == EChip::Eraser)
@@ -1539,10 +1539,10 @@ namespace roulette
 		else
 		{
 			// sender is number from column above, therefore their number is this fields' number + 1
-			unsigned neighbor_number = static_cast<unsigned>(m_index) + 1;
+			uint16 neighbor_number = static_cast<uint16>(m_index) + 1;
 			mp_table->signal_bet.emit(make_shared<Bet>(
 				chip, make_shared<type_raw_set>(
-					type_raw_set{ static_cast<unsigned>(m_index), neighbor_number })));
+					type_raw_set{ static_cast<uint16>(m_index), neighbor_number })));
 		}
 
 		if (get<0>(*chip) == EChip::Eraser)
@@ -1569,16 +1569,16 @@ namespace roulette
 		if (m_index > EField::Number2)
 		{
 			// sender is number from the left, therefore their number is this fields' number - 3
-			unsigned neighbor_number = static_cast<unsigned>(m_index) - 3;
+			uint16 neighbor_number = static_cast<uint16>(m_index) - 3;
 			mp_table->signal_bet.emit(make_shared<Bet>(
 				chip, make_shared<type_raw_set>(
-					type_raw_set{ neighbor_number, static_cast<unsigned>(m_index) })));
+					type_raw_set{ neighbor_number, static_cast<uint16>(m_index) })));
 		}
 		else // this is number 1 or 2 and neighbor is 0
 		{
 			mp_table->signal_bet.emit(make_shared<Bet>(
 				chip, make_shared<type_raw_set>(
-					type_raw_set{ 0, static_cast<unsigned>(m_index) })));
+					type_raw_set{ 0, static_cast<uint16>(m_index) })));
 		}
 
 		if (get<0>(*chip) == EChip::Eraser)
@@ -1616,15 +1616,15 @@ namespace roulette
 			// sender is either 1, 2 or 3 so we need to adjust on which numbers the bet is placed (0 and sender)
 			mp_table->signal_bet.emit(make_shared<Bet>(
 				chip, make_shared<type_raw_set>(
-					type_raw_set{ static_cast<unsigned>(m_index), static_cast<unsigned>(sender) })));
+					type_raw_set{ static_cast<uint16>(m_index), static_cast<uint16>(sender) })));
 		}
 		else if (m_index <= EField::Number36)
 		{
 			// sender is number from the right, therefore their number is this fields' number + 3
-			unsigned neighbor_number = static_cast<unsigned>(m_index) + 3;
+			uint16 neighbor_number = static_cast<uint16>(m_index) + 3;
 			mp_table->signal_bet.emit(make_shared<Bet>(
 				chip, make_shared<type_raw_set>(
-					type_raw_set{ static_cast<unsigned>(m_index), neighbor_number })));
+					type_raw_set{ static_cast<uint16>(m_index), neighbor_number })));
 		}
 
 		if (get<0>(*chip) == EChip::Eraser)
@@ -1763,10 +1763,10 @@ namespace roulette
 		}
 		else if((sender != EField::Number0) && (sender != EField::Number1)) // signal is received from column 2 or 3 (corner bets)
 		{
-			unsigned neighbor1 = static_cast<unsigned>(m_index) + 1;
-			unsigned neighbor2 = static_cast<unsigned>(m_index) + 3;
-			unsigned neighbor3 = static_cast<unsigned>(m_index) + 4;
-			p_set = make_shared<type_raw_set>(type_raw_set{static_cast<unsigned>(m_index), neighbor1, neighbor2, neighbor3});
+			uint16 neighbor1 = static_cast<uint16>(m_index) + 1;
+			uint16 neighbor2 = static_cast<uint16>(m_index) + 3;
+			uint16 neighbor3 = static_cast<uint16>(m_index) + 4;
+			p_set = make_shared<type_raw_set>(type_raw_set{static_cast<uint16>(m_index), neighbor1, neighbor2, neighbor3});
 			mp_table->signal_bet.emit(make_shared<Bet>(chip, p_set));
 		}
 	// signal will be emited by dozen2, skip re-emiting
@@ -1900,12 +1900,12 @@ namespace roulette
 				mp_table->signal_bet.emit(make_shared<Bet>(chip, Street02)); // m_index == Efield::Number2
 		}
 		// signal is received from column 2 or 3 (corner bets)
-		else if(static_cast<unsigned>(sender) == (static_cast<unsigned>(m_index) - 3) )
+		else if(static_cast<uint16>(sender) == (static_cast<uint16>(m_index) - 3) )
 		{
-			unsigned neighbor1 = static_cast<unsigned>(m_index) - 3;
-			unsigned neighbor2 = static_cast<unsigned>(m_index) - 2;
-			unsigned neighbor3 = static_cast<unsigned>(m_index) + 1;
-			p_set = make_shared<type_raw_set>(type_raw_set{ neighbor1, neighbor2, static_cast<unsigned>(m_index), neighbor3 });
+			uint16 neighbor1 = static_cast<uint16>(m_index) - 3;
+			uint16 neighbor2 = static_cast<uint16>(m_index) - 2;
+			uint16 neighbor3 = static_cast<uint16>(m_index) + 1;
+			p_set = make_shared<type_raw_set>(type_raw_set{ neighbor1, neighbor2, static_cast<uint16>(m_index), neighbor3 });
 			mp_table->signal_bet.emit(make_shared<Bet>(chip, p_set));
 		}
 

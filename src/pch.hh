@@ -49,9 +49,10 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <exception> // sed for error class
 #include <cmath>	// SetPart2 in bet..
 #include <utility> // for make_pair
-#include <map> // used in Table
-#include <unordered_set> // used for sets (sets.hh)
+#include <map> // used in Table and InfoBar
+#include <unordered_map> // used in Table
 #include <memory> // wide usage for shared_ptr
+#include <tuple> // for chip tuple
 
 // gtkmm
 #include <gtkmm/gtkmm.h>
@@ -67,8 +68,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <cairomm/cairomm.h>
 #include <pangomm/pangomm.h>
 
-#if 0
-#include <goocanvasmm\goocanvasmm.h> // not used
+#if 0 // not used
+#include <goocanvasmm\goocanvasmm.h>
 #endif
 
 // boost
@@ -76,8 +77,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <boost/filesystem.hpp> // used to check for existence of icons
 #include <boost/random/random_device.hpp> // used by Engine class
 
-#if 0
-// not used
+#if 0 // not used
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #endif

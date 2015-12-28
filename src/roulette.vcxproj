@@ -138,6 +138,7 @@
     <ClInclude Include="history.hh" />
     <ClInclude Include="infobar.hh" />
     <ClInclude Include="main.hh" />
+    <ClInclude Include="types.hh" />
     <ClInclude Include="window.hh" />
     <ClInclude Include="sets.hh" />
     <ClInclude Include="pch.hh" />
@@ -155,6 +156,7 @@
     <ClCompile Include="history.cc" />
     <ClCompile Include="infobar.cc" />
     <ClCompile Include="main.cc" />
+    <ClCompile Include="types.cc" />
     <ClCompile Include="window.cc" />
     <ClCompile Include="sets.cc" />
     <ClCompile Include="pch.cc">

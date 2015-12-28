@@ -78,7 +78,7 @@ namespace roulette
 		cout << to_string(info);
 	}
 
-	void IErrorHandler::print(const unsigned int info, bool newline /*= false*/) noexcept
+	void IErrorHandler::print(const uint16 info, bool newline /*= false*/) noexcept
 	{
 		if (newline)
 		{
@@ -89,7 +89,7 @@ namespace roulette
 		cout << to_string(info);
 	}
 
-	void IErrorHandler::print(const unsigned long long&& info, bool newline /*= false*/) noexcept
+	void IErrorHandler::print(const uint64&& info, bool newline /*= false*/) noexcept
 	{
 		if (newline)
 		{
@@ -127,10 +127,10 @@ namespace roulette
 		if (newline)
 		{
 			cout << endl;
-			cout << "-> " << to_string(static_cast<unsigned>(info));
+			cout << "-> " << to_string(static_cast<uint16>(info));
 			return;
 		}
-		cout << to_string(static_cast<unsigned>(info));
+		cout << to_string(static_cast<uint16>(info));
 	}
 
 	void IErrorHandler::print(EBet info, bool newline /*= false*/) noexcept
@@ -138,10 +138,10 @@ namespace roulette
 		if (newline)
 		{
 			cout << endl;
-			cout << "-> " << to_string(static_cast<unsigned>(info));
+			cout << "-> " << to_string(static_cast<uint16>(info));
 			return;
 		}
-		cout << to_string(static_cast<unsigned>(info));
+		cout << to_string(static_cast<uint16>(info));
 	}
 
 } // namespace roulette

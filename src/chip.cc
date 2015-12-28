@@ -44,7 +44,7 @@ namespace roulette
 
 	Chip::Chip(Engine* p_engine, const EChip chip_value) :
 		BaseControl("Chip"),
-		m_value(static_cast<unsigned>(chip_value)),
+		m_value(static_cast<uint16>(chip_value)),
 		mp_engine(p_engine),
 		refIcon(get_pixbuf(chip_value))
 	{

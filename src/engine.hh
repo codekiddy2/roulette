@@ -40,9 +40,6 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "main.hh"
 #include "sets.hh"
 
-// gtkmm
-#include <sigc++/signal.h>
-
 // boost
 #include <boost/random/random_device.hpp>
 
@@ -62,6 +59,12 @@ namespace roulette
 		// constructors
 		Engine() noexcept;
 
+		// signal the spin
+		type_signal_spin signal_spin;
+
+		// signal rebet of chips
+		type_signal_bet signal_rebet;
+
 		// place a bet into the engine bet container
 		void place_bet(type_bet bet);
 
@@ -72,13 +75,13 @@ namespace roulette
 		void clear_all_bets() noexcept;
 
 		// get total value of bets placed
-		inline unsigned get_current_bet() const noexcept;
+		inline uint16 get_current_bet() const noexcept;
 
 		// get current player bankroll
-		inline unsigned get_bankroll() const noexcept;
+		inline uint32 get_bankroll() const noexcept;
 
 		// get value of last bet placed
-		inline unsigned get_last_bet() const noexcept;
+		inline uint16 get_last_bet() const noexcept;
 
 		// get numbers on which the bet has been placed
 		type_set get_numbers() const noexcept;
@@ -88,11 +91,6 @@ namespace roulette
 
 		// double all bets
 		bool double_bets(Table* p_table);
-
-		// signal the spin
-		sigc::signal1<void, unsigned> signal_spin;
-
-		sigc::signal1<void, type_bet> signal_rebet;
 
 	private:
 		// clear a single bet from the engine store
@@ -105,9 +103,9 @@ namespace roulette
 
 		/// begin initializer list
 		bool m_spin_in_progress;
-		unsigned m_current_bet;
-		unsigned m_last_bet;
-		unsigned m_bankroll;
+		uint16 m_current_bet;
+		uint16 m_last_bet;
+		uint32 m_bankroll;
 		/// end initializer list
 
 		// deleted
@@ -123,17 +121,17 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
-	unsigned Engine::get_bankroll() const noexcept
+	uint32 Engine::get_bankroll() const noexcept
 	{
 		return m_bankroll;
 	}
 
-	unsigned Engine::get_current_bet() const noexcept
+	uint16 Engine::get_current_bet() const noexcept
 	{
 		return m_current_bet;
 	}
 
-	unsigned Engine::get_last_bet() const noexcept
+	uint16 Engine::get_last_bet() const noexcept
 	{
 		return m_last_bet;
 	}

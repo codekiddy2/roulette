@@ -28,7 +28,6 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 // roulette
 #include "pch.hh"
-#define TU_SETS_CC // Explicit template instantiation from sets.hh
 #include "sets.hh"
 
 #define MAKE_SET(...) std::make_shared<type_raw_set>(type_raw_set{ __VA_ARGS__ });

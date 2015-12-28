@@ -51,7 +51,7 @@ namespace roulette
 
 		// methods
 		inline EBet get_id() const noexcept; // get bet enum
-		inline unsigned get_chip_value() const noexcept; // get chip value
+		inline uint16 get_chip_value() const noexcept; // get chip value
 		inline type_chip get_chip() const noexcept; // get chip enum, drop point and bet enum
 		inline type_set get_selection() const noexcept; // numbers included in this bet
 
@@ -107,9 +107,9 @@ namespace roulette
 		return mp_set;
 	}
 
-	unsigned Bet::get_chip_value() const noexcept
+	uint16 Bet::get_chip_value() const noexcept
 	{
-		return static_cast<unsigned>(std::get<0>(*m_chip));
+		return static_cast<uint16>(std::get<0>(*m_chip));
 	}
 
 #ifdef _MSC_VER
@@ -171,24 +171,24 @@ namespace roulette
 #if 0
   //Bet(const ETable table,
   //	const EBet bet,
-  //	unsigned chip_info,
+  //	uint16 chip_info,
   //	Gdk::Point& point,
   //	std::shared_ptr<type_selection> selection = nullptr,
   //	Bet* parent = nullptr
   //	);
 
 		// methods
-		unsigned get_childs() const; // amount of childs
-		unsigned get_numbers() const; // amount of numbers
-		unsigned get_number(const unsigned& index) const; // reference number
+		uint16 get_childs() const; // amount of childs
+		uint16 get_numbers() const; // amount of numbers
+		uint16 get_number(const uint16& index) const; // reference number
 		
 		void set_points(Gdk::Point& point);
 		Gdk::Point get_points() const;
 
-		EBet get_child_id(const unsigned& child) const; // ID of a child 
-		unsigned get_child_chip_count(const unsigned& child) const; // amount of chips of a child
-		unsigned get_child_number_count(const unsigned& child) const; // amount of numbers of a child
-		unsigned get_child_number(const unsigned& child, const unsigned& index) const; // reference number of a child
+		EBet get_child_id(const uint16& child) const; // ID of a child 
+		uint16 get_child_chip_count(const uint16& child) const; // amount of chips of a child
+		uint16 get_child_number_count(const uint16& child) const; // amount of numbers of a child
+		uint16 get_child_number(const uint16& child, const uint16& index) const; // reference number of a child
 
 		void print_properties(const bool& childs = false) const;
 
@@ -199,12 +199,12 @@ namespace roulette
 		/// begin initilizer list
 		const Bet* mpParent;
 		std::shared_ptr<Childs_t> mpChilds;
-		unsigned mChips;
+		uint16 mChips;
 		Gdk::Point m_point;
 		/// end initilizer list
 		
-		void set_part_1(const unsigned& chips);
-		void set_part_2(const ETable& table, const unsigned& nums, const unsigned& chips);
+		void set_part_1(const uint16& chips);
+		void set_part_2(const ETable& table, const uint16& nums, const uint16& chips);
 		void fill_childs(const ETable& table, const std::shared_ptr<type_selection> selection, const int& chips, Gdk::Point point);
 
 	inline EBet Bet::get_id() const
@@ -222,7 +222,7 @@ namespace roulette
 		return m_point;
 	}
 
-	inline EBet Bet::get_child_id(const unsigned& child) const
+	inline EBet Bet::get_child_id(const uint16& child) const
 	{
 		if (mpChilds)
 		{
@@ -250,11 +250,11 @@ namespace roulette
 		}
 	}
 
-	inline unsigned Bet::get_childs() const
+	inline uint16 Bet::get_childs() const
 	{
 		if (mpChilds)
 		{
-			return static_cast<unsigned>(mpChilds->size());
+			return static_cast<uint16>(mpChilds->size());
 		}
 		else
 		{
@@ -262,11 +262,11 @@ namespace roulette
 		}
 	}
 
-	inline unsigned Bet::get_numbers() const
+	inline uint16 Bet::get_numbers() const
 	{
 		if (mpSelection)
 		{
-			return static_cast<unsigned>(mpSelection->size());
+			return static_cast<uint16>(mpSelection->size());
 		}
 		else
 		{
@@ -274,7 +274,7 @@ namespace roulette
 		}
 	}
 
-	inline unsigned Bet::get_number(const unsigned& index) const
+	inline uint16 Bet::get_number(const uint16& index) const
 	{
 		if (mpSelection)
 		{
@@ -287,7 +287,7 @@ namespace roulette
 		}
 	}
 
-	inline unsigned Bet::get_child_chip_count(const unsigned& child) const
+	inline uint16 Bet::get_child_chip_count(const uint16& child) const
 	{
 		if (mpChilds)
 		{
@@ -299,7 +299,7 @@ namespace roulette
 		}
 	}
 
-	inline unsigned Bet::get_child_number_count(const unsigned& child) const
+	inline uint16 Bet::get_child_number_count(const uint16& child) const
 	{
 		if (mpChilds)
 		{
@@ -307,7 +307,7 @@ namespace roulette
 			{
 				if (mpChilds->at(child)->mpSelection)
 				{
-					return static_cast<unsigned>(mpChilds->at(child)->mpSelection->size());
+					return static_cast<uint16>(mpChilds->at(child)->mpSelection->size());
 				}
 			}
 		}
@@ -317,7 +317,7 @@ namespace roulette
 		}
 	}
 
-	inline unsigned Bet::get_child_number(const unsigned& child, const unsigned& index) const
+	inline uint16 Bet::get_child_number(const uint16& child, const uint16& index) const
 	{
 		if (mpChilds)
 		{

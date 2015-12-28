@@ -31,8 +31,6 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 // roulette
 #include "pch.hh"
-#define TU_MAIN_CC // Explicit template instantiation from main.hh
-#include "main.hh"
 #include "window.hh"
 
 namespace
@@ -53,6 +51,7 @@ namespace
 
 	// load size x size version from the ico file
 	int chip_size = 32;
+
 } // namespace
 
 namespace roulette
@@ -62,6 +61,7 @@ namespace roulette
 	const int format = 8;
 	
 	type_dnd_targets dnd_targets;
+
 } // namespace roulette
 
 int main(int argc, char* argv[])
@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
 
 namespace roulette
 {
-	bool is_red(const unsigned number) noexcept
+	bool is_red(const uint16 number) noexcept
 	{
 		switch (number)
 		{
@@ -113,35 +113,35 @@ namespace roulette
 		}
 	}
 
-	bool is_black(const unsigned number) noexcept
+	bool is_black(const uint16 number) noexcept
 	{
 		if (is_green(number) || is_red(number))
 			return false;
 		else return(number && (number < 37));
 	}
 
-	bool is_green(const unsigned number) noexcept
+	bool is_green(const uint16 number) noexcept
 	{
 		if (number == 0 || number == 37)
 			return true;
 		else return false;
 	}
 
-	unsigned which_column(const unsigned number) noexcept
+	uint16 which_column(const uint16 number) noexcept
 	{
 		if (number % 3)
 			return number % 3;
 		else return 3;
 	}
 
-	unsigned which_column(EField field) noexcept
+	uint16 which_column(EField field) noexcept
 	{
-		if (static_cast<unsigned>(field) % 3)
-			return static_cast<unsigned>(field) % 3;
+		if (static_cast<uint16>(field) % 3)
+			return static_cast<uint16>(field) % 3;
 		else return 3;
 	}
 
-	unsigned which_dozen(const unsigned number) noexcept
+	uint16 which_dozen(const uint16 number) noexcept
 	{
 		if (number < 13)
 			return 1;
@@ -208,9 +208,9 @@ namespace roulette
 		}
 	}
 
-	unsigned get_neighbor(const ETable table, const unsigned refNum, const unsigned position)
+	uint16 get_neighbor(const ETable table, const uint16 refNum, const uint16 position)
 	{
-		unsigned i = 0;
+		uint16 i = 0;
 		static type_raw_set::const_iterator iter;
 
 		switch (table)

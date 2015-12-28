@@ -161,7 +161,7 @@ namespace roulette
 
 	void Engine::spin(const ETable table_type)
 	{
-		typedef boost::random::uniform_smallint<> type_dist;
+		typedef boost::random::uniform_smallint<uint16> type_dist;
 
 		switch (table_type)
 		{
@@ -170,10 +170,10 @@ namespace roulette
 			break;
 		case ETable::European:
 		{
-			static type_dist dist(0, static_cast<int>(EuropeanWheel->size()));
-			int result = dist(Engine::m_rng);
+			static type_dist dist(0, static_cast<uint16>(EuropeanWheel->size()));
+			uint16 result = dist(Engine::m_rng);
 
-			unsigned win = 0;
+			uint16 win = 0;
 			type_set current = nullptr;
 
 			for (auto iter : m_bets)
@@ -447,8 +447,8 @@ namespace roulette
 
 	bool Engine::double_bets(Table* p_table)
 	{
-		unsigned total = 0;
-		unsigned table_limit = p_table->get_table_limit();
+		uint16 total = 0;
+		uint32 table_limit = p_table->get_table_limit();
 		for (auto iter : m_bets)
 		{
 			total += iter->get_chip_value() * 2;
@@ -462,7 +462,7 @@ namespace roulette
 
 		for (auto main = m_bets.begin(); main != m_bets.end(); ++main)
 		{
-			unsigned main_value = main->get()->get_chip_value() * 2;
+			uint16 main_value = main->get()->get_chip_value() * 2;
 			auto main_bet = main->get()->get_id();
 			auto main_selection = main->get()->get_selection();
 			temp.push_back(*main);
@@ -470,7 +470,7 @@ namespace roulette
 			// check how many same bets there are, and sum their duplicate value
 			for (auto iter = main + 1; iter != m_bets.end(); ++iter)
 			{
-				unsigned iter_value = iter->get()->get_chip_value() * 2;
+				uint16 iter_value = iter->get()->get_chip_value() * 2;
 				auto iter_bet = iter->get()->get_id();
 				auto iter_selection = iter->get()->get_selection();
 				
