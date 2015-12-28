@@ -40,30 +40,24 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "pch.hh"
 #include "field.hh"
 #include "table.hh"
-#include "main.hh"
 #include "color.hh"
 #include "engine.hh"
+#include "bet.hh"
+
+namespace
+{
+	using std::get; // to extract type_chip_tuple
+	using std::to_string; // used in assign_apperance and query tooltip
+	using std::make_tuple; // to make type_chip_tuple
+	using std::make_shared; // to make type_chip
+}
 
 namespace roulette
 {
-
 #ifdef _MSC_VER
 #pragma region
 #endif // _MSC_VER
 
-	using std::cout;
-	using std::endl;
-	using std::to_string;
-	using std::make_shared;
-	using std::shared_ptr;
-	using std::make_pair;
-	using std::pair;
-	using std::make_tuple;
-	using std::tuple;
-	using std::get;
-
-	extern std::vector<Gtk::TargetEntry> dnd_targets;
-	
 	Field::Field(EField field_index, Table* p_table) :
 		Glib::ObjectBase("Field"), // The GType name will be gtkmm__CustomObject_Field
 		Gtk::Widget(),
@@ -128,7 +122,7 @@ namespace roulette
 
 		switch (m_index)
 		{
-		case roulette::EField::Number0:
+		case EField::Number0:
 			if (x < right)  // no chip drawing signal
 				if (emit) mp_table->check_limits(m_chips, chip);
 			else // x > right
@@ -212,7 +206,7 @@ namespace roulette
 				}
 			} // x > right
 			break;
-		case roulette::EField::Number3:
+		case EField::Number3:
 			if (x < left)
 			{
 				point.set_x(0);
@@ -265,7 +259,7 @@ namespace roulette
 			}
 			else if (emit) mp_table->check_limits(m_chips, chip); // cx, cy -> no chip drawing signal
 			break;
-		case roulette::EField::Number34:
+		case EField::Number34:
 			if (x < left)
 			{
 				point.set_x(0);
@@ -318,7 +312,7 @@ namespace roulette
 			}
 			else if (emit) mp_table->check_limits(m_chips, chip); // cx, cy -> no chip drawing signal
 			break;
-		case roulette::EField::Number35:
+		case EField::Number35:
 			if (x < left)
 			{
 				point.set_x(0);
@@ -371,7 +365,7 @@ namespace roulette
 			}
 			else if (emit) mp_table->check_limits(m_chips, chip); // cx, cy -> no chip drawing signal
 			break;
-		case roulette::EField::Number36:
+		case EField::Number36:
 			if (x < left)
 			{
 				point.set_x(0);
@@ -404,23 +398,23 @@ namespace roulette
 			}
 			else if (emit) mp_table->check_limits(m_chips, chip); // cx, cy -> no chip drawing signal
 			break;
-		case roulette::EField::Number00:
+		case EField::Number00:
 			break;
-		case roulette::EField::Red:
-		case roulette::EField::Black:
-		case roulette::EField::Even:
-		case roulette::EField::Odd:
-		case roulette::EField::High:
-		case roulette::EField::Low:
-		case roulette::EField::Column1:
-		case roulette::EField::Column2:
-		case roulette::EField::Column3:
+		case EField::Red:
+		case EField::Black:
+		case EField::Even:
+		case EField::Odd:
+		case EField::High:
+		case EField::Low:
+		case EField::Column1:
+		case EField::Column2:
+		case EField::Column3:
 			get<2>(*chip) = static_cast<EBet>(m_index);  // WARNING: this is supposed to be same enum number defined in sets.hh
 			if (emit) mp_table->check_limits(m_chips, chip);
 			break;
-		case roulette::EField::Dozen1:
-		case roulette::EField::Dozen2:
-		case roulette::EField::Dozen3:
+		case EField::Dozen1:
+		case EField::Dozen2:
+		case EField::Dozen3:
 			if (y > top)
 			{
 				get<2>(*chip) = static_cast<EBet>(m_index);  // WARNING: this is supposed to be same enum number defined in sets.hh
@@ -551,7 +545,7 @@ namespace roulette
 				} // else if (y < top)
 			} // else line or street bet
 			break;
-		case roulette::EField::Dummy1:
+		case EField::Dummy1:
 			if (x > right && y < top / 2)
 			{
 				point.set_x(width);
@@ -563,10 +557,10 @@ namespace roulette
 						signal_bet_basket.emit(m_index, chip);
 				}
 			}
-		case roulette::EField::Dummy2:
-		case roulette::EField::Dummy3:
+		case EField::Dummy2:
+		case EField::Dummy3:
 			break;
-		case roulette::EField::Number1:
+		case EField::Number1:
 			if (x < left)
 			{
 				point.set_x(0);
@@ -652,7 +646,7 @@ namespace roulette
 				if (emit) mp_table->check_limits(m_chips, chip); // y == cy, x = cx
 			}
 			break;
-		case roulette::EField::Number2:
+		case EField::Number2:
 			if (x < left)
 			{
 				point.set_x(0);
@@ -738,36 +732,36 @@ namespace roulette
 				if (emit) mp_table->check_limits(m_chips, chip); // y == cy, x = cx
 			}
 			break;
-		case roulette::EField::Number4:
-		case roulette::EField::Number5:
-		case roulette::EField::Number6:
-		case roulette::EField::Number7:
-		case roulette::EField::Number8:
-		case roulette::EField::Number9:
-		case roulette::EField::Number10:
-		case roulette::EField::Number11:
-		case roulette::EField::Number12:
-		case roulette::EField::Number13:
-		case roulette::EField::Number14:
-		case roulette::EField::Number15:
-		case roulette::EField::Number16:
-		case roulette::EField::Number17:
-		case roulette::EField::Number18:
-		case roulette::EField::Number19:
-		case roulette::EField::Number20:
-		case roulette::EField::Number21:
-		case roulette::EField::Number22:
-		case roulette::EField::Number23:
-		case roulette::EField::Number24:
-		case roulette::EField::Number25:
-		case roulette::EField::Number26:
-		case roulette::EField::Number27:
-		case roulette::EField::Number28:
-		case roulette::EField::Number29:
-		case roulette::EField::Number30:
-		case roulette::EField::Number31:
-		case roulette::EField::Number32:
-		case roulette::EField::Number33:
+		case EField::Number4:
+		case EField::Number5:
+		case EField::Number6:
+		case EField::Number7:
+		case EField::Number8:
+		case EField::Number9:
+		case EField::Number10:
+		case EField::Number11:
+		case EField::Number12:
+		case EField::Number13:
+		case EField::Number14:
+		case EField::Number15:
+		case EField::Number16:
+		case EField::Number17:
+		case EField::Number18:
+		case EField::Number19:
+		case EField::Number20:
+		case EField::Number21:
+		case EField::Number22:
+		case EField::Number23:
+		case EField::Number24:
+		case EField::Number25:
+		case EField::Number26:
+		case EField::Number27:
+		case EField::Number28:
+		case EField::Number29:
+		case EField::Number30:
+		case EField::Number31:
+		case EField::Number32:
+		case EField::Number33:
 			if (x < left)
 			{
 				point.set_x(0);
@@ -920,50 +914,50 @@ namespace roulette
 	{
 		switch (index)
 		{
-		case roulette::EField::Number00:
+		case EField::Number00:
 			m_layout = create_pango_layout("00");
 			break;
-		case roulette::EField::Column1:
+		case EField::Column1:
 			m_layout = create_pango_layout("2 to 1");
 			break;
-		case roulette::EField::Column2:
+		case EField::Column2:
 			m_layout = create_pango_layout("2 to 1");
 			break;
-		case roulette::EField::Column3:
+		case EField::Column3:
 			m_layout = create_pango_layout("2 to 1");
 			break;
-		case roulette::EField::Dozen1:
+		case EField::Dozen1:
 			m_layout = create_pango_layout("1st 12");
 			break;
-		case roulette::EField::Dozen2:
+		case EField::Dozen2:
 			m_layout = create_pango_layout("2nd 12");
 			break;
-		case roulette::EField::Dozen3:
+		case EField::Dozen3:
 			m_layout = create_pango_layout("3rd 12");
 			break;
-		case roulette::EField::Red:
+		case EField::Red:
 			m_background.set("Red");
 			m_layout = create_pango_layout("RED");
 			break;
-		case roulette::EField::Black:
+		case EField::Black:
 			m_background.set("Black");
 			m_layout = create_pango_layout("BLACK");
 			break;
-		case roulette::EField::Even:
+		case EField::Even:
 			m_layout = create_pango_layout("EVEN");
 			break;
-		case roulette::EField::Odd:
+		case EField::Odd:
 			m_layout = create_pango_layout("ODD");
 			break;
-		case roulette::EField::High:
+		case EField::High:
 			m_layout = create_pango_layout("HIGH");
 			break;
-		case roulette::EField::Low:
+		case EField::Low:
 			m_layout = create_pango_layout("LOW");
 			break;
-		case roulette::EField::Dummy1:
-		case roulette::EField::Dummy2:
-		case roulette::EField::Dummy3:
+		case EField::Dummy1:
+		case EField::Dummy2:
+		case EField::Dummy3:
 			m_layout = create_pango_layout("");
 			break;
 		default:
@@ -1027,6 +1021,15 @@ namespace roulette
 		} // for
 		/*m_chips_saved = m_chips;*/
 		return refGdkWindow->invalidate(false);
+	}
+
+	void Field::on_signal_rebet()
+	{
+		if (!m_chips_saved.empty())
+		{
+			m_chips = m_chips_saved;
+			refGdkWindow->invalidate(false);
+		}
 	}
 
 #ifdef _MSC_VER
@@ -1149,44 +1152,44 @@ namespace roulette
 									// TODO: move line and street bets here too
 									switch (get<2>(*chip))
 									{
-									case roulette::EBet::StraightUp:
+									case EBet::StraightUp:
 										// TODO: making type_set for single number is not smart
 										p_set = make_shared<type_raw_set>(type_raw_set{ static_cast<unsigned>(m_index) });
 										break;
-									case roulette::EBet::Column1:
+									case EBet::Column1:
 										p_set = Column1;
 										break;
-									case roulette::EBet::Column2:
+									case EBet::Column2:
 										p_set = Column2;
 										break;
-									case roulette::EBet::Column3:
+									case EBet::Column3:
 										p_set = Column3;
 										break;
-									case roulette::EBet::Dozen1:
+									case EBet::Dozen1:
 										p_set = Dozen1;
 										break;
-									case roulette::EBet::Dozen2:
+									case EBet::Dozen2:
 										p_set = Dozen2;
 										break;
-									case roulette::EBet::Dozen3:
+									case EBet::Dozen3:
 										p_set = Dozen3;
 										break;
-									case roulette::EBet::Red:
+									case EBet::Red:
 										p_set = Red;
 										break;
-									case roulette::EBet::Black:
+									case EBet::Black:
 										p_set = Black;
 										break;
-									case roulette::EBet::Even:
+									case EBet::Even:
 										p_set = Even;
 										break;
-									case roulette::EBet::Odd:
+									case EBet::Odd:
 										p_set = Odd;
 										break;
-									case roulette::EBet::High:
+									case EBet::High:
 										p_set = High;
 										break;
-									case roulette::EBet::Low:
+									case EBet::Low:
 										p_set = Low;
 										break;
 									default: // the bet is already emited by signal handlers during calculate_points
@@ -1338,6 +1341,7 @@ namespace roulette
 
 	void Field::place_chip(type_chip chip)
 	{
+		// TODO: unfinished function
 		unsigned result = 0;
 		for (auto iter : m_chips)
 		{
@@ -1388,40 +1392,40 @@ namespace roulette
 
 			switch (m_index)
 			{
-			case roulette::EField::Number1:
+			case EField::Number1:
 				p_set = Street1;
 				break;
-			case roulette::EField::Number4:
+			case EField::Number4:
 				p_set = Street2;
 				break;
-			case roulette::EField::Number7:
+			case EField::Number7:
 				p_set = Street3;
 				break;
-			case roulette::EField::Number10:
+			case EField::Number10:
 				p_set = Street4;
 				break;
-			case roulette::EField::Number13:
+			case EField::Number13:
 				p_set = Street5;
 				break;
-			case roulette::EField::Number16:
+			case EField::Number16:
 				p_set = Street6;
 				break;
-			case roulette::EField::Number19:
+			case EField::Number19:
 				p_set = Street7;
 				break;
-			case roulette::EField::Number22:
+			case EField::Number22:
 				p_set = Street8;
 				break;
-			case roulette::EField::Number25:
+			case EField::Number25:
 				p_set = Street9;
 				break;
-			case roulette::EField::Number28:
+			case EField::Number28:
 				p_set = Street10;
 				break;
-			case roulette::EField::Number31:
+			case EField::Number31:
 				p_set = Street11;
 				break;
-			case roulette::EField::Number34:
+			case EField::Number34:
 				p_set = Street12;
 				break;
 			default:
@@ -1971,39 +1975,39 @@ namespace roulette
 
 			switch (m_index)
 			{
-			case roulette::EField::Number4:
+			case EField::Number4:
 				p_set = Line1;
 				break;
-			case roulette::EField::Number7:
+			case EField::Number7:
 				p_set = Line2;
 				break;
-			case roulette::EField::Number10:
+			case EField::Number10:
 				p_set = Line3;
 				break;
-			case roulette::EField::Number13:
+			case EField::Number13:
 				if (m_index != EField::Dozen2) goto dozen_2_will_emit_this_bet;
 				p_set = Line4;
 				break;
-			case roulette::EField::Number16:
+			case EField::Number16:
 				p_set = Line5;
 				break;
-			case roulette::EField::Number19:
+			case EField::Number19:
 				p_set = Line6;
 				break;
-			case roulette::EField::Number22:
+			case EField::Number22:
 				p_set = Line7;
 				break;
-			case roulette::EField::Number25:
+			case EField::Number25:
 				if (m_index != EField::Dozen2) goto dozen_2_will_emit_this_bet;
 				p_set = Line8;
 				break;
-			case roulette::EField::Number28:
+			case EField::Number28:
 				p_set = Line9;
 				break;
-			case roulette::EField::Number31:
+			case EField::Number31:
 				p_set = Line10;
 				break;
-			case roulette::EField::Number34:
+			case EField::Number34:
 				p_set = Line11;
 				break;
 			default:

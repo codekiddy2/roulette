@@ -26,7 +26,6 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 #include "pch.hh"
-#include "sets.hh"
 #include "window.hh"
 
 namespace roulette
@@ -58,7 +57,7 @@ namespace roulette
 		m_BtnClear("Clear"),
 		m_BtnClose("Close"),
 		mp_engine(new Engine),
-		mp_table(new Table),
+		mp_table(new Table(ETable::European)),
 		m_infobar(mp_engine, mp_table),
 		m_Chip1(mp_engine, EChip::Chip1),
 		m_Chip5(mp_engine, EChip::Chip5),

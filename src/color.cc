@@ -34,32 +34,4 @@ namespace roulette
 	Gdk::RGBA Color::m_background("rgb(0, 102, 0)");
 	Gdk::RGBA Color::m_foreground("rgb(255, 255, 255)");
 
-	roulette::Color::Color()
-	{
-	}
-
-	roulette::Color::~Color()
-	{
-	}
-
-	const Gdk::RGBA & roulette::Color::get_background_color()
-	{
-		return m_background;
-	}
-
-	const Gdk::RGBA & roulette::Color::get_foreground_color()
-	{
-		return m_foreground;
-	}
-
-	void roulette::Color::set_background_color(const Gdk::RGBA & color)
-	{
-		m_background = color;
-	}
-
-	void roulette::Color::set_foreground_color(const Gdk::RGBA & color)
-	{
-		m_foreground = color;
-	}
-
 } // namespace roulette

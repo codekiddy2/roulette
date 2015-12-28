@@ -38,9 +38,6 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "error.hh"
 #include "color.hh"
 
-// std
-#include <string>
-
 // gtkmm
 #include <gtkmm/widget.h>
 #include <glibmm/refptr.h>
@@ -62,7 +59,7 @@ namespace roulette
 		// constructors
 		// the name argument will be drawn onto control
 		BaseControl(const std::string&& name);
-		virtual ~BaseControl();
+		inline virtual ~BaseControl() noexcept;
 
 		// Overrides derived from Gtk::Widget
 		Gtk::SizeRequestMode get_request_mode_vfunc() const override;
@@ -97,6 +94,18 @@ namespace roulette
 		BaseControl& operator=(const BaseControl&) = delete;
 		BaseControl& operator=(const BaseControl&&) = delete;
 	};
+
+#ifdef _MSC_VER
+#pragma region
+#endif // _MSC_VER
+
+	BaseControl::~BaseControl() noexcept
+	{
+	}
+
+#ifdef _MSC_VER
+#pragma endregion inlines
+#endif // _MSC_VER
 
 } // namespace roulette
 

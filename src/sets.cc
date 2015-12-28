@@ -26,16 +26,15 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
+// roulette
 #include "pch.hh"
+#define TU_SETS_CC // Explicit template instantiation from sets.hh
 #include "sets.hh"
 
-#define MAKE_SET(...) \
-   make_shared<type_raw_set>(type_raw_set{ __VA_ARGS__ });
+#define MAKE_SET(...) std::make_shared<type_raw_set>(type_raw_set{ __VA_ARGS__ });
 
 namespace roulette
 {
-	using std::make_shared;
-
 	type_set Corner0 = MAKE_SET({ 0, 1, 2, 3 });
 	type_set Basket = MAKE_SET({ 0,37,1,2,3 });
 

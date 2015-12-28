@@ -31,15 +31,16 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 // roulette
 #include "pch.hh"
+#define TU_MAIN_CC // Explicit template instantiation from main.hh
 #include "main.hh"
 #include "window.hh"
 
-namespace roulette
+namespace
 {
 	using std::find; // get_neighbor()
 	using std::string; // load icons()
-	using std::vector; // dnd_targets
 	using boost::filesystem::exists; // load_icons()
+	using roulette::type_chip_icon; // for below chip declarations
 
 	// chip pixbuf icons
 	type_chip_icon icon1;
@@ -51,15 +52,17 @@ namespace roulette
 	type_chip_icon app_icon;
 
 	// load size x size version from the ico file
-	static int chip_size = 32;
+	int chip_size = 32;
+} // namespace
+
+namespace roulette
+{
+	bool load_icons();
 
 	const int format = 8;
 	
-	vector<Gtk::TargetEntry> dnd_targets;
-
-	bool load_icons();
-
-} // namespace
+	type_dnd_targets dnd_targets;
+} // namespace roulette
 
 int main(int argc, char* argv[])
 {
@@ -67,7 +70,7 @@ int main(int argc, char* argv[])
 
 	if (roulette::load_icons())
 	{
-		roulette::Window* p_window = new roulette::Window(roulette::app_icon);
+		roulette::Window* p_window = new roulette::Window(app_icon);
 
 		if (p_window)
 		{
@@ -82,7 +85,7 @@ int main(int argc, char* argv[])
 
 namespace roulette
 {
-	bool is_red(const unsigned number)
+	bool is_red(const unsigned number) noexcept
 	{
 		switch (number)
 		{
@@ -110,35 +113,35 @@ namespace roulette
 		}
 	}
 
-	bool is_black(const unsigned number)
+	bool is_black(const unsigned number) noexcept
 	{
 		if (is_green(number) || is_red(number))
 			return false;
 		else return(number && (number < 37));
 	}
 
-	bool is_green(const unsigned number)
+	bool is_green(const unsigned number) noexcept
 	{
 		if (number == 0 || number == 37)
 			return true;
 		else return false;
 	}
 
-	unsigned which_column(const unsigned number)
+	unsigned which_column(const unsigned number) noexcept
 	{
 		if (number % 3)
 			return number % 3;
 		else return 3;
 	}
 
-	unsigned which_column(EField field)
+	unsigned which_column(EField field) noexcept
 	{
 		if (static_cast<unsigned>(field) % 3)
 			return static_cast<unsigned>(field) % 3;
 		else return 3;
 	}
 
-	unsigned which_dozen(const unsigned number)
+	unsigned which_dozen(const unsigned number) noexcept
 	{
 		if (number < 13)
 			return 1;
@@ -147,12 +150,12 @@ namespace roulette
 		else return 3;
 	}
 
-	void set_chipsize(const int size)
+	void set_chipsize(const int size) noexcept
 	{
 		chip_size = size;
 	}
 
-	int get_chipsize()
+	int get_chipsize() noexcept
 	{
 		return chip_size;
 	}

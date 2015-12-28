@@ -41,46 +41,24 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 namespace roulette
 {
-	enum class EField : unsigned;
+	// forward declarations
 	enum class EBet : unsigned;
+	enum class EField : unsigned;
 
 	class error final :
 		public std::exception
 	{
 	public:
 		// constructors
-		error(const char* description, short code = 0) throw() :
-			m_description(description), m_code(code) { }
-
-		error(const error& ref)
-			: m_description(ref.m_description), m_code(ref.m_code) { }
-
-		error(error&& ref)
-			: m_description(ref.m_description), m_code(ref.m_code) { }
-
-		error& operator=(const error& rhs)
-		{
-			if (this != &rhs)
-			{
-				return *this;
-			}
-		}
-
-		error& operator=(error&&)
-		{
-			return *this;
-		}
+		inline error(const char* description, const short code = 0) noexcept;
+		inline error(const error& ref) noexcept;
+		inline error(error&& ref) noexcept;
+		inline error& operator=(const error& rhs) noexcept;
+		inline error& operator=(error&&) noexcept;
 
 		// methods
-		const char* what() const throw() override
-		{
-			return m_description;
-		}
-
-		short code() const throw()
-		{
-			return m_code;
-		}
+		inline const char* what() const noexcept override;
+		inline short code() const noexcept;
 
 	private:
 		// members
@@ -88,41 +66,102 @@ namespace roulette
 		const char* m_description;
 	};
 
-	// error handler interface
+	// error handler and debug interface
 	class IErrorHandler
 	{
 	public:
-		// costructors
-		IErrorHandler(const std::string&& derived_class);
-
 		// set debugging option for derived class
-		inline virtual void set_debug(bool debug);
+		inline virtual void set_debug(bool debug) noexcept;
 
 	protected:
+		// costructors
+		inline IErrorHandler(const std::string&& derived_class) noexcept;
+		inline virtual ~IErrorHandler() noexcept = 0;
+
 		// methods
 		// error handler to throw and handle errors
 		virtual void error_handler(const error&& ref);
 
 		// a set of overrides for debugging output
-		virtual void print();
-		virtual void print(const std::string&& info, bool newline = false);
-		virtual void print(const char* info, bool newline = false);
-		virtual void print(const unsigned char* info, bool newline = false);
-		virtual void print(const int&& info, bool newline = false);
-		virtual void print(const unsigned int info, bool newline = false);
-		virtual void print(const unsigned long long&& info, bool newline = false);
-		virtual void print(EField& info, bool newline = false);
-		virtual void print(EBet info, bool newline = false);
+		virtual void print() noexcept;
+		virtual void print(const std::string&& info, bool newline = false) noexcept;
+		virtual void print(const char* info, bool newline = false) noexcept;
+		virtual void print(const unsigned char* info, bool newline = false) noexcept;
+		virtual void print(const int&& info, bool newline = false) noexcept;
+		virtual void print(const unsigned int info, bool newline = false) noexcept;
+		virtual void print(const unsigned long long&& info, bool newline = false) noexcept;
+		virtual void print(EField& info, bool newline = false) noexcept;
+		virtual void print(EBet info, bool newline = false) noexcept;
 
 		// members
 		bool m_debug = false;
 		std::string m_derived_class;
+
+	private:
+		// deleted
+		IErrorHandler(const IErrorHandler&) = delete;
+		IErrorHandler(const IErrorHandler&&) = delete;
+		IErrorHandler& operator=(const IErrorHandler&) = delete;
+		IErrorHandler& operator=(const IErrorHandler&&) = delete;
 	};
 
-	void IErrorHandler::set_debug(bool debug)
+#ifdef _MSC_VER
+#pragma region
+#endif // _MSC_VER
+
+	IErrorHandler::IErrorHandler(const std::string && derived_class) noexcept :
+	m_derived_class(derived_class)
+	{ }
+
+	IErrorHandler::~IErrorHandler()
+	{ }
+
+	void IErrorHandler::set_debug(bool debug) noexcept
 	{
 		m_debug = debug;
 	}
+
+	error::error(const char* description, const short code) noexcept :
+		m_description(description),
+		m_code(code)
+	{ }
+
+	error::error(const error& ref)  noexcept :
+		m_description(ref.m_description),
+		m_code(ref.m_code)
+	{ }
+
+	error::error(error&& ref) noexcept :
+		m_description(ref.m_description),
+		m_code(ref.m_code)
+	{ }
+
+	error& error::operator=(const error& rhs) noexcept
+	{
+		if (this != &rhs)
+		{
+			return *this;
+		}
+	}
+
+	error& error::operator=(error&&) noexcept
+	{
+		return *this;
+	}
+
+	const char* error::what() const noexcept
+	{
+		return m_description;
+	}
+
+	short error::code() const noexcept
+	{
+		return m_code;
+	}
+
+#ifdef _MSC_VER
+#pragma endregion inlines
+#endif // _MSC_VER
 
 } // namespace roulette
 

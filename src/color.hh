@@ -32,23 +32,28 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
+// gtkmm
 #include <gdkmm/rgba.h>
 
 namespace roulette
 {
+#ifdef _MSC_VER
+#pragma region
+#endif // _MSC_VER
+
 	class Color
 	{
 	protected:
 		// constructors
-		Color();
-		virtual ~Color();
+		inline Color() noexcept;
+		inline virtual ~Color() noexcept;
 
 	public:
 		// methods
-		static const Gdk::RGBA& get_background_color();
-		static const Gdk::RGBA& get_foreground_color();
-		static void set_background_color(const Gdk::RGBA& color);
-		static void set_foreground_color(const Gdk::RGBA& color);
+		inline static const Gdk::RGBA& get_background_color() noexcept;
+		inline static const Gdk::RGBA& get_foreground_color() noexcept;
+		inline static void set_background_color(const Gdk::RGBA& color) noexcept;
+		inline static void set_foreground_color(const Gdk::RGBA& color) noexcept;
 
 	private:
 		// members
@@ -61,6 +66,44 @@ namespace roulette
 		Color& operator=(const Color&) = delete;
 		Color& operator=(const Color&&) = delete;
 	};
+
+#ifdef _MSC_VER
+#pragma endregion begin
+
+#pragma region
+#endif // _MSC_VER
+
+	roulette::Color::Color() noexcept
+	{
+	}
+
+	roulette::Color::~Color() noexcept
+	{
+	}
+
+	const Gdk::RGBA& roulette::Color::get_background_color() noexcept
+	{
+		return m_background;
+	}
+
+	const Gdk::RGBA& roulette::Color::get_foreground_color() noexcept
+	{
+		return m_foreground;
+	}
+
+	void roulette::Color::set_background_color(const Gdk::RGBA& color) noexcept
+	{
+		m_background = color;
+	}
+
+	void roulette::Color::set_foreground_color(const Gdk::RGBA& color) noexcept
+	{
+		m_foreground = color;
+	}
+
+#ifdef _MSC_VER
+#pragma endregion inlines
+#endif // _MSC_VER
 
 } // namespace roulette
 

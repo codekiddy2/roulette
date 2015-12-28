@@ -27,20 +27,20 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 #include "pch.hh"
 #include "chip.hh"
-#include "main.hh"
 #include "engine.hh"
+#include "sets.hh"
+
+namespace
+{
+	using std::to_string; // used in ctor
+}
 
 namespace roulette
 {
-	using std::cerr;
-	using std::endl;
-	using std::cout;
-	using std::string;
 
 #ifdef _MSC_VER
 #pragma region begin
 #endif // _MSC_VER
-
 
 	Chip::Chip(Engine* p_engine, const EChip chip_value) :
 		BaseControl("Chip"),
@@ -52,13 +52,13 @@ namespace roulette
 		set_events(Gdk::EventMask::BUTTON_PRESS_MASK); // TODO: implement chip behaviour for other masks
 
 		// Make this Chip a drag source
-		std::vector<Gtk::TargetEntry> this_source;
-		Gtk::TargetEntry entry(std::to_string(m_value),
+		type_dnd_targets this_source;
+		Gtk::TargetEntry entry(to_string(m_value),
 			Gtk::TargetFlags::TARGET_OTHER_WIDGET, static_cast<guint>(chip_value));
 
 		dnd_targets.push_back(entry);
 		this_source.push_back(entry);
-
+		
 		drag_source_set(this_source, Gdk::ModifierType::BUTTON1_MASK, Gdk::ACTION_COPY);
 	}
 
@@ -96,8 +96,7 @@ namespace roulette
 			refIcon->get_width() / 2, // the X offset within widget of the hotspot.
 			refIcon->get_height() / 2); // the Y offset within widget of the hotspot.
 	}
-
-
+	
 	void Chip::on_drag_data_get(const Glib::RefPtr<Gdk::DragContext>& /*context*/,
 		Gtk::SelectionData& selection_data, guint info, guint time)
 	{
@@ -122,7 +121,6 @@ namespace roulette
 			print();
 		}
 	}
-
 
 	void Chip::on_drag_end(const Glib::RefPtr<Gdk::DragContext>& context)
 	{

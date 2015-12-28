@@ -30,13 +30,13 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "pch.hh"
 #include "field.hh"
 #include "table.hh"
+#include "sets.hh"
 
-// std
-#include <tuple>
-using std::get;
-
-// gtkmm
-#include <gtkmm/messagedialog.h>
+namespace
+{
+	using std::get; // to extract type_chip_tuple
+	using std::make_pair; // to make EField Field pair
+}
 
 namespace roulette
 {
@@ -45,14 +45,11 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
-	using std::endl;
-	using std::cout;
-	using std::make_pair;
 
 	Table::Table(const ETable table_type) :
 		IErrorHandler("Table"),
-		m_tablemax(0),
 		m_tabletype(table_type),
+		m_tablemax(0),
 		m_totalbets(0)
 	{
 		set_column_homogeneous(true);
@@ -660,7 +657,7 @@ namespace roulette
 		}
 	}
 
-	void Table::set_debug(bool debug)
+	void Table::set_debug(bool debug) noexcept
 	{
 		for (auto pair : m_fields)
 		{
@@ -704,59 +701,6 @@ namespace roulette
 			}
 		} // if is_toplevel
 		else error_handler(error("ERROR: get_toplevel did not return a top level window"));
-	}
-
-	void Table::print_properties() const
-	{
-		cout << "Table properties" << endl;
-		cout << "**************************" << endl << endl;
-		cout << "Layout	";
-		switch (m_tabletype)
-		{
-		case ETable::NoZero:
-			cout << "	No zerro" << endl;
-			break;
-		case ETable::American:
-			cout << "	American" << endl;
-			break;
-		case ETable::European:
-			cout << "	European" << endl;
-			break;
-		case ETable::French:
-			cout << "	French ";
-			switch (m_tabletype)
-			{
-			case ETable::SingleImprisonment:
-				cout << "single imprisonment" << endl;
-				break;
-			case ETable::DoubleImprisonment:
-				cout << "double imprisonment" << endl;
-				break;
-			case ETable::TripleImprisonment:
-				cout << "triple imprisonment" << endl;
-				break;
-			case ETable::InfininiteImprisonment:
-				cout << "infinite imprisonment" << endl;
-				break;
-			default:
-				cout << endl;
-				break;
-			} //single zero table
-			cout << "Maximum bets    " << m_totalbets << endl;
-			break;
-		}
-		cout << "Inside min.	" << m_minimums.at(EMinimum::Inside) << endl;
-		cout << "Outside min.	" << m_minimums.at(EMinimum::Outside) << endl;
-		cout << "Table min.	" << m_minimums.at(EMinimum::Table) << endl;
-		cout << "Table max.	" << m_tablemax << endl;
-		cout << "StraightUp	" << m_maximums.at(EBet::StraightUp) << endl;
-		cout << "Split		" << m_maximums.at(EBet::Split) << endl;
-		cout << "Street		" << m_maximums.at(EBet::Street) << endl;
-		cout << "Corner		" << m_maximums.at(EBet::Corner) << endl;
-		cout << "Basket		" << m_maximums.at(EBet::Basket) << endl;
-		cout << "Line		" << m_maximums.at(EBet::Line) << endl;
-		cout << "Column/Dozen	" << m_maximums.at(EBet::Column1) << endl;
-		cout << "EvenMoney	" << m_maximums.at(EBet::Red) << endl;
 	}
 
 	unsigned Table::get_limit(const EBet& name)

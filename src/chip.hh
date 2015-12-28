@@ -33,12 +33,13 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 // roulette
-#include "sets.hh"
 #include "base_control.hh"
 
 namespace roulette
 {
+	// forward declarations
 	class Engine;
+	enum class EChip : unsigned;
 
 	class Chip final : 
 		public BaseControl

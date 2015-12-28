@@ -36,8 +36,9 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
-#include <memory>
-#include <vector> // type_set
+// std
+#include <memory> // type_set
+#include <vector> // type_raw_set
 
 namespace roulette
 {
@@ -247,6 +248,18 @@ namespace roulette
 		TableMin,
 		TableMax,
 	};
+
+#ifdef TU_SETS_CC
+	// Explicit instantiation definition
+	// typedef-name cannot be used in explicit instantiation.
+	template std::vector<unsigned>; // type_raw_set
+	template std::shared_ptr<std::vector<unsigned>>; // type_set
+#else
+	// Explicit instantiation declaration
+	// typedef-name cannot be used in explicit instantiation.
+	extern template std::vector<unsigned>; // type_raw_set
+	extern template std::shared_ptr<std::vector<unsigned>>; // type_set
+#endif // !TU_SETS_CC
 
 	// single type declaring a set of numbers in roulette
 	// must be vector to preserve numbers order and avoid sorting

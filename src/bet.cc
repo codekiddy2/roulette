@@ -29,15 +29,14 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 #include "pch.hh"
-#include "sets.hh"
-#include "chip.hh"
 #include "bet.hh"
+#include "chip.hh"
 
-#include <cmath>		// due to set_part_2
-#include <iostream>		// due to PrintProperties
-#include <algorithm>	// due to sort in set_part_1
-
-//#include <boost/uuid/uuid_generators.hpp>
+namespace
+{
+	using std::get; // to extract type_chip_tuple
+	using std::move; // used in move ctor and assignment
+}
 
 namespace roulette
 {
@@ -46,65 +45,7 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
-	using std::make_shared;
-	using std::move;
-	using std::to_string;
-	using std::get;
-
-	// TODO selection as array
-	//Bet::Bet(const ETable table, const EBet bet, unsigned chip_info, Gdk::Point& point,
-	//	std::shared_ptr<type_selection> selection, Bet* parent) :
-	//	mId(bet),
-	//	mpParent(parent),
-	//	mpChilds(nullptr),
-	//	mpSelection(selection),
-	//	mpName(nullptr),
-	//	mCoverage(1),
-	//	mChips(static_cast<unsigned>(chip_info)),
-	//	mReturn(0.f),
-	//	mPayout(0.f),
-	//	mWin(0.f),
-	//	mResult(0.f),
-	//	mLose(0.f),
-	//	mOdds(0.f),
-	//	mProbWin(0.f),
-	//	mProbPush(0.f),
-	//	mProbLose(0.f),
-	//	mExpectedValue(0.f),
-	//	mExpectedReturn(0.f),
-	//	mAverageWin(0.f),
-	//	mFirstMoment(0),
-	//	mSecondMoment(0),
-	//	mThirdMoment(0),
-	//	mFourthMoment(0),
-	//	mSkewness(0.f),
-	//	mKurtosis(0.f),
-	//	mVariance(0.f),
-	//	mBinomialVariance(0.f),
-	//	mStandardDeviation(0.f),
-	//	mBinomialStandardDeviation(0.f),
-	//	m_point(point)
-	//{
-	//	assign_name();
-
-	//	if (parent)
-	//		set_part_1(mChips);
-	//	else
-	//	{
-	//		mpChilds = make_shared<Childs_t>();
-	//		mpSelection = make_shared<type_selection>();
-	//		fill_childs(table, selection, mChips, m_point);
-	//		unsigned nums = table > ETable::American ? 37 : static_cast<unsigned>(table);
-
-	//		for (unsigned i = 0; i < mpChilds->size(); ++i)
-	//			mpChilds->at(i)->set_part_2(table, nums, mChips);
-
-	//		set_part_1(mChips);
-	//		set_part_2(table, nums, mChips);
-	//	}
-	//}
-
-	Bet::Bet(/*const*/ type_chip chip, type_set selection) :
+	Bet::Bet(const type_chip chip, const type_set selection) :
 		IErrorHandler("Bet"),
 		m_chip(chip),
 		mp_set(selection),
@@ -135,39 +76,140 @@ namespace roulette
 		assign_name();
 	}
 
-	Bet::Bet(Bet&& ref) :
+	Bet::Bet(Bet&& ref) noexcept :
 		IErrorHandler("Bet"),
-		m_chip(ref.m_chip),
-		mp_set(std::move(ref.mp_set))
+		m_chip(move(ref.m_chip)),
+		mp_set(move(ref.mp_set)),
+		mCoverage(ref.mCoverage),
+		mReturn(ref.mReturn),
+		mPayout(ref.mPayout),
+		mWin(ref.mWin),
+		mResult(ref.mResult),
+		mLose(ref.mLose),
+		mOdds(ref.mOdds),
+		mProbWin(ref.mProbWin),
+		mProbPush(ref.mProbPush),
+		mProbLose(ref.mProbLose),
+		mExpectedValue(ref.mExpectedValue),
+		mExpectedReturn(ref.mExpectedReturn),
+		mAverageWin(ref.mAverageWin),
+		mFirstMoment(ref.mFirstMoment),
+		mSecondMoment(ref.mSecondMoment),
+		mThirdMoment(ref.mThirdMoment),
+		mFourthMoment(ref.mFourthMoment),
+		mSkewness(ref.mSkewness),
+		mKurtosis(ref.mKurtosis),
+		mVariance(ref.mVariance),
+		mBinomialVariance(ref.mBinomialVariance),
+		mStandardDeviation(ref.mStandardDeviation),
+		mBinomialStandardDeviation(ref.mBinomialStandardDeviation),
+		m_name(move(ref.m_name))
 	{
 	}
 
-	Bet::Bet(const Bet& ref) :
+	Bet::Bet(const Bet& ref) noexcept :
 		IErrorHandler("Bet"),
 		m_chip(ref.m_chip),
-		mp_set(ref.mp_set)
+		mp_set(ref.mp_set),
+		mCoverage(ref.mCoverage),
+		mReturn(ref.mReturn),
+		mPayout(ref.mPayout),
+		mWin(ref.mWin),
+		mResult(ref.mResult),
+		mLose(ref.mLose),
+		mOdds(ref.mOdds),
+		mProbWin(ref.mProbWin),
+		mProbPush(ref.mProbPush),
+		mProbLose(ref.mProbLose),
+		mExpectedValue(ref.mExpectedValue),
+		mExpectedReturn(ref.mExpectedReturn),
+		mAverageWin(ref.mAverageWin),
+		mFirstMoment(ref.mFirstMoment),
+		mSecondMoment(ref.mSecondMoment),
+		mThirdMoment(ref.mThirdMoment),
+		mFourthMoment(ref.mFourthMoment),
+		mSkewness(ref.mSkewness),
+		mKurtosis(ref.mKurtosis),
+		mVariance(ref.mVariance),
+		mBinomialVariance(ref.mBinomialVariance),
+		mStandardDeviation(ref.mStandardDeviation),
+		mBinomialStandardDeviation(ref.mBinomialStandardDeviation),
+		m_name(ref.m_name)
 	{
 	}
 
-	Bet& Bet::operator=(Bet&& ref)
+	Bet& Bet::operator=(Bet&& ref) noexcept
+	{
+		if (this != &ref)
+		{
+			m_chip = move(ref.m_chip);
+			mp_set = move(ref.mp_set);
+			mCoverage = ref.mCoverage;
+			mReturn = ref.mReturn;
+			mPayout = ref.mPayout;
+			mWin = ref.mWin;
+			mResult = ref.mResult;
+			mLose = ref.mLose;
+			mOdds = ref.mOdds;
+			mProbWin = ref.mProbWin;
+			mProbPush = ref.mProbPush;
+			mProbLose = ref.mProbLose;
+			mExpectedValue = ref.mExpectedValue;
+			mExpectedReturn = ref.mExpectedReturn;
+			mAverageWin = ref.mAverageWin;
+			mFirstMoment = ref.mFirstMoment;
+			mSecondMoment = ref.mSecondMoment;
+			mThirdMoment = ref.mThirdMoment;
+			mFourthMoment = ref.mFourthMoment;
+			mSkewness = ref.mSkewness;
+			mKurtosis = ref.mKurtosis;
+			mVariance = ref.mVariance;
+			mBinomialVariance = ref.mBinomialVariance;
+			mStandardDeviation = ref.mStandardDeviation;
+			mBinomialStandardDeviation = ref.mBinomialStandardDeviation;
+			m_name = move(ref.m_name);
+		}
+		return *this;
+	}
+
+	Bet& Bet::operator=(const Bet& ref) noexcept
 	{
 		if (this != &ref)
 		{
 			m_chip = ref.m_chip;
 			mp_set = ref.mp_set;
+			mCoverage = ref.mCoverage;
+			mReturn = ref.mReturn;
+			mPayout = ref.mPayout;
+			mWin = ref.mWin;
+			mResult = ref.mResult;
+			mLose = ref.mLose;
+			mOdds = ref.mOdds;
+			mProbWin = ref.mProbWin;
+			mProbPush = ref.mProbPush;
+			mProbLose = ref.mProbLose;
+			mExpectedValue = ref.mExpectedValue;
+			mExpectedReturn = ref.mExpectedReturn;
+			mAverageWin = ref.mAverageWin;
+			mFirstMoment = ref.mFirstMoment;
+			mSecondMoment = ref.mSecondMoment;
+			mThirdMoment = ref.mThirdMoment;
+			mFourthMoment = ref.mFourthMoment;
+			mSkewness = ref.mSkewness;
+			mKurtosis = ref.mKurtosis;
+			mVariance = ref.mVariance;
+			mBinomialVariance = ref.mBinomialVariance;
+			mStandardDeviation = ref.mStandardDeviation;
+			mBinomialStandardDeviation = ref.mBinomialStandardDeviation;
+			m_name = ref.m_name;
 		}
 		return *this;
 	}
 
-	Bet& Bet::operator=(const Bet& ref)
-	{
-		if (this != &ref)
-		{
-			m_chip = ref.m_chip;
-			mp_set = ref.mp_set;
-		}
-		return *this;
-	}
+#ifdef _MSC_VER
+#pragma endregion begin
+#pragma region
+#endif // _MSC_VER
 
 	void Bet::assign_name()
 	{
@@ -388,7 +430,67 @@ namespace roulette
 		}
 	}
 
+#ifdef _MSC_VER
+#pragma endregion methods
+#endif // _MSC_VER
+
+} // namespace
+
 #if 0
+
+	// TODO selection as array
+	//Bet::Bet(const ETable table, const EBet bet, unsigned chip_info, Gdk::Point& point,
+	//	std::shared_ptr<type_selection> selection, Bet* parent) :
+	//	mId(bet),
+	//	mpParent(parent),
+	//	mpChilds(nullptr),
+	//	mpSelection(selection),
+	//	mpName(nullptr),
+	//	mCoverage(1),
+	//	mChips(static_cast<unsigned>(chip_info)),
+	//	mReturn(0.f),
+	//	mPayout(0.f),
+	//	mWin(0.f),
+	//	mResult(0.f),
+	//	mLose(0.f),
+	//	mOdds(0.f),
+	//	mProbWin(0.f),
+	//	mProbPush(0.f),
+	//	mProbLose(0.f),
+	//	mExpectedValue(0.f),
+	//	mExpectedReturn(0.f),
+	//	mAverageWin(0.f),
+	//	mFirstMoment(0),
+	//	mSecondMoment(0),
+	//	mThirdMoment(0),
+	//	mFourthMoment(0),
+	//	mSkewness(0.f),
+	//	mKurtosis(0.f),
+	//	mVariance(0.f),
+	//	mBinomialVariance(0.f),
+	//	mStandardDeviation(0.f),
+	//	mBinomialStandardDeviation(0.f),
+	//	m_point(point)
+	//{
+	//	assign_name();
+
+	//	if (parent)
+	//		set_part_1(mChips);
+	//	else
+	//	{
+	//		mpChilds = make_shared<Childs_t>();
+	//		mpSelection = make_shared<type_selection>();
+	//		fill_childs(table, selection, mChips, m_point);
+	//		unsigned nums = table > ETable::American ? 37 : static_cast<unsigned>(table);
+
+	//		for (unsigned i = 0; i < mpChilds->size(); ++i)
+	//			mpChilds->at(i)->set_part_2(table, nums, mChips);
+
+	//		set_part_1(mChips);
+	//		set_part_2(table, nums, mChips);
+	//	}
+	//}
+
 	Bet::Bet(const Bet& ref) :
 		mId(ref.mId),
 		mpParent(ref.mpParent),
@@ -548,20 +650,12 @@ namespace roulette
 		}
 		return *this;
 	}
-#endif
-#ifdef _MSC_VER
-#pragma endregion contructors
 
-#pragma region
-#endif // _MSC_VER
-#if 0
 	// TODO implement map of strings with names 
 	void Bet::fill_childs(
 		const ETable& table, const std::shared_ptr<type_selection> selection, const int& chips, Gdk::Point point)
 	{
-#if 0
 		short temp[6];
-#endif
 		switch (mId)
 		{
 		case EBet::StraightUp:	// TODO these bets do not need a child
@@ -612,7 +706,6 @@ namespace roulette
 			mpChilds->push_back(make_shared<Bet>(table, mId, chips, point, make_shared<type_selection>(Odd), this));
 			break;
 
-#if 0 // TODO: fix code
 		case EBet::VoisinsDeZero:
 			for (unsigned i = 0; i < 10; i += 2)
 				mpChilds->push_back(make_shared<Bet>(table, EBet::Split, chips, make_shared<type_selection>(VoisinsDeZero.find(i), VoisinsDeZero.find(i + 2)), this));
@@ -806,7 +899,6 @@ namespace roulette
 			break;
 
 		}
-#endif // 0
 		case EBet::Maximus13:
 			break;
 		case EBet::Maximus2:
@@ -878,13 +970,11 @@ namespace roulette
 				mpChilds->at(i)->print_properties();
 	}
 	
-	
 	void Bet::set_part_1(const unsigned& chips)
 	{
 		using std::sort;
 
 		 //TODO: THIS FUNCTION THROWS, fix it.
-#if 0
 		 //COVERAGE
 		if (mpSelection->empty())  // it is parent
 		{
@@ -905,7 +995,6 @@ namespace roulette
 					++mCoverage;
 			}
 		}
-#endif
 
 		// CHIPS
 		if (mpChilds)  // it is parent
@@ -1126,9 +1215,6 @@ namespace roulette
 		mVariance = pow(chips * (mPayout + mReturn) * sqrt(mProbWin * mProbLose), 2);
 		mStandardDeviation = chips * (mPayout + mReturn) * sqrt(mProbWin * mProbLose);
 	}
-#endif
-#ifdef _MSC_VER
-#pragma endregion methods
-#endif // _MSC_VER
 
-} // namespace
+
+#endif // 0

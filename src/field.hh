@@ -33,15 +33,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 // roulette
-#include "bet.hh"
-#include "sets.hh"
 #include "error.hh"
 #include "main.hh"
-
-// std
-#include <vector>
-#include <memory>
-#include <utility>
 
 // gtkmm
 #include <gtkmm/widget.h>
@@ -66,6 +59,7 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
+	// forward declarations
 	class Table;
 
 	class Field final : 
@@ -77,7 +71,7 @@ namespace roulette
 		Field(EField field_index, Table* p_table);
 
 		// typedefs
-		typedef sigc::signal<void, const EField&, type_chip> signal;
+		typedef sigc::signal2<void, const EField&, type_chip> signal;
 		
 		// signals emited by number fields only
 		signal signal_bet_top;
@@ -109,9 +103,9 @@ namespace roulette
 		signal signal_bet_line5; // not used by dozen1 and dozen2 only
 
 		// methods
-		inline const EField& get_index() const;
-		inline void on_signal_rebet();
-		inline void on_signal_spin(unsigned result);
+		void on_signal_rebet();
+		inline const EField get_index() const noexcept;
+		inline void on_signal_spin(unsigned result) noexcept;
 
 		// signal handlers
 		void on_signal_bet_bottom(const EField& sender, type_chip chip);
@@ -127,7 +121,7 @@ namespace roulette
 		// overrides:
 		Gtk::SizeRequestMode get_request_mode_vfunc() const override;
 		void get_preferred_width_vfunc(int& minimum_width, int& natural_width) const override;
-		void get_preferred_height_for_width_vfunc(int width, int& minimum_height, int& natural_height) const  override;
+		void get_preferred_height_for_width_vfunc(int width, int& minimum_height, int& natural_height) const override;
 		void get_preferred_height_vfunc(int& minimum_height, int& natural_height) const override;
 		void get_preferred_width_for_height_vfunc(int height, int& minimum_width, int& natural_width) const override;
 		void on_size_allocate(Gtk::Allocation& allocation) override;
@@ -183,21 +177,12 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
-	const EField& Field::get_index() const
+	const EField Field::get_index() const noexcept
 	{
 		return m_index;
 	}
 
-	inline void Field::on_signal_rebet()
-	{
-		if (!m_chips_saved.empty())
-		{
-			m_chips = m_chips_saved;
-			refGdkWindow->invalidate(false);
-		}
-	}
-
-	void Field::on_signal_spin(unsigned /*result*/)
+	void Field::on_signal_spin(unsigned /*result*/) noexcept
 	{
 		m_chips_saved = m_chips;
 	}

@@ -36,9 +36,9 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 // roulette
-#include "bet.hh"
 #include "error.hh"
 #include "main.hh"
+#include "sets.hh"
 
 // gtkmm
 #include <sigc++/signal.h>
@@ -60,7 +60,7 @@ namespace roulette
 	{
 	public:
 		// constructors
-		Engine();
+		Engine() noexcept;
 
 		// place a bet into the engine bet container
 		void place_bet(type_bet bet);
@@ -69,19 +69,19 @@ namespace roulette
 		void spin(const ETable table_type);
 
 		// remove all previously placed bets
-		void clear_all_bets();
+		void clear_all_bets() noexcept;
 
 		// get total value of bets placed
-		inline unsigned get_current_bet() const;
+		inline unsigned get_current_bet() const noexcept;
 
 		// get current player bankroll
-		inline unsigned get_bankroll() const;
+		inline unsigned get_bankroll() const noexcept;
 
 		// get value of last bet placed
-		inline unsigned get_last_bet() const;
+		inline unsigned get_last_bet() const noexcept;
 
 		// get numbers on which the bet has been placed
-		inline type_set get_numbers() const;
+		type_set get_numbers() const noexcept;
 
 		// place last bets again
 		void rebet();
@@ -123,32 +123,19 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
-	unsigned Engine::get_bankroll() const
+	unsigned Engine::get_bankroll() const noexcept
 	{
 		return m_bankroll;
 	}
 
-	unsigned Engine::get_current_bet() const
+	unsigned Engine::get_current_bet() const noexcept
 	{
 		return m_current_bet;
 	}
 
-	unsigned Engine::get_last_bet() const
+	unsigned Engine::get_last_bet() const noexcept
 	{
 		return m_last_bet;
-	}
-
-	type_set Engine::get_numbers() const
-	{
-		// if bets are cleared from the table return nullptr
-		if (m_bets.empty())
-		{
-			return nullptr;
-		}
-		else
-		{
-			return m_bets.back()->get_selection();
-		}
 	}
 
 #ifdef _MSC_VER

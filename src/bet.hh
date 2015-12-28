@@ -30,61 +30,32 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
+// roulette
 #include "error.hh"
+#include "main.hh"
 #include "sets.hh"
-//#include "main.hh"
-
-#include <iostream>
-#include <vector>	// due to and Childs_t
-#include <memory>
-#include <tuple>
-#include <string> // used in assign_name
-
-#include <gdkmm/types.h> // Gdk::Point
-#include <gdkmm/pixbuf.h>
-#include <glibmm/refptr.h>
-
-//#include <boost/uuid/uuid.hpp>
 
 namespace roulette
 {
-	// type declaring a a pair which makes a chip
-	typedef std::tuple<const EChip, Gdk::Point, EBet> type_chip_tuple;
-
-	// type declaring a final chip type
-	typedef std::shared_ptr<type_chip_tuple> type_chip;
-
-	//typedef std::vector<unsigned> type_selection; // numbers selected for the bet (ALSO DEFINED AS type_set !)
-
 	class Bet final :
 		public IErrorHandler
 	{
 	public:
 		// constructors
-		//Bet(const ETable table,
-		//	const EBet bet,
-		//	unsigned chip_info,
-		//	Gdk::Point& point,
-		//	std::shared_ptr<type_selection> selection = nullptr,
-		//	Bet* parent = nullptr
-		//	);
+		Bet(const type_chip chip, const type_set selection);
 
-		Bet(/*const*/ type_chip chip,
-			type_set selection = nullptr
-			);
+		Bet(Bet&& ref) noexcept;
+		Bet(const Bet& ref) noexcept;
+		Bet& operator=(Bet&& ref) noexcept;
+		Bet& operator=(const Bet& ref) noexcept;
 
-		Bet(Bet&& ref);
-		Bet(const Bet& ref);
-		Bet& operator=(Bet&& ref);
-		Bet& operator=(const Bet& ref);
-
-		inline EBet get_id() const; // get bet enum
-		inline unsigned get_chip_value() const; // get chip value
-		inline type_chip get_chip() const; // get chip enum and drop point
-		inline type_set get_selection() const; // numbers included in this bet
+		// methods
+		inline EBet get_id() const noexcept; // get bet enum
+		inline unsigned get_chip_value() const noexcept; // get chip value
+		inline type_chip get_chip() const noexcept; // get chip enum, drop point and bet enum
+		inline type_set get_selection() const noexcept; // numbers included in this bet
 
 	private:
-
 		// methods
 		void assign_name();
 
@@ -121,22 +92,22 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
-	EBet Bet::get_id() const
+	EBet Bet::get_id() const noexcept
 	{
 		return std::get<2>(*m_chip);
 	}
 
-	type_chip Bet::get_chip() const
+	type_chip Bet::get_chip() const noexcept
 	{
 		return m_chip;
 	}
 
-	type_set Bet::get_selection() const
+	type_set Bet::get_selection() const noexcept
 	{
 		return mp_set;
 	}
 
-	unsigned Bet::get_chip_value() const
+	unsigned Bet::get_chip_value() const noexcept
 	{
 		return static_cast<unsigned>(std::get<0>(*m_chip));
 	}
@@ -198,6 +169,14 @@ namespace roulette
   ///</summary>
 
 #if 0
+  //Bet(const ETable table,
+  //	const EBet bet,
+  //	unsigned chip_info,
+  //	Gdk::Point& point,
+  //	std::shared_ptr<type_selection> selection = nullptr,
+  //	Bet* parent = nullptr
+  //	);
+
 		// methods
 		unsigned get_childs() const; // amount of childs
 		unsigned get_numbers() const; // amount of numbers

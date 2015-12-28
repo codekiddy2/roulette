@@ -28,13 +28,15 @@ along with this program. If not, see http://www.gnu.org/licenses.
 // roulette
 #include "pch.hh"
 #include "engine.hh"
-#include "main.hh"
 #include "table.hh"
+#include "bet.hh"
 
-// std
-#include <algorithm>
-using std::equal;
-using std::find;
+namespace
+{
+	using std::equal; // used to compare selection of numbers
+	using std::find; // used in spin to search for numbers
+	using boost::random::random_device; // boost rng
+}
 
 namespace roulette
 {
@@ -43,9 +45,9 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
-	boost::random::random_device Engine::m_rng;
+	random_device Engine::m_rng;
 
-	Engine::Engine() :
+	Engine::Engine() noexcept :
 		IErrorHandler("Engine"),
 		m_spin_in_progress(false),
 		m_current_bet(0),
@@ -59,6 +61,19 @@ namespace roulette
 
 #pragma region
 #endif // _MSC_VER
+
+	type_set Engine::get_numbers() const noexcept
+	{
+		// if bets are cleared from the table return nullptr
+		if (m_bets.empty())
+		{
+			return nullptr;
+		}
+		else
+		{
+			return m_bets.back()->get_selection();
+		}
+	}
 
 	void Engine::place_bet(type_bet bet)
 	{
@@ -335,7 +350,7 @@ namespace roulette
 		}
 	}
 
-	void Engine::clear_all_bets()
+	void Engine::clear_all_bets() noexcept
 	{
 		if (!m_bets.empty())
 		{
@@ -497,44 +512,3 @@ namespace roulette
 #endif // _MSC_VER
 
 } // namespace roulette
-
-//
-//switch (main_bet)
-//{
-//case roulette::EBet::StraightUp:
-//	break;
-//case roulette::EBet::Split:
-//	break;
-//case roulette::EBet::Street:
-//	break;
-//case roulette::EBet::Corner:
-//	break;
-//case roulette::EBet::Line:
-//	break;
-//case roulette::EBet::Column1:
-//	break;
-//case roulette::EBet::Column2:
-//	break;
-//case roulette::EBet::Column3:
-//	break;
-//case roulette::EBet::Dozen1:
-//	break;
-//case roulette::EBet::Dozen2:
-//	break;
-//case roulette::EBet::Dozen3:
-//	break;
-//case roulette::EBet::Red:
-//	break;
-//case roulette::EBet::Black:
-//	break;
-//case roulette::EBet::Even:
-//	break;
-//case roulette::EBet::Odd:
-//	break;
-//case roulette::EBet::High:
-//	break;
-//case roulette::EBet::Low:
-//	break;
-//default:
-//	break;
-//}

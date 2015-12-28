@@ -31,14 +31,11 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 // roulette
-#include "bet.hh"
-#include "sets.hh"
 #include "error.hh"
 #include "main.hh"
 
 // std
 #include <map>
-#include <memory>
 
 // gtkmm
 #include <glibmm/refptr.h>
@@ -58,6 +55,7 @@ namespace roulette
 
 	class Engine;
 	class Table;
+	enum class ELayout : unsigned;
 
 	class InfoBar :
 		public Gtk::DrawingArea,
