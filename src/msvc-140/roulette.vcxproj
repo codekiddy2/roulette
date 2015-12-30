@@ -182,6 +182,7 @@
     <ClInclude Include="..\engine.hh" />
     <ClInclude Include="..\error.hh" />
     <ClInclude Include="..\field.hh" />
+    <ClInclude Include="..\pragmas.hh" />
     <ClInclude Include="..\history.hh" />
     <ClInclude Include="..\infobar.hh" />
     <ClInclude Include="..\main.hh" />

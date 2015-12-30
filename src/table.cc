@@ -28,6 +28,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 // roulette
 #include "pch.hh"
+#include "pragmas.hh"
 #include "table.hh"
 #include "field.hh"
 #include "sets.hh"

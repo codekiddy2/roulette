@@ -38,6 +38,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 // roulette
 #include "pch.hh"
+#include "pragmas.hh"
 #include "field.hh"
 #include "table.hh"
 #include "color.hh"
@@ -101,7 +102,7 @@ namespace roulette
 	{
 		Gtk::Allocation alloc = get_allocation();
 		Gdk::Point& point = get<1>(*chip);
-		
+
 		const int x = point.get_x();
 		const int y = point.get_y();
 
@@ -516,7 +517,7 @@ namespace roulette
 				else if (x < check_street4)
 				{
 					point.set_x(line4);
-					if (emit) 
+					if (emit)
 					{
 						get<2>(*chip) = EBet::Line;
 						if (!mp_table->check_limits(m_chips, chip))
@@ -1088,11 +1089,11 @@ namespace roulette
 			return true; // Return whether the cursor position is in a drop zone.
 		}
 	}
-	
+
 	void Field::on_drag_data_received(const Glib::RefPtr<Gdk::DragContext>& context,
 		int x, int y, const Gtk::SelectionData& selection_data, guint info, guint time)
 	{
-		// chips can't be drawn on dummy2 
+		// chips can't be drawn on dummy2
 		if (m_index != EField::Dummy2)
 		{
 			if (selection_data.get_format() == format)
@@ -2058,7 +2059,7 @@ namespace roulette
 		minimum_width = 60;
 		natural_width = 60;
 	}
-	
+
 	// Calculate the minimum and natural height of the widget.
 	void Field::get_preferred_height_vfunc(int& minimum_height, int& natural_height) const
 	{

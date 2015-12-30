@@ -26,6 +26,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 #include "pch.hh"
+#include "pragmas.hh"
 #include "chip.hh"
 #include "engine.hh"
 #include "sets.hh"

@@ -1,7 +1,4 @@
 
-#include "pch.hh"
-#include "color.hh"
-
 /*
 roulette - roulette simulation program
 
@@ -28,6 +25,10 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //	Definition of Color class
 //
 ///</summary>
+
+#include "pch.hh"
+#include "pragmas.hh"
+#include "color.hh"
 
 namespace roulette
 {

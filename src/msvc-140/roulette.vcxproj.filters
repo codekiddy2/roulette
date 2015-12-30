@@ -138,5 +138,8 @@
     <ClInclude Include="..\types.hh">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\pragmas.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

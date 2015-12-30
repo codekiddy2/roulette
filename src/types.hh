@@ -63,31 +63,21 @@ namespace roulette
 	enum class ELayout : uint16;
 	enum class EMinimum : uint16;
 
+	// type declaring a pixbuf icon for a chip
+	typedef Glib::RefPtr<Gdk::Pixbuf> type_chip_icon;
+
+	// type declaring a pango layout (used by Field)
+	typedef Glib::RefPtr<Pango::Layout> type_layout;
+
+	// type declaring layout container
+	typedef std::map<ELayout, type_layout> type_layout_container;
+
 	// single type declaring a set of numbers in roulette
 	// must be vector to preserve numbers order and avoid sorting
 	typedef const std::vector<uint16> type_raw_set;
 
 	// shared pointer to the const set is shared between objects
 	typedef std::shared_ptr<type_raw_set> type_set;
-
-	// type declaring a pango layout (used by Field)
-	typedef Glib::RefPtr<Pango::Layout> type_layout;
-
-	// type declaring layout container
-	// TODO: No Explicit instantiation due to warning C4661
-	typedef std::map<ELayout, type_layout> type_layout_container;
-
-	// type declaring list of bet for table (used by Table)
-	typedef std::vector<EBet> type_bet_list;
-
-	// type declaring table maximums (used by Table)
-	typedef std::map<EBet, uint16> type_max_container;
-
-	// type declaring table minimums (used by Table)
-	typedef std::map<EMinimum, uint16> type_min_container;
-
-	// type declaring table fields (used by Table)
-	typedef std::map<EField, Field*> type_fields;
 
 	// type declaring drag and drop targets and sources
 	typedef std::vector<Gtk::TargetEntry> type_dnd_targets;
@@ -98,9 +88,6 @@ namespace roulette
 	// container type to store bets
 	typedef std::vector<type_bet> type_bet_container;
 
-	// type declaring a pixbuf icon for a chip
-	typedef Glib::RefPtr<Gdk::Pixbuf> type_chip_icon;
-
 	// type declaring a tuple which defines a chip
 	typedef std::tuple<EChip, Gdk::Point, EBet> type_chip_tuple;
 
@@ -110,14 +97,26 @@ namespace roulette
 	// type declaring a container of chips
 	typedef std::vector<type_chip> type_chip_container;
 
+	// type declaring list of bet for table (used by Table)
+	typedef std::vector<EBet> type_bet_list;
+
+	// type declaring table fields (used by Table)
+	typedef std::map<EField, Field*> type_fields;
+
+	// type declaring table maximums (used by Table)
+	typedef std::map<EBet, uint16> type_max_container;
+
+	// type declaring table minimums (used by Table)
+	typedef std::map<EMinimum, uint16> type_min_container;
+
 	// type declaring an empty signal (used by Table)
 	typedef sigc::signal0<void> type_signal;
 
-	// type signaling a bet (used by Table and Engine)
-	typedef sigc::signal1<void, type_bet> type_signal_bet;
-
 	// type declaring a spin signal (used by Engine)
 	typedef sigc::signal1<void, uint16> type_signal_spin;
+
+	// type signaling a bet (used by Table and Engine)
+	typedef sigc::signal1<void, type_bet> type_signal_bet;
 
 	// type declaring chip drawing signal (used by Field)
 	typedef sigc::signal2<void, const EField&, type_chip> type_signal_chip;
@@ -130,29 +129,35 @@ namespace roulette
 	extern template class Glib::RefPtr<Gdk::Pixbuf>; // type_chip_icon
 	extern template class Glib::RefPtr<Pango::Layout>; // type_layout
 
-	extern template class std::shared_ptr<roulette::Bet>; // type_bet
-	extern template class std::vector<Gtk::TargetEntry>; // type_dnd_targets
-	extern template class std::vector<std::shared_ptr<roulette::Bet>>; // type_bet_container
-
-#if GDKMM_MINOR_VERSION != 18 // TODO: probably a bug in 3.0.18 with deleted copy asignment
-	extern template class std::tuple<roulette::EChip, Gdk::Point, roulette::EBet>; // type_chip_tuple
+#ifndef _MSC_VER // HACK: No Explicit instantiation due to warning C4661
+	extern template class std::map<roulette::ELayout, roulette::type_layout>; // type_layout_container
 #endif
 
-	extern template class std::shared_ptr<std::tuple<roulette::EChip, Gdk::Point, roulette::EBet>>; // type_chip
-	extern template class std::vector<std::shared_ptr<std::tuple<roulette::EChip, Gdk::Point, roulette::EBet>>>; // type_chip_container
+#ifndef __GNUC__ // HACK: g++ says "undefined reference"
+	extern template class std::vector<roulette::uint16>; // type_raw_set
+	extern template class std::shared_ptr<roulette::type_raw_set>; // type_set
+#endif // __GNUC__
+
+	extern template class std::vector<Gtk::TargetEntry>; // type_dnd_targets
+	extern template class std::shared_ptr<roulette::Bet>; // type_bet
+	extern template class std::vector<roulette::type_bet>; // type_bet_container
+
+#if GDKMM_MINOR_VERSION != 18 // HACK: probably a bug in 3.0.18 with deleted copy asignment
+	extern template class std::tuple<roulette::EChip, Gdk::Point, roulette::EBet>; // type_chip_tuple
+#endif // GDKMM_MINOR_VERSION
+
+	extern template class std::shared_ptr<roulette::type_chip_tuple>; // type_chip
+	extern template class std::vector<roulette::type_chip>; // type_chip_container
 
 	extern template class std::vector<roulette::EBet>; // type_bet_list
 	extern template class std::map<roulette::EField, roulette::Field*>; // type_fields
-	extern template class std::map<roulette::EBet, unsigned short>; // type_max_container
-	extern template class std::map<roulette::EMinimum, unsigned short>; // type_min_container
-
-	extern template class std::vector<unsigned short>; // type_raw_set
-	extern template class std::shared_ptr<std::vector<unsigned short>>; // type_set
+	extern template class std::map<roulette::EBet, roulette::uint16>; // type_max_container
+	extern template class std::map<roulette::EMinimum, roulette::uint16>; // type_min_container
 
 	extern template class sigc::signal0<void>; // type_signal
-	extern template class sigc::signal1<void, unsigned short>; // type_signal_spin
-	extern template class sigc::signal1<void, std::shared_ptr<roulette::Bet>>; // type_signal_bet
-	extern template class sigc::signal2<void, const roulette::EField&, std::shared_ptr<std::tuple<roulette::EChip, Gdk::Point, roulette::EBet>>>; // type_signal_chip
+	extern template class sigc::signal1<void, roulette::uint16>; // type_signal_spin
+	extern template class sigc::signal1<void, roulette::type_bet>; // type_signal_bet
+	extern template class sigc::signal2<void, const roulette::EField&, roulette::type_chip>; // type_signal_chip
 
 #endif // !TU_TYPES_CC
 

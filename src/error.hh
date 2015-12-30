@@ -60,9 +60,10 @@ namespace roulette
 		inline uint16 code() const noexcept;
 
 	private:
-		// members
-		const uint16 m_code;
+		/// begin initializer list
 		const char* m_description;
+		const uint16 m_code;
+		/// end initializer list
 	};
 
 	// error handler and debug interface

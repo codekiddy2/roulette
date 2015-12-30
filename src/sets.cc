@@ -28,6 +28,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 // roulette
 #include "pch.hh"
+#include "pragmas.hh"
 #include "sets.hh"
 
 #define MAKE_SET(...) std::make_shared<type_raw_set>(type_raw_set{ __VA_ARGS__ })

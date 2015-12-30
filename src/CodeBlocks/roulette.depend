@@ -1,9 +1,10 @@
 # depslib dependency file v1.0
-1451322281 source:d:\github\roulette\src\base_control.cc
+1451481994 source:d:\github\roulette\src\base_control.cc
 	"pch.hh"
+	"gcc.hh"
 	"base_control.hh"
 
-1451407824 d:\github\roulette\src\pch.hh
+1451482522 d:\github\roulette\src\pch.hh
 	<vector>
 	<string>
 	<algorithm>
@@ -31,7 +32,7 @@
 	<boost/uuid/uuid.hpp>
 	<boost/uuid/uuid_generators.hpp>
 
-1451322479 d:\github\roulette\src\base_control.hh
+1451483668 d:\github\roulette\src\base_control.hh
 	"error.hh"
 	"color.hh"
 	<gtkmm/widget.h>
@@ -43,12 +44,12 @@
 	<cairomm/refptr.h>
 	<cairomm/context.h>
 
-1451339658 d:\github\roulette\src\error.hh
+1451469081 d:\github\roulette\src\error.hh
 	"types.hh"
 	<string>
 	<exception>
 
-1451402545 d:\github\roulette\src\types.hh
+1451483672 d:\github\roulette\src\types.hh
 	<map>
 	<tuple>
 	<vector>
@@ -64,8 +65,9 @@
 1451321349 d:\github\roulette\src\color.hh
 	<gdkmm/rgba.h>
 
-1451341342 source:d:\github\roulette\src\bet.cc
+1451481994 source:d:\github\roulette\src\bet.cc
 	"pch.hh"
+	"gcc.hh"
 	"bet.hh"
 	"chip.hh"
 
@@ -83,8 +85,9 @@
 1451341342 d:\github\roulette\src\chip.hh
 	"base_control.hh"
 
-1451341342 source:d:\github\roulette\src\chip.cc
+1451481994 source:d:\github\roulette\src\chip.cc
 	"pch.hh"
+	"gcc.hh"
 	"chip.hh"
 	"engine.hh"
 	"sets.hh"
@@ -95,19 +98,22 @@
 	"sets.hh"
 	<boost/random/random_device.hpp>
 
-1451314793 source:d:\github\roulette\src\color.cc
+1451481994 source:d:\github\roulette\src\color.cc
 	"pch.hh"
+	"gcc.hh"
 	"color.hh"
 
-1451324666 source:d:\github\roulette\src\control.cc
+1451481994 source:d:\github\roulette\src\control.cc
 	"pch.hh"
+	"gcc.hh"
 	"control.hh"
 
 1450757041 d:\github\roulette\src\control.hh
 	"base_control.hh"
 
-1451341068 source:d:\github\roulette\src\engine.cc
+1451481994 source:d:\github\roulette\src\engine.cc
 	"pch.hh"
+	"gcc.hh"
 	"engine.hh"
 	"table.hh"
 	"bet.hh"
@@ -117,13 +123,15 @@
 	"main.hh"
 	<gtkmm/grid.h>
 
-1451341342 source:d:\github\roulette\src\error.cc
+1451481994 source:d:\github\roulette\src\error.cc
 	"pch.hh"
+	"gcc.hh"
 	"error.hh"
 	"sets.hh"
 
-1451341033 source:d:\github\roulette\src\field.cc
+1451481854 source:d:\github\roulette\src\field.cc
 	"pch.hh"
+	"gcc.hh"
 	"field.hh"
 	"table.hh"
 	"color.hh"
@@ -147,8 +155,9 @@
 	<gdkmm/event.h>
 	<gtkmm/tooltip.h>
 
-1451340561 source:d:\github\roulette\src\history.cc
+1451481994 source:d:\github\roulette\src\history.cc
 	"pch.hh"
+	"gcc.hh"
 	"history.hh"
 	"main.hh"
 
@@ -160,13 +169,14 @@
 	<gtkmm/textbuffer.h>
 	<gtkmm/scrolledwindow.h>
 
-1451324538 source:d:\github\roulette\src\infobar.cc
+1451481994 source:d:\github\roulette\src\infobar.cc
 	"pch.hh"
+	"gcc.hh"
 	"infobar.hh"
 	"engine.hh"
 	"table.hh"
 
-1451330630 d:\github\roulette\src\infobar.hh
+1451477066 d:\github\roulette\src\infobar.hh
 	"error.hh"
 	"main.hh"
 	<glibmm/refptr.h>
@@ -177,8 +187,9 @@
 	<gtkmm/drawingarea.h>
 	<gdkmm/window.h>
 
-1451398211 source:d:\github\roulette\src\main.cc
+1451481994 source:d:\github\roulette\src\main.cc
 	"pch.hh"
+	"gcc.hh"
 	"window.hh"
 
 1451129180 d:\github\roulette\src\window.hh
@@ -197,11 +208,13 @@
 1450753981 source:d:\github\roulette\src\pch.cc
 	"pch.hh"
 
-1451405895 source:d:\github\roulette\src\sets.cc
+1451481994 source:d:\github\roulette\src\sets.cc
 	"pch.hh"
+	"gcc.hh"
 	"sets.hh"
 
-1451398261 source:d:\github\roulette\src\pch.hh
+1451507365 source:d:\github\roulette\src\pch.hh
+	"pragmas.hh"
 	<vector>
 	<string>
 	<algorithm>
@@ -229,17 +242,24 @@
 	<boost/uuid/uuid.hpp>
 	<boost/uuid/uuid_generators.hpp>
 
-1451405975 source:d:\github\roulette\src\table.cc
+1451481994 source:d:\github\roulette\src\table.cc
 	"pch.hh"
+	"gcc.hh"
 	"table.hh"
 	"field.hh"
 	"sets.hh"
 
-1451402292 source:d:\github\roulette\src\types.cc
+1451481994 source:d:\github\roulette\src\types.cc
 	"pch.hh"
+	"gcc.hh"
 	"types.hh"
 
-1451324591 source:d:\github\roulette\src\window.cc
+1451481994 source:d:\github\roulette\src\window.cc
 	"pch.hh"
+	"gcc.hh"
 	"window.hh"
+
+1451491172 d:\github\roulette\src\gcc.hh
+
+1451507282 d:\github\roulette\src\pragmas.hh
 

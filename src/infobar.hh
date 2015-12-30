@@ -80,6 +80,12 @@ namespace roulette
 		Gdk::RGBA m_background = Gdk::RGBA("rgb(0, 0, 0)");
 		type_layout_container m_layouts;
 		Glib::RefPtr<Gdk::Window> refGdkWindow;
+
+		// deleted
+		InfoBar(const InfoBar&) = delete;
+		InfoBar(const InfoBar&&) = delete;
+		InfoBar& operator=(const InfoBar&) = delete;
+		InfoBar& operator=(const InfoBar&&) = delete;
 	};
 
 #ifdef _MSC_VER
