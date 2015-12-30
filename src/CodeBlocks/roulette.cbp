@@ -3,7 +3,7 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="roulette" />
-		<Option pch_mode="2" />
+		<Option pch_mode="0" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug x64">
@@ -13,56 +13,47 @@
 				<Option compiler="gcc" />
 				<Option projectCompilerOptionsRelation="1" />
 				<Compiler>
-					<Add option="-Wshadow" />
-					<Add option="-Winit-self" />
-					<Add option="-Wredundant-decls" />
-					<Add option="-Weffc++" />
-					<Add option="-Wmain" />
-					<Add option="-pedantic" />
-					<Add option="-Wzero-as-null-pointer-constant" />
 					<Add option="-std=c++11" />
-					<Add option="-Wextra" />
 					<Add option="-g" />
-					<Add option="-Winvalid-pch" />
 					<Add option="-mms-bitfields" />
 					<Add option="-pthread" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/include/gtkmm-3.0" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/lib/gtkmm-3.0/include" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/include/atkmm-1.6" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/include/gdkmm-3.0" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/lib/gdkmm-3.0/include" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/include/giomm-2.4" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/lib/giomm-2.4/include" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/include/pangomm-1.4" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/lib/pangomm-1.4/include" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/include/glibmm-2.4" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/lib/glibmm-2.4/include" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/include/gtk-3.0" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/include/cairo" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/include" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/include/pango-1.0" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/include/atk-1.0" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/include/cairomm-1.0" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/lib/cairomm-1.0/include" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/include/pixman-1" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/include/freetype2" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/include/libpng16" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/include/harfbuzz" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/include/glib-2.0" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/lib/glib-2.0/include" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/include/sigc++-2.0" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/lib/sigc++-2.0/include" />
-					<Add option="-I$(INCLUDE_DIR)/mingw64/include/gdk-pixbuf-2.0" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/gtkmm-3.0" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/lib/gtkmm-3.0/include" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/atkmm-1.6" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/gdkmm-3.0" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/lib/gdkmm-3.0/include" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/giomm-2.4" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/lib/giomm-2.4/include" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/pangomm-1.4" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/lib/pangomm-1.4/include" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/glibmm-2.4" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/lib/glibmm-2.4/include" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/gtk-3.0" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/cairo" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/pango-1.0" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/atk-1.0" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/cairomm-1.0" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/lib/cairomm-1.0/include" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/pixman-1" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/freetype2" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/libpng16" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/harfbuzz" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/glib-2.0" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/lib/glib-2.0/include" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/sigc++-2.0" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/lib/sigc++-2.0/include" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/gdk-pixbuf-2.0" />
 					<Add option="-DWINVER=0x0A00" />
 					<Add option="-D_WIN32_WINNT=0x0A00" />
+					<Add option="-DATKMM_DISABLE_DEPRECATED=1" />
+					<Add option="-DGDKMM_DISABLE_DEPRECATED=1" />
+					<Add option="-DGTKMM_DISABLE_DEPRECATED=1" />
 					<Add option="-DGIOMM_DISABLE_DEPRECATED=1" />
 					<Add option="-DGLIBMM_DISABLE_DEPRECATED=1" />
 					<Add option="-DSIGCXX_DISABLE_DEPRECATED=1" />
-					<Add option="-DATKMM_DISABLE_DEPRECATED=1" />
 					<Add option="-DCAIROMM_DISABLE_DEPRECATED=1" />
 					<Add option="-DPANGOMM_DISABLE_DEPRECATED=1" />
-					<Add option="-DGDKMM_DISABLE_DEPRECATED=1" />
-					<Add option="-DGTKMM_DISABLE_DEPRECATED=1" />
 				</Compiler>
 				<Linker>
 					<Add option="-L/mingw64/lib" />
@@ -117,7 +108,7 @@
 					<Add directory="D:/Github/Install/msys64" />
 				</Linker>
 				<Environment>
-					<Variable name="INCLUDE_DIR" value="D:/Github/Install/msys64" />
+					<Variable name="INCLUDE_DIR" value="D:\Github\Install\msys64" />
 				</Environment>
 			</Target>
 		</Build>
@@ -188,6 +179,7 @@
 		<Unit filename="../error.hh" />
 		<Unit filename="../field.cc" />
 		<Unit filename="../field.hh" />
+		<Unit filename="../gcc.hh" />
 		<Unit filename="../history.cc" />
 		<Unit filename="../history.hh" />
 		<Unit filename="../icons/chip1.ico" />
@@ -206,6 +198,7 @@
 			<Option compile="1" />
 			<Option weight="0" />
 		</Unit>
+		<Unit filename="../pragmas.hh" />
 		<Unit filename="../sets.cc" />
 		<Unit filename="../sets.hh" />
 		<Unit filename="../table.cc" />

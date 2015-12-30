@@ -1,10 +1,11 @@
 # depslib dependency file v1.0
-1451481994 source:d:\github\roulette\src\base_control.cc
+1451507465 source:d:\github\roulette\src\base_control.cc
 	"pch.hh"
-	"gcc.hh"
+	"pragmas.hh"
 	"base_control.hh"
 
-1451482522 d:\github\roulette\src\pch.hh
+1451507365 d:\github\roulette\src\pch.hh
+	"pragmas.hh"
 	<vector>
 	<string>
 	<algorithm>
@@ -65,9 +66,9 @@
 1451321349 d:\github\roulette\src\color.hh
 	<gdkmm/rgba.h>
 
-1451481994 source:d:\github\roulette\src\bet.cc
+1451507465 source:d:\github\roulette\src\bet.cc
 	"pch.hh"
-	"gcc.hh"
+	"pragmas.hh"
 	"bet.hh"
 	"chip.hh"
 
@@ -85,9 +86,9 @@
 1451341342 d:\github\roulette\src\chip.hh
 	"base_control.hh"
 
-1451481994 source:d:\github\roulette\src\chip.cc
+1451507465 source:d:\github\roulette\src\chip.cc
 	"pch.hh"
-	"gcc.hh"
+	"pragmas.hh"
 	"chip.hh"
 	"engine.hh"
 	"sets.hh"
@@ -98,22 +99,22 @@
 	"sets.hh"
 	<boost/random/random_device.hpp>
 
-1451481994 source:d:\github\roulette\src\color.cc
+1451507465 source:d:\github\roulette\src\color.cc
 	"pch.hh"
-	"gcc.hh"
+	"pragmas.hh"
 	"color.hh"
 
-1451481994 source:d:\github\roulette\src\control.cc
+1451507465 source:d:\github\roulette\src\control.cc
 	"pch.hh"
-	"gcc.hh"
+	"pragmas.hh"
 	"control.hh"
 
 1450757041 d:\github\roulette\src\control.hh
 	"base_control.hh"
 
-1451481994 source:d:\github\roulette\src\engine.cc
+1451507465 source:d:\github\roulette\src\engine.cc
 	"pch.hh"
-	"gcc.hh"
+	"pragmas.hh"
 	"engine.hh"
 	"table.hh"
 	"bet.hh"
@@ -123,15 +124,15 @@
 	"main.hh"
 	<gtkmm/grid.h>
 
-1451481994 source:d:\github\roulette\src\error.cc
+1451507465 source:d:\github\roulette\src\error.cc
 	"pch.hh"
-	"gcc.hh"
+	"pragmas.hh"
 	"error.hh"
 	"sets.hh"
 
-1451481854 source:d:\github\roulette\src\field.cc
+1451507465 source:d:\github\roulette\src\field.cc
 	"pch.hh"
-	"gcc.hh"
+	"pragmas.hh"
 	"field.hh"
 	"table.hh"
 	"color.hh"
@@ -155,9 +156,9 @@
 	<gdkmm/event.h>
 	<gtkmm/tooltip.h>
 
-1451481994 source:d:\github\roulette\src\history.cc
+1451507465 source:d:\github\roulette\src\history.cc
 	"pch.hh"
-	"gcc.hh"
+	"pragmas.hh"
 	"history.hh"
 	"main.hh"
 
@@ -169,9 +170,9 @@
 	<gtkmm/textbuffer.h>
 	<gtkmm/scrolledwindow.h>
 
-1451481994 source:d:\github\roulette\src\infobar.cc
+1451507465 source:d:\github\roulette\src\infobar.cc
 	"pch.hh"
-	"gcc.hh"
+	"pragmas.hh"
 	"infobar.hh"
 	"engine.hh"
 	"table.hh"
@@ -187,9 +188,9 @@
 	<gtkmm/drawingarea.h>
 	<gdkmm/window.h>
 
-1451481994 source:d:\github\roulette\src\main.cc
+1451507465 source:d:\github\roulette\src\main.cc
 	"pch.hh"
-	"gcc.hh"
+	"pragmas.hh"
 	"window.hh"
 
 1451129180 d:\github\roulette\src\window.hh
@@ -205,12 +206,12 @@
 	<gdkmm/event.h>
 	<glibmm/refptr.h>
 
-1450753981 source:d:\github\roulette\src\pch.cc
+1451507379 source:d:\github\roulette\src\pch.cc
 	"pch.hh"
 
-1451481994 source:d:\github\roulette\src\sets.cc
+1451507465 source:d:\github\roulette\src\sets.cc
 	"pch.hh"
-	"gcc.hh"
+	"pragmas.hh"
 	"sets.hh"
 
 1451507365 source:d:\github\roulette\src\pch.hh
@@ -242,21 +243,21 @@
 	<boost/uuid/uuid.hpp>
 	<boost/uuid/uuid_generators.hpp>
 
-1451481994 source:d:\github\roulette\src\table.cc
+1451507465 source:d:\github\roulette\src\table.cc
 	"pch.hh"
-	"gcc.hh"
+	"pragmas.hh"
 	"table.hh"
 	"field.hh"
 	"sets.hh"
 
-1451481994 source:d:\github\roulette\src\types.cc
+1451507465 source:d:\github\roulette\src\types.cc
 	"pch.hh"
-	"gcc.hh"
+	"pragmas.hh"
 	"types.hh"
 
-1451481994 source:d:\github\roulette\src\window.cc
+1451507465 source:d:\github\roulette\src\window.cc
 	"pch.hh"
-	"gcc.hh"
+	"pragmas.hh"
 	"window.hh"
 
 1451491172 d:\github\roulette\src\gcc.hh
