@@ -30,6 +30,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <tuple>
 #include <vector>
 #include <memory>
+#include <cstdint>
 
 // gtkmm
 #include <sigc++/signal.h>
@@ -41,19 +42,16 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 namespace roulette
 {
-	// TODO: use these types in declarations
-	typedef unsigned char uint8;
-	typedef unsigned short uint16;
-	typedef unsigned long uint32;
-	typedef unsigned long long uint64;
+	// preffered integral types
+	typedef std::uint_least8_t uint8;
+	typedef std::uint_least16_t uint16; // used
+	typedef std::uint_least32_t uint32; // used
+	typedef std::uint_least64_t uint64;
 
-	typedef signed char int8;
-	typedef signed short int16;
-	typedef signed long int32;
-	typedef signed long long int64;
-
-	//typedef unsigned long ulong;
-	//typedef unsigned short ushort;
+	typedef std::int_least8_t int8;
+	typedef std::int_least16_t int16;
+	typedef std::int_least32_t int32;
+	typedef std::int_least64_t int64;
 
 	// forward declarations
 	class Bet;
@@ -64,32 +62,6 @@ namespace roulette
 	enum class EField : uint16;
 	enum class ELayout : uint16;
 	enum class EMinimum : uint16;
-
-#ifndef TU_TYPES_CC
-	// Explicit instantiation declaration
-	// typedef-name cannot be used in explicit instantiation.
-	extern template std::shared_ptr<Bet>; // type_bet
-	extern template Glib::RefPtr<Gdk::Pixbuf>; // type_chip_icon
-	extern template std::vector<Gtk::TargetEntry>; // type_dnd_targets
-	extern template std::vector<std::shared_ptr<Bet>>; // type_bet_container
-	extern template std::tuple<EChip, Gdk::Point, EBet>; // type_chip_tuple
-	extern template std::shared_ptr<std::tuple<EChip, Gdk::Point, EBet>>; // type_chip
-	extern template std::vector<std::shared_ptr<std::tuple<EChip, Gdk::Point, EBet>>>; // type_chip_container
-
-	extern template std::vector<EBet>; // type_bet_list
-	extern template std::map<EField, Field*>; // type_fields
-	extern template std::map<EBet, uint16>; // type_max_container
-	extern template std::map<EMinimum, uint16>; // type_min_container
-	extern template Glib::RefPtr<Pango::Layout>; // type_layout
-
-	extern template sigc::signal0<void>; // type_signal
-	extern template sigc::signal1<void, uint16>; // type_signal_spin
-	extern template sigc::signal1<void, std::shared_ptr<Bet>>; // type_signal_bet
-	extern template sigc::signal2<void, const EField&, std::shared_ptr<std::tuple<EChip, Gdk::Point, EBet>>>; // type_signal_chip
-
-	extern template std::vector<uint16>; // type_raw_set
-	extern template std::shared_ptr<std::vector<uint16>>; // type_set
-#endif // !MAIN_TU
 
 	// single type declaring a set of numbers in roulette
 	// must be vector to preserve numbers order and avoid sorting
@@ -151,5 +123,37 @@ namespace roulette
 	typedef sigc::signal2<void, const EField&, type_chip> type_signal_chip;
 
 } // namespace roulette
+
+#ifndef TU_TYPES_CC
+    // Explicit instantiation declaration
+    // typedef-name cannot be used in explicit instantiation.
+	extern template class Glib::RefPtr<Gdk::Pixbuf>; // type_chip_icon
+	extern template class Glib::RefPtr<Pango::Layout>; // type_layout
+
+	extern template class std::shared_ptr<roulette::Bet>; // type_bet
+	extern template class std::vector<Gtk::TargetEntry>; // type_dnd_targets
+	extern template class std::vector<std::shared_ptr<roulette::Bet>>; // type_bet_container
+
+#if GDKMM_MINOR_VERSION != 18 // TODO: probably a bug in 3.0.18 with deleted copy asignment
+	extern template class std::tuple<roulette::EChip, Gdk::Point, roulette::EBet>; // type_chip_tuple
+#endif
+
+	extern template class std::shared_ptr<std::tuple<roulette::EChip, Gdk::Point, roulette::EBet>>; // type_chip
+	extern template class std::vector<std::shared_ptr<std::tuple<roulette::EChip, Gdk::Point, roulette::EBet>>>; // type_chip_container
+
+	extern template class std::vector<roulette::EBet>; // type_bet_list
+	extern template class std::map<roulette::EField, roulette::Field*>; // type_fields
+	extern template class std::map<roulette::EBet, unsigned short>; // type_max_container
+	extern template class std::map<roulette::EMinimum, unsigned short>; // type_min_container
+
+	extern template class std::vector<unsigned short>; // type_raw_set
+	extern template class std::shared_ptr<std::vector<unsigned short>>; // type_set
+
+	extern template class sigc::signal0<void>; // type_signal
+	extern template class sigc::signal1<void, unsigned short>; // type_signal_spin
+	extern template class sigc::signal1<void, std::shared_ptr<roulette::Bet>>; // type_signal_bet
+	extern template class sigc::signal2<void, const roulette::EField&, std::shared_ptr<std::tuple<roulette::EChip, Gdk::Point, roulette::EBet>>>; // type_signal_chip
+
+#endif // !TU_TYPES_CC
 
 #endif // !TYPES_HH

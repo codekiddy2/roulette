@@ -25,30 +25,31 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #define TU_TYPES_CC
 #include "types.hh"
 
-namespace roulette
-{
 	// Explicit instantiation definition
 	// typedef-name cannot be used in explicit instantiation.
-	template std::shared_ptr<Bet>; // type_bet
-	template Glib::RefPtr<Gdk::Pixbuf>; // type_chip_icon
-	template std::vector<Gtk::TargetEntry>; // type_dnd_targets
-	template std::vector<std::shared_ptr<Bet>>; // type_bet_container
-	template std::tuple<EChip, Gdk::Point, EBet>; // type_chip_tuple
-	template std::shared_ptr<std::tuple<EChip, Gdk::Point, EBet>>; // type_chip
-	template std::vector<std::shared_ptr<std::tuple<EChip, Gdk::Point, EBet>>>; // type_chip_container
+	template class Glib::RefPtr<Gdk::Pixbuf>; // type_chip_icon
+	template class Glib::RefPtr<Pango::Layout>; // type_layout
 
-	template std::vector<EBet>; // type_bet_list
-	template std::map<EField, Field*>; // type_fields
-	template std::map<EBet, uint16>; // type_max_container
-	template std::map<EMinimum, uint16>; // type_min_container
-	template Glib::RefPtr<Pango::Layout>; // type_layout
+	template class std::shared_ptr<roulette::Bet>; // type_bet
+	template class std::vector<Gtk::TargetEntry>; // type_dnd_targets
+	template class std::vector<std::shared_ptr<roulette::Bet>>; // type_bet_container
 
-	template sigc::signal0<void>; // type_signal
-	template sigc::signal1<void, uint16>; // type_signal_spin
-	template sigc::signal1<void, std::shared_ptr<Bet>>; // type_signal_bet
-	template sigc::signal2<void, const EField&, std::shared_ptr<std::tuple<EChip, Gdk::Point, EBet>>>; // type_signal_chip
+#if GDKMM_MINOR_VERSION != 18 // TODO: probably a bug in 3.0.18 with deleted copy asignment
+	template class std::tuple<roulette::EChip, Gdk::Point, roulette::EBet>; // type_chip_tuple
+#endif
 
-	template std::vector<uint16>; // type_raw_set
-	template std::shared_ptr<std::vector<uint16>>; // type_set
+	template class std::shared_ptr<std::tuple<roulette::EChip, Gdk::Point, roulette::EBet>>; // type_chip
+	template class std::vector<std::shared_ptr<std::tuple<roulette::EChip, Gdk::Point, roulette::EBet>>>; // type_chip_container
 
-} // namespace roulette
+	template class std::vector<roulette::EBet>; // type_bet_list
+	template class std::map<roulette::EField, roulette::Field*>; // type_fields
+	template class std::map<roulette::EBet, unsigned short>; // type_max_container
+	template class std::map<roulette::EMinimum, unsigned short>; // type_min_container
+
+	template class std::vector<unsigned short>; // type_raw_set
+	template class std::shared_ptr<std::vector<unsigned short>>; // type_set
+
+	template class sigc::signal0<void>; // type_signal
+	template class sigc::signal1<void, unsigned short>; // type_signal_spin
+	template class sigc::signal1<void, std::shared_ptr<roulette::Bet>>; // type_signal_bet
+	template class sigc::signal2<void, const roulette::EField&, std::shared_ptr<std::tuple<roulette::EChip, Gdk::Point, roulette::EBet>>>; // type_signal_chip

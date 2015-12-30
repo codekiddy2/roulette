@@ -39,6 +39,16 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #pragma warning(disable: 4996) // lvl3 The compiler encountered a deprecated declaration.
 #pragma warning(disable: 4242) // lvl4 The types are different. Type conversion may result in loss of data.
 #pragma warning(push, 0)
+#elif defined (__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wzero-as-null-pointer-constant" // disable warnings
+#pragma GCC diagnostic ignored "-Weffc++"
+#pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
+#pragma GCC diagnostic ignored "-Wredundant-decls"
+#pragma GCC diagnostic ignored "-Winit-self"
+#pragma GCC diagnostic ignored "-Wshadow"
+#pragma GCC diagnostic ignored "-pedantic"
+#pragma GCC diagnostic ignored "-Wextra"
 #endif // _MSC_VER
 
 // std
@@ -53,9 +63,10 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <unordered_map> // used in Table
 #include <memory> // wide usage for shared_ptr
 #include <tuple> // for chip tuple
+#include <cstdint> // for integral typedefs
 
 // gtkmm
-#include <gtkmm/gtkmm.h>
+#include <gtkmm.h>
 
 #if 0
 #include <gtkmm/gdkmm.h> // included by gtkmm.h
@@ -63,13 +74,13 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <glibmm/glibmm.h> // included by gtkmm.h and giomm.h
 #endif
 
-#include <atkmm/atkmm.h> // needed if GTKMM_ATKMM_ENABLED is defined
+#include <atkmm.h> // needed if GTKMM_ATKMM_ENABLED is defined
+#include <pangomm.h>
 #include <sigc++/sigc++.h>
 #include <cairomm/cairomm.h>
-#include <pangomm/pangomm.h>
 
 #if 0 // not used
-#include <goocanvasmm\goocanvasmm.h>
+#include <goocanvasmm.h>
 #endif
 
 // boost
@@ -86,6 +97,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 // reenable warnings for /W4
 #pragma warning(default: 4309 4505 4250 4710 4996 4242)
 #pragma warning(pop)
+#elif defined (__GNUC__)
+#pragma GCC diagnostic pop // re-enable all warnings
 #endif // _MSC_VER
 
 #endif // ! PCH_HH

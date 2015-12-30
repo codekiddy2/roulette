@@ -64,7 +64,7 @@ namespace roulette
 		}
 		// TODO: check if any signals are connected more than once,
 		//ex: debug output how many times handlers get called per chip placed (should be twice at most - drawing and bet signal)
-	
+
 		// get dozens and their neighbors on top (column1) (will be used later, forward declaration.
 		auto zerro = m_fields.find(EField::Number0)->second;
 		auto number1 = m_fields.find(EField::Number1)->second;
@@ -125,9 +125,9 @@ namespace roulette
 			col3 = 3, // number from roulette column3 = 3
 			col = 1; // the acctual vertical column according to Gtk::Grid / or street acording to roulette table
 			col3 <= 36; // using roulette column3 here, it's the same as col2 <= 35 or col3 <= 34
-			col1 += 3, // increase number from roulete table column1 by 3 
-			col2 += 3, // increase number from roulete table column2 by 3 
-			col3 += 3, // increase number from roulete table column3 by 3 
+			col1 += 3, // increase number from roulete table column1 by 3
+			col2 += 3, // increase number from roulete table column2 by 3
+			col3 += 3, // increase number from roulete table column3 by 3
 			++col) // iterate street by street
 		{
 			// attach current street beginning from top to bottom
@@ -680,12 +680,7 @@ namespace roulette
 				dialog.run();
 				return;
 			}
-			else if (limit < 0)
-			{
-				dialog.set_secondary_text("Limit can't be negative");
-				dialog.run();
-				return;
-			}
+
 			auto iter = m_maximums.find(EBet::Red);
 			if (iter != m_maximums.end())
 			{
@@ -700,20 +695,25 @@ namespace roulette
 				m_tablelimit = limit;
 			}
 		} // if is_toplevel
-		else error_handler(error("ERROR: get_toplevel did not return a top level window"));
+		else
+		{
+			error_handler(error("ERROR: get_toplevel did not return a top level window"));
+		}
 	}
 
 	uint16 Table::get_limit(const EBet& name)
 	{
 		if ((m_maxiter = m_maximums.find(name)) == m_maximums.end())
+		{
 			error_handler(error("Table -> get_limit -> iterator out of range"));
-
+		}
 		return m_maxiter->second;
 	}
 
 	uint16 Table::get_minimum(const EMinimum & minimum)
 	{
 		auto iter = m_minimums.find(minimum);
+
 		if (iter == m_minimums.end())
 		{
 			error_handler(error("Table -> get_minimum -> minimum not found"));
@@ -723,17 +723,26 @@ namespace roulette
 
 	void Table::set_minimum(const EMinimum& name, const uint16& minimum)
 	{
-		if (name == EMinimum::Table && (minimum < 0))
-			error_handler(error("Table -> set_minimum -> Table minimum less then 0"));
-
-		minimum > 1 ? m_minimums.find(name)->second = minimum :
-			error_handler(error("Table -> set_minimum -> Bet minimum less then 1"));
+		if (minimum > 1)
+      {
+         m_minimums.find(name)->second = minimum;
+      }
+      else
+      {
+         error_handler(error("Table -> set_minimum -> Bet minimum less then 1"));
+      }
 	}
 
 	void Table::set_maximum(const EBet& name, const uint16& limit)
 	{
-		(m_maxiter = m_maximums.find(name)) != m_maximums.end() ? m_maxiter->second = limit :
-			error_handler(error("Table -> set_maximum -> Iterator out of range"));
+		if ((m_maxiter = m_maximums.find(name)) != m_maximums.end())
+      {
+         m_maxiter->second = limit;
+      }
+      else
+      {
+         error_handler(error("Table -> set_maximum -> Iterator out of range"));
+      }
 	}
 
 #ifdef _MSC_VER

@@ -61,7 +61,7 @@ namespace roulette
 	// forward declarations
 	class Table;
 
-	class Field final : 
+	class Field final :
 		public Gtk::Widget,
 		public IErrorHandler
 	{
@@ -90,7 +90,7 @@ namespace roulette
 		type_signal_chip signal_bet_street4; // used by dozens only
 
 		type_signal_chip signal_bet_basket; // used by zero and dozen1 only
-		
+
 		// signals used by dozens only
 		type_signal_chip signal_bet_line1; // used by dozen2 and dozen 3 only
 		type_signal_chip signal_bet_line2;
@@ -100,7 +100,7 @@ namespace roulette
 
 		// methods
 		void on_signal_rebet();
-		inline const EField get_index() const noexcept;
+		inline EField get_index() const noexcept;
 		inline void on_signal_spin(uint16 result) noexcept;
 
 		// signal handlers
@@ -159,7 +159,7 @@ namespace roulette
 		Table* mp_table;
 		EField m_index;
 		/// end initializer list
-		
+
 		// deleted
 		Field(const Field&) = delete;
 		Field(const Field&&) = delete;
@@ -173,7 +173,7 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
-	const EField Field::get_index() const noexcept
+	EField Field::get_index() const noexcept
 	{
 		return m_index;
 	}

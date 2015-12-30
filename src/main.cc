@@ -56,7 +56,7 @@ namespace
 
 namespace roulette
 {
-	bool load_icons();
+	bool load_icons(string&& path);
 
 	const int format = 8;
 	
@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
 {
 	Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(argc, argv, "roulette.exe");
 
-	if (roulette::load_icons())
+	if (roulette::load_icons("..\\icons\\"))
 	{
 		roulette::Window* p_window = new roulette::Window(app_icon);
 
@@ -160,29 +160,29 @@ namespace roulette
 		return chip_size;
 	}
 
-	bool load_icons()
+	bool load_icons(string&& path)
 	{
 		bool success = true;
-		string file_name = "Chip1.ico";
+		string file_name = path + "Chip1.ico";
 	
 		exists(file_name) ? icon1 = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
 
-		file_name = "Chip5.ico";
+		file_name = path + "Chip5.ico";
 		exists(file_name) ? icon5 = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
 
-		file_name = "Chip25.ico";
+		file_name = path + "Chip25.ico";
 		exists(file_name) ? icon25 = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
 
-		file_name = "Chip50.ico";
+		file_name = path + "Chip50.ico";
 		exists(file_name) ? icon50 = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
 
-		file_name = "Chip100.ico";
+		file_name = path + "Chip100.ico";
 		exists(file_name) ? icon100 = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
 
-		file_name = "eraser.ico";
+		file_name = path + "eraser.ico";
 		exists(file_name) ? eraser = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
 
-		file_name = "roulette.ico";
+		file_name = path + "roulette.ico";
 		exists(file_name) ? app_icon = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
 
 		return success;

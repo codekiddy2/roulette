@@ -200,3 +200,7 @@ FakesAssemblies/
 
 # other projects
 /samples/
+
+#GCC
+*.gch
+
