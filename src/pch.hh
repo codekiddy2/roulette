@@ -30,16 +30,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
-#ifdef _MSC_VER
-// disabled warnings for /W4
-#pragma warning(disable: 4309) // lvl2 'conversion' : truncation of constant value
-#pragma warning(disable: 4505) // lvl4 'function' : unreferenced local function has been removed
-#pragma warning(disable: 4250) // lvl2 'class1' : inherits 'class2::member' via dominance
-#pragma warning(disable: 4710) // lvl4 the compiler did not perform the inlining.
-#pragma warning(disable: 4996) // lvl3 The compiler encountered a deprecated declaration.
-#pragma warning(disable: 4242) // lvl4 The types are different. Type conversion may result in loss of data.
-#pragma warning(push, 0)
-#endif // _MSC_VER
+// options
+#include "pragmas.hh"
 
 // std
 #include <vector> // wide usage for containers
@@ -49,12 +41,14 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <exception> // sed for error class
 #include <cmath>	// SetPart2 in bet..
 #include <utility> // for make_pair
-#include <map> // used in Table
-#include <unordered_set> // used for sets (sets.hh)
+#include <map> // used in Table and InfoBar
+#include <unordered_map> // used in Table
 #include <memory> // wide usage for shared_ptr
+#include <tuple> // for chip tuple
+#include <cstdint> // for integral typedefs
 
 // gtkmm
-#include <gtkmm/gtkmm.h>
+#include <gtkmm.h>
 
 #if 0
 #include <gtkmm/gdkmm.h> // included by gtkmm.h
@@ -62,30 +56,26 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <glibmm/glibmm.h> // included by gtkmm.h and giomm.h
 #endif
 
-#include <atkmm/atkmm.h> // needed if GTKMM_ATKMM_ENABLED is defined
+#ifdef GTKMM_ATKMM_ENABLED
+#include <atkmm.h> // needed if GTKMM_ATKMM_ENABLED is defined
+#endif // GTKMM_ATKMM_ENABLED
+
+#include <pangomm.h>
 #include <sigc++/sigc++.h>
 #include <cairomm/cairomm.h>
-#include <pangomm/pangomm.h>
 
-#if 0
-#include <goocanvasmm\goocanvasmm.h> // not used
-#endif
+#if 0 // not used
+#include <goocanvasmm.h>
+#endif // 0
 
 // boost
 #include <boost/random.hpp> // used by Engine class
 #include <boost/filesystem.hpp> // used to check for existence of icons
 #include <boost/random/random_device.hpp> // used by Engine class
 
-#if 0
-// not used
+#if 0 // not used
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
-#endif
-
-#ifdef _MSC_VER
-// reenable warnings for /W4
-#pragma warning(default: 4309 4505 4250 4710 4996 4242)
-#pragma warning(pop)
-#endif // _MSC_VER
+#endif // 0
 
 #endif // ! PCH_HH
