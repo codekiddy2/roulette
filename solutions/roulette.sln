@@ -3,17 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{61D20D77-CD28-4954-9EDE-CAC9E996035A}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "roulette", "..\src\msvc-140\roulette.vcxproj", "{7954DF58-9125-433B-9EAE-765C43DF8061}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_control", "..\src\test_control\test_control.vcxproj", "{3370B61D-3D2B-4AAF-89B6-0FFE7D06F340}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_functions", "..\src\test_functions\test_functions.vcxproj", "{C241DB5E-79A1-42D7-9B8B-89148875E148}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_sets", "..\src\test_sets\test_sets.vcxproj", "{C9A467CB-0A6A-493B-AE48-811DE16227C1}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_controlset", "..\src\test_controlset\test_controlset.vcxproj", "{5537AFAB-7040-43F4-8BE1-8CFBB1003321}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,42 +21,8 @@ Global
 		{7954DF58-9125-433B-9EAE-765C43DF8061}.Release|x64.Build.0 = Release|x64
 		{7954DF58-9125-433B-9EAE-765C43DF8061}.Release|x86.ActiveCfg = Release|Win32
 		{7954DF58-9125-433B-9EAE-765C43DF8061}.Release|x86.Build.0 = Release|Win32
-		{3370B61D-3D2B-4AAF-89B6-0FFE7D06F340}.Debug|x64.ActiveCfg = Debug|x64
-		{3370B61D-3D2B-4AAF-89B6-0FFE7D06F340}.Debug|x86.ActiveCfg = Debug|Win32
-		{3370B61D-3D2B-4AAF-89B6-0FFE7D06F340}.Debug|x86.Build.0 = Debug|Win32
-		{3370B61D-3D2B-4AAF-89B6-0FFE7D06F340}.Release|x64.ActiveCfg = Release|x64
-		{3370B61D-3D2B-4AAF-89B6-0FFE7D06F340}.Release|x64.Build.0 = Release|x64
-		{3370B61D-3D2B-4AAF-89B6-0FFE7D06F340}.Release|x86.ActiveCfg = Release|Win32
-		{3370B61D-3D2B-4AAF-89B6-0FFE7D06F340}.Release|x86.Build.0 = Release|Win32
-		{C241DB5E-79A1-42D7-9B8B-89148875E148}.Debug|x64.ActiveCfg = Debug|x64
-		{C241DB5E-79A1-42D7-9B8B-89148875E148}.Debug|x86.ActiveCfg = Debug|Win32
-		{C241DB5E-79A1-42D7-9B8B-89148875E148}.Debug|x86.Build.0 = Debug|Win32
-		{C241DB5E-79A1-42D7-9B8B-89148875E148}.Release|x64.ActiveCfg = Release|x64
-		{C241DB5E-79A1-42D7-9B8B-89148875E148}.Release|x64.Build.0 = Release|x64
-		{C241DB5E-79A1-42D7-9B8B-89148875E148}.Release|x86.ActiveCfg = Release|Win32
-		{C241DB5E-79A1-42D7-9B8B-89148875E148}.Release|x86.Build.0 = Release|Win32
-		{C9A467CB-0A6A-493B-AE48-811DE16227C1}.Debug|x64.ActiveCfg = Debug|x64
-		{C9A467CB-0A6A-493B-AE48-811DE16227C1}.Debug|x86.ActiveCfg = Debug|Win32
-		{C9A467CB-0A6A-493B-AE48-811DE16227C1}.Debug|x86.Build.0 = Debug|Win32
-		{C9A467CB-0A6A-493B-AE48-811DE16227C1}.Release|x64.ActiveCfg = Release|x64
-		{C9A467CB-0A6A-493B-AE48-811DE16227C1}.Release|x64.Build.0 = Release|x64
-		{C9A467CB-0A6A-493B-AE48-811DE16227C1}.Release|x86.ActiveCfg = Release|Win32
-		{C9A467CB-0A6A-493B-AE48-811DE16227C1}.Release|x86.Build.0 = Release|Win32
-		{5537AFAB-7040-43F4-8BE1-8CFBB1003321}.Debug|x64.ActiveCfg = Debug|x64
-		{5537AFAB-7040-43F4-8BE1-8CFBB1003321}.Debug|x86.ActiveCfg = Debug|Win32
-		{5537AFAB-7040-43F4-8BE1-8CFBB1003321}.Debug|x86.Build.0 = Debug|Win32
-		{5537AFAB-7040-43F4-8BE1-8CFBB1003321}.Release|x64.ActiveCfg = Release|x64
-		{5537AFAB-7040-43F4-8BE1-8CFBB1003321}.Release|x64.Build.0 = Release|x64
-		{5537AFAB-7040-43F4-8BE1-8CFBB1003321}.Release|x86.ActiveCfg = Release|Win32
-		{5537AFAB-7040-43F4-8BE1-8CFBB1003321}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{3370B61D-3D2B-4AAF-89B6-0FFE7D06F340} = {61D20D77-CD28-4954-9EDE-CAC9E996035A}
-		{C241DB5E-79A1-42D7-9B8B-89148875E148} = {61D20D77-CD28-4954-9EDE-CAC9E996035A}
-		{C9A467CB-0A6A-493B-AE48-811DE16227C1} = {61D20D77-CD28-4954-9EDE-CAC9E996035A}
-		{5537AFAB-7040-43F4-8BE1-8CFBB1003321} = {61D20D77-CD28-4954-9EDE-CAC9E996035A}
 	EndGlobalSection
 EndGlobal

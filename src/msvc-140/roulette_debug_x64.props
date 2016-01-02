@@ -28,7 +28,7 @@
       <CompileAsManaged>false</CompileAsManaged>
       <CompileAsWinRT>false</CompileAsWinRT>
       <WarningLevel>EnableAllWarnings</WarningLevel>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <OpenMPSupport>false</OpenMPSupport>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -40,9 +40,8 @@
       <FloatingPointExceptions>true</FloatingPointExceptions>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <SmallerTypeCheck>true</SmallerTypeCheck>
-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <BrowseInformation>false</BrowseInformation>
+      <AdditionalOptions>/Zc:strictStrings /vd2 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Xdcmake>
       <DocumentLibraryDependencies>false</DocumentLibraryDependencies>

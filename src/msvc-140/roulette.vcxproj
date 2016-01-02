@@ -168,9 +168,11 @@
     <ClCompile Include="..\pch.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\racetrack.cc" />
     <ClCompile Include="..\sets.cc" />
     <ClCompile Include="..\table.cc" />
     <ClCompile Include="..\types.cc" />
+    <ClCompile Include="..\wheel.cc" />
     <ClCompile Include="..\window.cc" />
   </ItemGroup>
   <ItemGroup>
@@ -187,9 +189,11 @@
     <ClInclude Include="..\infobar.hh" />
     <ClInclude Include="..\main.hh" />
     <ClInclude Include="..\pch.hh" />
+    <ClInclude Include="..\racetrack.hh" />
     <ClInclude Include="..\sets.hh" />
     <ClInclude Include="..\table.hh" />
     <ClInclude Include="..\types.hh" />
+    <ClInclude Include="..\wheel.hh" />
     <ClInclude Include="..\window.hh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

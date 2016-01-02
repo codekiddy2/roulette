@@ -88,6 +88,12 @@
     <ClCompile Include="..\window.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\wheel.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\racetrack.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\base_control.hh">
@@ -139,6 +145,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\pragmas.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wheel.hh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\racetrack.hh">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

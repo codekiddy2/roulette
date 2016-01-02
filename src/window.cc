@@ -83,9 +83,15 @@ namespace roulette
 
 		// PACKING from top to bottom
 		m_VBoxArea.pack_start(m_infobar, Gtk::PACK_SHRINK);
-		m_VBoxArea.pack_start(*mp_table, Gtk::PACK_EXPAND_WIDGET);
+		m_VBoxArea.pack_start(m_racetrack, Gtk::PACK_SHRINK);
+		m_VBoxArea.pack_start(m_HBoxTable, Gtk::PACK_EXPAND_WIDGET);
 		m_VBoxArea.pack_start(m_HBoxControls, Gtk::PACK_SHRINK);
 		m_VBoxArea.show_all();
+
+		// PACKING from right to left
+		m_HBoxTable.pack_start(m_wheel, Gtk::PACK_SHRINK);
+		m_HBoxTable.pack_start(*mp_table, Gtk::PACK_EXPAND_WIDGET);
+		m_HBoxTable.show_all();
 
 		// PACKING from right to left
 		m_HBoxControls.pack_end(m_Controlset, Gtk::PACK_SHRINK); // Controlset

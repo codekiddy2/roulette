@@ -1346,7 +1346,7 @@ namespace roulette
 		uint16 result = 0;
 		for (auto iter : m_chips)
 		{
-			result += static_cast<uint16>(get<0>(*iter));
+			result += static_cast<uint16>(get<EChip>(*iter));
 		}
 	}
 
