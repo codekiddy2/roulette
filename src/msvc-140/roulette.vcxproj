@@ -155,6 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\base_control.cc" />
+    <ClCompile Include="..\base_field.cc" />
     <ClCompile Include="..\bet.cc" />
     <ClCompile Include="..\chip.cc" />
     <ClCompile Include="..\color.cc" />
@@ -177,6 +178,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\base_control.hh" />
+    <ClInclude Include="..\base_field.hh" />
     <ClInclude Include="..\bet.hh" />
     <ClInclude Include="..\chip.hh" />
     <ClInclude Include="..\color.hh" />
