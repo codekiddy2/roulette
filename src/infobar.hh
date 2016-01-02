@@ -31,14 +31,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 // roulette
-#include "bet.hh"
-#include "sets.hh"
 #include "error.hh"
 #include "main.hh"
-
-// std
-#include <map>
-#include <memory>
 
 // gtkmm
 #include <glibmm/refptr.h>
@@ -56,8 +50,8 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
-	class Engine;
 	class Table;
+	class Engine;
 
 	class InfoBar :
 		public Gtk::DrawingArea,
@@ -84,8 +78,14 @@ namespace roulette
 		Pango::FontDescription font;
 		Gdk::RGBA m_foreground = Gdk::RGBA("rgb(0, 190, 0)");
 		Gdk::RGBA m_background = Gdk::RGBA("rgb(0, 0, 0)");
-		std::map<ELayout, Glib::RefPtr<Pango::Layout>> m_layouts;
+		type_layout_container m_layouts;
 		Glib::RefPtr<Gdk::Window> refGdkWindow;
+
+		// deleted
+		InfoBar(const InfoBar&) = delete;
+		InfoBar(const InfoBar&&) = delete;
+		InfoBar& operator=(const InfoBar&) = delete;
+		InfoBar& operator=(const InfoBar&&) = delete;
 	};
 
 #ifdef _MSC_VER

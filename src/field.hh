@@ -33,15 +33,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 // roulette
-#include "bet.hh"
-#include "sets.hh"
 #include "error.hh"
 #include "main.hh"
-
-// std
-#include <vector>
-#include <memory>
-#include <utility>
 
 // gtkmm
 #include <gtkmm/widget.h>
@@ -55,8 +48,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include <gdkmm/rectangle.h> // Gtk::Allocation
 #include <cairomm/refptr.h>
 #include <cairomm/context.h>
-#include <sigc++/sigc++.h>
 #include <gdkmm/event.h> // GdkEventButton
+#include <gtkmm/tooltip.h>
 
 namespace roulette
 {
@@ -65,9 +58,10 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
+	// forward declarations
 	class Table;
 
-	class Field final : 
+	class Field final :
 		public Gtk::Widget,
 		public IErrorHandler
 	{
@@ -75,41 +69,39 @@ namespace roulette
 		// constructors
 		Field(EField field_index, Table* p_table);
 
-		// typedefs
-		typedef sigc::signal<void, const EField&, type_chip> signal;
-		
 		// signals emited by number fields only
-		signal signal_bet_top;
-		signal signal_bet_bottom;
-		signal signal_bet_left;
-		signal signal_bet_right;
-		signal signal_bet_top_right;
-		signal signal_bet_top_left;
-		signal signal_bet_bottom_right;
-		signal signal_bet_bottom_left;
+		type_signal_chip signal_bet_top;
+		type_signal_chip signal_bet_bottom;
+		type_signal_chip signal_bet_left;
+		type_signal_chip signal_bet_right;
+		type_signal_chip signal_bet_top_right;
+		type_signal_chip signal_bet_top_left;
+		type_signal_chip signal_bet_bottom_right;
+		type_signal_chip signal_bet_bottom_left;
 
 		// sinals emited by zero and dozens to number fields
-		signal signal_bet_split1;
-		signal signal_bet_split2;
-		signal signal_bet_split3;
+		type_signal_chip signal_bet_split1;
+		type_signal_chip signal_bet_split2;
+		type_signal_chip signal_bet_split3;
 
-		signal signal_bet_street1; // used by dozens and zero only
-		signal signal_bet_street2; // used by dozens and zero only
-		signal signal_bet_street3; // used by dozens only
-		signal signal_bet_street4; // used by dozens only
+		type_signal_chip signal_bet_street1; // used by dozens and zero only
+		type_signal_chip signal_bet_street2; // used by dozens and zero only
+		type_signal_chip signal_bet_street3; // used by dozens only
+		type_signal_chip signal_bet_street4; // used by dozens only
 
-		signal signal_bet_basket; // used by zero and dozen1 only
-		
+		type_signal_chip signal_bet_basket; // used by zero and dozen1 only
+
 		// signals used by dozens only
-		signal signal_bet_line1; // used by dozen2 and dozen 3 only
-		signal signal_bet_line2;
-		signal signal_bet_line3;
-		signal signal_bet_line4;
-		signal signal_bet_line5; // not used by dozen1 and dozen2 only
+		type_signal_chip signal_bet_line1; // used by dozen2 and dozen 3 only
+		type_signal_chip signal_bet_line2;
+		type_signal_chip signal_bet_line3;
+		type_signal_chip signal_bet_line4;
+		type_signal_chip signal_bet_line5; // not used by dozen1 and dozen2 only
 
 		// methods
-		inline const EField& get_index() const;
-		inline void on_signal_rebet();
+		void on_signal_rebet();
+		inline EField get_index() const noexcept;
+		inline void on_signal_spin(uint16 result) noexcept;
 
 		// signal handlers
 		void on_signal_bet_bottom(const EField& sender, type_chip chip);
@@ -125,7 +117,7 @@ namespace roulette
 		// overrides:
 		Gtk::SizeRequestMode get_request_mode_vfunc() const override;
 		void get_preferred_width_vfunc(int& minimum_width, int& natural_width) const override;
-		void get_preferred_height_for_width_vfunc(int width, int& minimum_height, int& natural_height) const  override;
+		void get_preferred_height_for_width_vfunc(int width, int& minimum_height, int& natural_height) const override;
 		void get_preferred_height_vfunc(int& minimum_height, int& natural_height) const override;
 		void get_preferred_width_for_height_vfunc(int height, int& minimum_width, int& natural_width) const override;
 		void on_size_allocate(Gtk::Allocation& allocation) override;
@@ -149,17 +141,18 @@ namespace roulette
 		// methods
 		void clear_all();
 		void clear(Gdk::Point& chip_point);
-		EBet calculate_points(type_chip chip, bool emit = true);
+		void calculate_points(type_chip chip, bool emit = true);
 		bool on_clicked(GdkEventButton* button_event);
 		void assign_apperance(EField index);
 		void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int field_width, int field_height);
 		void place_chip(type_chip chip);
+		bool on_query_tooltip(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
 
 		// members
 		type_chip_container m_chips;
 		type_chip_container m_chips_saved;
 		Pango::FontDescription m_font;
-		Glib::RefPtr<Pango::Layout> m_layout;
+		type_layout m_layout;
 
 		/// begin initializer list
 		Gdk::RGBA m_background;
@@ -180,18 +173,14 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
-	const EField& Field::get_index() const
+	EField Field::get_index() const noexcept
 	{
 		return m_index;
 	}
 
-	inline void Field::on_signal_rebet()
+	void Field::on_signal_spin(uint16 /*result*/) noexcept
 	{
-		if (!m_chips_saved.empty())
-		{
-			m_chips = m_chips_saved;
-			refGdkWindow->invalidate(false);
-		}
+		m_chips_saved = m_chips;
 	}
 
 #ifdef _MSC_VER

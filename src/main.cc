@@ -31,15 +31,15 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 // roulette
 #include "pch.hh"
-#include "main.hh"
+#include "pragmas.hh"
 #include "window.hh"
 
-namespace roulette
+namespace
 {
 	using std::find; // get_neighbor()
 	using std::string; // load icons()
-	using std::vector; // dnd_targets
 	using boost::filesystem::exists; // load_icons()
+	using roulette::type_chip_icon; // for below chip declarations
 
 	// chip pixbuf icons
 	type_chip_icon icon1;
@@ -51,23 +51,27 @@ namespace roulette
 	type_chip_icon app_icon;
 
 	// load size x size version from the ico file
-	static int chip_size = 32;
+	int chip_size = 32;
+
+} // namespace
+
+namespace roulette
+{
+	bool load_icons(string&& path);
 
 	const int format = 8;
 	
-	vector<Gtk::TargetEntry> dnd_targets;
+	type_dnd_targets dnd_targets;
 
-	bool load_icons();
-
-} // namespace
+} // namespace roulette
 
 int main(int argc, char* argv[])
 {
 	Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(argc, argv, "roulette.exe");
 
-	if (roulette::load_icons())
+	if (roulette::load_icons("..\\icons\\"))
 	{
-		roulette::Window* p_window = new roulette::Window(roulette::app_icon);
+		roulette::Window* p_window = new roulette::Window(app_icon);
 
 		if (p_window)
 		{
@@ -82,7 +86,7 @@ int main(int argc, char* argv[])
 
 namespace roulette
 {
-	bool is_red(const unsigned number)
+	bool is_red(const uint16 number) noexcept
 	{
 		switch (number)
 		{
@@ -110,35 +114,35 @@ namespace roulette
 		}
 	}
 
-	bool is_black(const unsigned number)
+	bool is_black(const uint16 number) noexcept
 	{
 		if (is_green(number) || is_red(number))
 			return false;
 		else return(number && (number < 37));
 	}
 
-	bool is_green(const unsigned number)
+	bool is_green(const uint16 number) noexcept
 	{
 		if (number == 0 || number == 37)
 			return true;
 		else return false;
 	}
 
-	unsigned which_column(const unsigned number)
+	uint16 which_column(const uint16 number) noexcept
 	{
 		if (number % 3)
 			return number % 3;
 		else return 3;
 	}
 
-	unsigned which_column(EField field)
+	uint16 which_column(EField field) noexcept
 	{
-		if (static_cast<unsigned>(field) % 3)
-			return static_cast<unsigned>(field) % 3;
+		if (static_cast<uint16>(field) % 3)
+			return static_cast<uint16>(field) % 3;
 		else return 3;
 	}
 
-	unsigned which_dozen(const unsigned number)
+	uint16 which_dozen(const uint16 number) noexcept
 	{
 		if (number < 13)
 			return 1;
@@ -147,39 +151,39 @@ namespace roulette
 		else return 3;
 	}
 
-	void set_chipsize(const int size)
+	void set_chipsize(const int size) noexcept
 	{
 		chip_size = size;
 	}
 
-	int get_chipsize()
+	int get_chipsize() noexcept
 	{
 		return chip_size;
 	}
 
-	bool load_icons()
+	bool load_icons(string&& path)
 	{
 		bool success = true;
-		string file_name = "Chip1.ico";
+		string file_name = path + "Chip1.ico";
 	
 		exists(file_name) ? icon1 = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
 
-		file_name = "Chip5.ico";
+		file_name = path + "Chip5.ico";
 		exists(file_name) ? icon5 = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
 
-		file_name = "Chip25.ico";
+		file_name = path + "Chip25.ico";
 		exists(file_name) ? icon25 = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
 
-		file_name = "Chip50.ico";
+		file_name = path + "Chip50.ico";
 		exists(file_name) ? icon50 = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
 
-		file_name = "Chip100.ico";
+		file_name = path + "Chip100.ico";
 		exists(file_name) ? icon100 = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
 
-		file_name = "eraser.ico";
+		file_name = path + "eraser.ico";
 		exists(file_name) ? eraser = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
 
-		file_name = "roulette.ico";
+		file_name = path + "roulette.ico";
 		exists(file_name) ? app_icon = Gdk::Pixbuf::create_from_file(file_name, chip_size, chip_size) : success = false;
 
 		return success;
@@ -205,9 +209,9 @@ namespace roulette
 		}
 	}
 
-	unsigned get_neighbor(const ETable table, const unsigned refNum, const unsigned position)
+	uint16 get_neighbor(const ETable table, const uint16 refNum, const uint16 position)
 	{
-		unsigned i = 0;
+		uint16 i = 0;
 		static type_raw_set::const_iterator iter;
 
 		switch (table)

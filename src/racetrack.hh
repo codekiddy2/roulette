@@ -1,4 +1,7 @@
 
+#ifndef RACETRACK_HH
+#define RACETRACK_HH 1
+
 /*
 roulette - roulette simulation program
 
@@ -20,19 +23,40 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 ///<summary>
 //
-//	color.cc
+//	racetrack.hh
 //
-//	Definition of Color class
+//	Declaration of Racetrack class
+//
+// TODO: add description
 //
 ///</summary>
 
-#include "pch.hh"
-#include "pragmas.hh"
-#include "color.hh"
+// roulette
+#include "error.hh"
+
+// gtkmm
+#include <gtkmm/drawingarea.h>
 
 namespace roulette
 {
-	Gdk::RGBA Color::m_background("rgb(0, 102, 0)");
-	Gdk::RGBA Color::m_foreground("rgb(255, 255, 255)");
+	class Racetrack :
+		public Gtk::DrawingArea,
+		public IErrorHandler
+	{
+	public:
+		// constructors
+		Racetrack();
 
-} // namespace roulette
+	private:
+		// methods
+		bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+
+		//deleted
+		Racetrack(Racetrack&&) = delete;
+		Racetrack(const Racetrack&) = delete;
+		Racetrack& operator= (Racetrack&&) = delete;
+		Racetrack& operator= (const Racetrack&) = delete;
+	};
+}
+
+#endif // !RACETRACK_HH

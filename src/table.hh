@@ -35,20 +35,11 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 // roulette
-#include "sets.hh"
 #include "error.hh"
 #include "main.hh"
 
-// std
-#include <map>
-#include <string>
-#include <memory>
-#include <vector>
-#include <unordered_map>
-
 // gtkmm
 #include <gtkmm/grid.h>
-#include <sigc++/signal.h>
 
 namespace roulette
 {
@@ -57,81 +48,68 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
-	class Field;
-
 	class Table final :
 		public Gtk::Grid,
 		public IErrorHandler
 	{
 	public:
 		// constructors
-		Table(const ETable table_type = ETable::European);
+		Table(const ETable table_type);
 		~Table();
 
-		// check if table limits are reached and inform the player
-		bool check_limits(type_chip_container& chips, type_chip& chip, EBet bet_type);
-
-		// get maximum amount of chips which can be placed for given bet
-		unsigned get_limit(const EBet& bet);
-
-		// get table miniums
-		unsigned get_minimum(const EMinimum& minimum);
-
-		// TODO: remove this
-		void print_properties() const;
-
-		// set table maximum
-		void set_table_max(const unsigned& limit = 0);
-
-		// set maximum for bet
-		void set_maximum(const EBet& name, const unsigned& limit);
-
-		// set table minimum
-		void set_minimum(const EMinimum& name, const unsigned& minimum);
-
-		// return current table maximum
-		inline unsigned get_table_limit() const;
-
-		// return table type, european, american...
-		inline ETable get_table_type() const;
-		
 		// clear all chips from the table
-		sigc::signal0<void> signal_clear_all;
-
-		// fields emit bet signals to engine and inforbar
-		sigc::signal1<void, type_bet> signal_bet;
+		type_signal signal_clear_all;
 
 		// redraw last chips
-		sigc::signal0<void> signal_rebet;
+		type_signal signal_rebet;
 
-		void set_debug(bool debug) override;
+		// fields emit bet signals to engine and inforbar
+		type_signal_bet signal_bet;
+
+		// check if table limits are reached and inform the player
+		bool check_limits(type_chip_container& chips, type_chip& chip);
+
+		// get maximum amount of chips which can be placed for given bet
+		uint16 get_limit(const EBet& bet);
+
+		// get table miniums
+		uint16 get_minimum(const EMinimum& minimum);
+
+		// set table maximum
+		void set_table_max(const uint32& limit = 0);
+
+		// set maximum for bet
+		void set_maximum(const EBet& name, const uint16& limit);
+
+		// set table minimum
+		void set_minimum(const EMinimum& name, const uint16& minimum);
+
+		// return current table maximum
+		inline uint32 get_table_limit() const noexcept;
+
+		// return table type, european, american...
+		inline ETable get_table_type() const noexcept;
+
+		// call on_signal_spin for all fields
+		void on_signal_spin(uint16 result);
+		
+		// set debug mode for all table fields
+		void set_debug(bool debug) noexcept override;
 
 	private:
-		// typedefs
-		typedef std::vector<EBet> type_bet_list;
-		typedef std::map<EBet, unsigned> type_max_container;
-		typedef std::map<EMinimum, unsigned> type_min_container;
-		typedef std::unordered_map<EField, Field*> type_fields;
-
 		// members
-		type_fields m_fields;
-		unsigned m_tablemax; // maximum amount of chips possible which can be put on the table
-		unsigned m_tablelimit;  // limit of the above
-		float m_result;
-
-		// SUM of of all the Bet types that can be placed on a ETable
-		int m_totalbets;
-
-		// Maximum number of n EBet that can be placed, separated into container.
-		type_max_container m_maxbets; // count of bet types for given table
+		uint32 m_tablelimit;  // table limit
+		type_fields m_fields; // table fields
 		type_bet_list m_blacklist; // unsupported bet list
+		type_max_container m_maxbets; // count of bet types for given table, Maximum number of EBet that can be placed
 		type_min_container m_minimums;	// table minimums
 		type_max_container m_maximums;	// table maximums
-
 		type_max_container::iterator m_maxiter; // for constructor and get_limit 
 
 		/// begin initializer list
 		ETable m_tabletype;
+		uint32 m_tablemax; // maximum amount of chips possible which can be put on the table
+		uint16 m_totalbets; // SUM of of all the Bet types that can be placed on a ETable
 		/// end initializer list
 
 		// deleted
@@ -147,12 +125,12 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
-	ETable Table::get_table_type() const
+	ETable Table::get_table_type() const noexcept
 	{
 		return m_tabletype;
 	}
 
-	unsigned Table::get_table_limit() const
+	uint32 Table::get_table_limit() const noexcept
 	{
 		return m_tablelimit;
 	}

@@ -36,14 +36,14 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
-#include <memory>
-#include <vector> // type_set
+// roulette
+#include "types.hh"
 
 namespace roulette
 {
 	// Used by Field
 	// Chip enumerations
-	enum class EChip: unsigned
+	enum class EChip: uint16
 	{
 		Eraser,
 		Chip1 = 1,
@@ -55,7 +55,7 @@ namespace roulette
 
 	// used by Table
 	// Table layout enumerations
-	enum class ETable: unsigned
+	enum class ETable: uint16
 	{
 		NoZero = 36,
 		European,
@@ -69,7 +69,7 @@ namespace roulette
 
 	// used by Bet
 	// Bet type enumerations
-	enum class EBet: unsigned
+	enum class EBet: uint16
 	{
 		UNDEFINED = 0,
 		///<needsSelection>
@@ -156,7 +156,7 @@ namespace roulette
 
 	// used by Table
 	// Table minimums
-	enum class EMinimum: unsigned
+	enum class EMinimum: uint16
 	{
 		Inside = 1,
 		Outside,
@@ -165,7 +165,7 @@ namespace roulette
 
 	// used by Fields and Table
 	// Table Field enumerations
-	enum class EField: unsigned
+	enum class EField: uint16
 	{
 		Number0,
 		Number1,
@@ -224,7 +224,7 @@ namespace roulette
 
 	// used by InfoBar
 	// Layout enumerations
-	enum class ELayout : unsigned
+	enum class ELayout : uint16
 	{
 		Bankroll,
 		TotalBet,
@@ -247,13 +247,6 @@ namespace roulette
 		TableMin,
 		TableMax,
 	};
-
-	// single type declaring a set of numbers in roulette
-	// must be vector to preserve numbers order and avoid sorting
-	typedef const std::vector<unsigned> type_raw_set;
-
-	// shared pointer to the const set is shared between objects
-	typedef std::shared_ptr<type_raw_set> type_set;
 
 	// wheel number sets
 	extern type_set NoZeroWheel;

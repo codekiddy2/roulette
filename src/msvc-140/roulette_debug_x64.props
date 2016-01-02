@@ -24,11 +24,11 @@
     </Link>
     <ClCompile>
       <AdditionalIncludeDirectories>$(INCLUDE_DIR)gtkmm;$(INCLUDE_DIR)glibmm;$(INCLUDE_DIR)sigc++;$(INCLUDE_DIR)cairomm;$(INCLUDE_DIR)pangomm;$(INCLUDE_DIR)atkmm;$(INCLUDE_DIR)goocanvasmm;$(LIB_DIR)gtkmm\include;$(LIB_DIR)gdkmm\include;$(LIB_DIR)glibmm\include;$(LIB_DIR)giomm\include;$(LIB_DIR)sigc++\include;$(LIB_DIR)cairomm\include;$(LIB_DIR)pangomm\include;$(LIB_DIR)atkmm\include;$(LIB_DIR)goocanvasmm\include;$(INCLUDE_DIR)gtk;$(INCLUDE_DIR)glib;$(INCLUDE_DIR)cairo;$(INCLUDE_DIR)pango;$(INCLUDE_DIR)atk;$(INCLUDE_DIR)goocanvas;$(LIB_DIR)glib\include;$(INCLUDE_DIR)gdk-pixbuf;$(INCLUDE_DIR)pixman;$(INCLUDE_DIR);$(INCLUDE_DIR)jbig;$(INCLUDE_DIR)gettext\intl;$(INCLUDE_DIR)iconv;$(INCLUDE_DIR)dirent;$(INCLUDE_DIR)harfbuzz;$(INCLUDE_DIR)expat;$(INCLUDE_DIR)zlib;$(INCLUDE_DIR)jpeg-turbo;$(INCLUDE_DIR)freetype;$(INCLUDE_DIR)png;$(INCLUDE_DIR)ffi;$(INCLUDE_DIR)tiff;$(INCLUDE_DIR)pcre;$(INCLUDE_DIR)bzip2;$(INCLUDE_DIR)icu;$(INCLUDE_DIR)lzma;$(INCLUDE_DIR)editline;$(INCLUDE_DIR)gettext\libasprintf;$(INCLUDE_DIR)libxml;$(INCLUDE_DIR)fontconfig;$(INCLUDE_DIR)gstreamer;$(INCLUDE_DIR)pcre2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>BOOST_ALL_NO_LIB;WIN32;WIN64;DEBUG;WINVER=0x0A00;_WIN32_WINNT=0x0A00;GIOMM_DISABLE_DEPRECATED=1;GLIBMM_DISABLE_DEPRECATED=1;SIGCXX_DISABLE_DEPRECATED=1;ATKMM_DISABLE_DEPRECATED=1;CAIROMM_DISABLE_DEPRECATED=1;PANGOMM_DISABLE_DEPRECATED=1;GDKMM_DISABLE_DEPRECATED=1;GTKMM_DISABLE_DEPRECATED=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;WIN64;DEBUG;BOOST_ALL_NO_LIB;WINVER=0x0A00;_WIN32_WINNT=0x0A00;ATKMM_DISABLE_DEPRECATED=1;GDKMM_DISABLE_DEPRECATED=1;GTKMM_DISABLE_DEPRECATED=1;GIOMM_DISABLE_DEPRECATED=1;GLIBMM_DISABLE_DEPRECATED=1;SIGCXX_DISABLE_DEPRECATED=1;CAIROMM_DISABLE_DEPRECATED=1;PANGOMM_DISABLE_DEPRECATED=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CompileAsManaged>false</CompileAsManaged>
       <CompileAsWinRT>false</CompileAsWinRT>
-      <WarningLevel>Level4</WarningLevel>
-      <SDLCheck>true</SDLCheck>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <SDLCheck>false</SDLCheck>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <OpenMPSupport>false</OpenMPSupport>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -40,10 +40,12 @@
       <FloatingPointExceptions>true</FloatingPointExceptions>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <SmallerTypeCheck>true</SmallerTypeCheck>
-      <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <BrowseInformation>true</BrowseInformation>
+      <BrowseInformation>false</BrowseInformation>
+      <AdditionalOptions>/Zc:strictStrings /vd2 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
+    <Xdcmake>
+      <DocumentLibraryDependencies>false</DocumentLibraryDependencies>
+    </Xdcmake>
   </ItemDefinitionGroup>
   <ItemGroup>
     <BuildMacro Include="REPO_DIR">

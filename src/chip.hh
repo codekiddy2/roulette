@@ -33,12 +33,13 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 // roulette
-#include "sets.hh"
 #include "base_control.hh"
 
 namespace roulette
 {
+	// forward declarations
 	class Engine;
+	enum class EChip : uint16;
 
 	class Chip final : 
 		public BaseControl
@@ -59,7 +60,7 @@ namespace roulette
 
 	private:
 		/// begin initializer list
-		unsigned m_value;
+		uint16 m_value;
 		Engine* mp_engine;
 		Glib::RefPtr<Gdk::Pixbuf> refIcon;
 		/// end initializer list

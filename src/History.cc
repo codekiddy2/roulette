@@ -26,18 +26,18 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 #include "pch.hh"
+#include "pragmas.hh"
 #include "history.hh"
-#include "color.hh"
 #include "main.hh"
 
-// std
-#include <string>
+namespace
+{
+	using std::string; // used in ctor and set_result
+	using std::to_string; // used in set_result
+}
 
 namespace roulette
 {
-	using std::string;
-	using std::to_string;
-
 	History::History() :
 		IErrorHandler("History"),
 		mTagTable(Gtk::TextTagTable::create()),
@@ -107,7 +107,7 @@ namespace roulette
 			refGreenBuffer->end());
 	}
 
-	void History::set_result(unsigned result)
+	void History::set_result(uint16 result)
 	{
 		string red_output, black_output, green_output;
 		string single_space = " ", triple_space = "   ", newline = "\n", tab = "\t";

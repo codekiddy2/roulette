@@ -27,3 +27,19 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 #include "pch.hh"
+
+#if \
+!defined(ATKMM_DISABLE_DEPRECATED) || \
+!defined(GDKMM_DISABLE_DEPRECATED) || \
+!defined(GTKMM_DISABLE_DEPRECATED) || \
+!defined(GIOMM_DISABLE_DEPRECATED) || \
+!defined(GLIBMM_DISABLE_DEPRECATED) || \
+!defined(SIGCXX_DISABLE_DEPRECATED) || \
+!defined(CAIROMM_DISABLE_DEPRECATED) || \
+!defined(PANGOMM_DISABLE_DEPRECATED)
+#error "deprecated API not disabled"
+#endif
+
+#ifndef GTKMM_ATKMM_ENABLED
+#error "GTKMM_ATKMM_ENABLED undefined"
+#endif

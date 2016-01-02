@@ -27,21 +27,22 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //	
 ///</summary>
 
+// roulette
 #include "pch.hh"
+#include "pragmas.hh"
 #include "error.hh"
 #include "sets.hh"
 
-#include <iostream>
+namespace
+{
+	// used in print functions
+	using std::cout;
+	using std::endl;
+	using std::to_string;
+}
 
 namespace roulette
 {
-	using std::cout;
-	using std::endl;
-
-	IErrorHandler::IErrorHandler(const std::string && derived_class) :
-		m_derived_class(derived_class)
-	{
-	}
 
 	void IErrorHandler::error_handler(const error && ref)
 	{
@@ -51,12 +52,12 @@ namespace roulette
 		throw(ref);
 	}
 
-	void IErrorHandler::print()
+	void IErrorHandler::print() noexcept
 	{
 		cout << endl;
 	}
 
-	void IErrorHandler::print(const std::string&& info, bool newline /*= false*/)
+	void IErrorHandler::print(const std::string&& info, bool newline /*= false*/) noexcept
 	{
 		if (newline)
 		{
@@ -67,40 +68,40 @@ namespace roulette
 		cout << info;
 	}
 
-	void IErrorHandler::print(const int&& info, bool newline /*= false*/)
+	void IErrorHandler::print(const int&& info, bool newline /*= false*/) noexcept
 	{
 		if (newline)
 		{
 			cout << endl;
-			cout << "-> " << std::to_string(info);
+			cout << "-> " << to_string(info);
 			return;
 		}
-		cout << std::to_string(info);
+		cout << to_string(info);
 	}
 
-	void IErrorHandler::print(const unsigned int info, bool newline /*= false*/)
+	void IErrorHandler::print(const uint16 info, bool newline /*= false*/) noexcept
 	{
 		if (newline)
 		{
 			cout << endl;
-			cout << "-> " << std::to_string(info);
+			cout << "-> " << to_string(info);
 			return;
 		}
-		cout << std::to_string(info);
+		cout << to_string(info);
 	}
 
-	void IErrorHandler::print(const unsigned long long&& info, bool newline /*= false*/)
+	void IErrorHandler::print(const uint64&& info, bool newline /*= false*/) noexcept
 	{
 		if (newline)
 		{
 			cout << endl;
-			cout << "-> " << std::to_string(info);
+			cout << "-> " << to_string(info);
 			return;
 		}
-		cout << std::to_string(info);
+		cout << to_string(info);
 	}
 
-	void IErrorHandler::print(const char* info, bool newline /*= false*/)
+	void IErrorHandler::print(const char* info, bool newline /*= false*/) noexcept
 	{
 		if (newline)
 		{
@@ -111,7 +112,7 @@ namespace roulette
 		cout << info;
 	}
 
-	void IErrorHandler::print(const unsigned char* info, bool newline /*= false*/)
+	void IErrorHandler::print(const unsigned char* info, bool newline /*= false*/) noexcept
 	{
 		if (newline)
 		{
@@ -122,26 +123,26 @@ namespace roulette
 		cout << info;
 	}
 
-	void IErrorHandler::print(EField& info, bool newline /*= false*/)
+	void IErrorHandler::print(EField& info, bool newline /*= false*/) noexcept
 	{
 		if (newline)
 		{
 			cout << endl;
-			cout << "-> " << std::to_string(static_cast<unsigned>(info));
+			cout << "-> " << to_string(static_cast<uint16>(info));
 			return;
 		}
-		cout << std::to_string(static_cast<unsigned>(info));
+		cout << to_string(static_cast<uint16>(info));
 	}
 
-	void IErrorHandler::print(EBet info, bool newline /*= false*/)
+	void IErrorHandler::print(EBet info, bool newline /*= false*/) noexcept
 	{
 		if (newline)
 		{
 			cout << endl;
-			cout << "-> " << std::to_string(static_cast<unsigned>(info));
+			cout << "-> " << to_string(static_cast<uint16>(info));
 			return;
 		}
-		cout << std::to_string(static_cast<unsigned>(info));
+		cout << to_string(static_cast<uint16>(info));
 	}
 
 } // namespace roulette

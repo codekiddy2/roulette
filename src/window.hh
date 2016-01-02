@@ -39,6 +39,8 @@ along with this program. If not, see http://www.gnu.org/licenses.
 #include "control.hh"
 #include "engine.hh"
 #include "infobar.hh"
+#include "wheel.hh"
+#include "racetrack.hh"
 
 // gtkmm
 #include <gtkmm/box.h>
@@ -69,6 +71,7 @@ namespace roulette
 		// members
 		Gtk::HBox m_HBoxTop;
 		Gtk::VBox m_VBoxArea;
+		Gtk::HBox m_HBoxTable;
 		Gtk::HBox m_HBoxControls;
 		Gtk::ButtonBox m_Chipset;
 		Gtk::ButtonBox m_Controlset;
@@ -96,6 +99,8 @@ namespace roulette
 		/// end of initializer list
 
 		History m_history;
+		Wheel m_wheel;
+		Racetrack m_racetrack;
 
 		// deleted
 		Window(const Window&) = delete;

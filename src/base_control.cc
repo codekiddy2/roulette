@@ -26,12 +26,16 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 #include "pch.hh"
+#include "pragmas.hh"
 #include "base_control.hh"
+
+namespace
+{
+	using std::string; // used in ctor
+}
 
 namespace roulette
 {
-	using std::string;
-
 	BaseControl::BaseControl(const string&& name) :
 		//The GType name will actually be gtkmm__CustomObject_Control
 		Glib::ObjectBase(name.c_str()),
@@ -43,10 +47,6 @@ namespace roulette
 	{
 		set_has_window(true);
 		m_layout->set_font_description(m_font);
-	}
-
-	BaseControl::~BaseControl()
-	{
 	}
 
 	// (optional) Return what Gtk::SizeRequestMode is preferred by the widget.

@@ -32,81 +32,45 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 // roulette
-#include "bet.hh"
-
-// std
-#include <vector>
-#include <memory>
-
-// gtkmm
-#include <gdkmm/types.h> // Gdk::Point
-#include <glibmm/refptr.h>
-#include <gdkmm/pixbuf.h>
-#include <gtkmm/targetentry.h>
+#include "types.hh"
 
 namespace roulette
 {
-	// TODO: use these types in declarations
-	typedef unsigned long ulong;
-	typedef unsigned short ushort;
-
-	// forward declarations
-	enum class ETable: unsigned;
-	enum class EChip: unsigned;
-
 	// drag and drop target entry shared by fields and chips
-	extern std::vector<Gtk::TargetEntry> dnd_targets;
+	extern type_dnd_targets dnd_targets;
 
 	// number of bits in a byte, used by drag and drop
 	extern const int format;
-
-	// type declaring a bet
-	typedef std::shared_ptr<Bet> type_bet;
-
-	// container type to store bets
-	typedef std::vector<type_bet> type_bet_container;
-
-	// type declaring a pixbuf icon for a chip
-	typedef Glib::RefPtr<Gdk::Pixbuf> type_chip_icon;
-
-	// type declaring a a pair which makes a chip
-	typedef std::pair<const EChip, Gdk::Point> type_chip_pair; // TODO: Bet uses their own typedef
-
-	// type declaring a container of chips
-	typedef std::vector<type_chip> type_chip_container;
-
-	// type declaring a final chip type
-	typedef std::shared_ptr<type_chip_pair> type_chip;
 
 	// return chip pixbuf associated with the chip enum
 	type_chip_icon get_pixbuf(EChip ref);
 
 	// return true if number is red
-	bool is_red(const unsigned number);
+	bool is_red(const uint16 number) noexcept;
 
 	// return true if number is black
-	bool is_black(const unsigned number);
+	bool is_black(const uint16 number) noexcept;
 
 	// return true if number is green
-	bool is_green(const unsigned number);
+	bool is_green(const uint16 number) noexcept;
 
 	// return to which columns a field enum index belongs
-	unsigned which_column(EField field);
+	uint16 which_column(EField field) noexcept;
 
 	// return to which column a number belongs
-	unsigned which_column(const unsigned number);
+	uint16 which_column(const uint16 number) noexcept;
 
 	// return to which dozen a number belongs
-	unsigned which_dozen(const unsigned number);
+	uint16 which_dozen(const uint16 number) noexcept;
 
 	// return neighboring number on roulette wheel, distance determined by position
-	unsigned get_neighbor(const ETable table, const unsigned refNum, const unsigned position);
+	uint16 get_neighbor(const ETable table, const uint16 refNum, const uint16 position);
 
 	// return current pixel size of chips
-	int get_chipsize();
+	int get_chipsize() noexcept;
 
 	// set pixel size of chips
-	void set_chipsize(const int size);
+	void set_chipsize(const int size) noexcept;
 
 } // namespace roulette
 

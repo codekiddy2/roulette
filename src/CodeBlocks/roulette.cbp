@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="roulette" />
+		<Option pch_mode="0" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug x64">
+				<Option output="../../solutions/x64/Debug/CB/bin/roulette" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../../solutions/x64/Debug/CB/obj" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Option projectCompilerOptionsRelation="1" />
+				<Compiler>
+					<Add option="-std=c++11" />
+					<Add option="-g" />
+					<Add option="-mms-bitfields" />
+					<Add option="-pthread" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/gtkmm-3.0" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/lib/gtkmm-3.0/include" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/atkmm-1.6" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/gdkmm-3.0" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/lib/gdkmm-3.0/include" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/giomm-2.4" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/lib/giomm-2.4/include" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/pangomm-1.4" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/lib/pangomm-1.4/include" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/glibmm-2.4" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/lib/glibmm-2.4/include" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/gtk-3.0" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/cairo" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/pango-1.0" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/atk-1.0" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/cairomm-1.0" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/lib/cairomm-1.0/include" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/pixman-1" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/freetype2" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/libpng16" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/harfbuzz" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/glib-2.0" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/lib/glib-2.0/include" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/sigc++-2.0" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/lib/sigc++-2.0/include" />
+					<Add option="-isystem$(INCLUDE_DIR)/mingw64/include/gdk-pixbuf-2.0" />
+					<Add option="-DWINVER=0x0A00" />
+					<Add option="-D_WIN32_WINNT=0x0A00" />
+					<Add option="-DATKMM_DISABLE_DEPRECATED=1" />
+					<Add option="-DGDKMM_DISABLE_DEPRECATED=1" />
+					<Add option="-DGTKMM_DISABLE_DEPRECATED=1" />
+					<Add option="-DGIOMM_DISABLE_DEPRECATED=1" />
+					<Add option="-DGLIBMM_DISABLE_DEPRECATED=1" />
+					<Add option="-DSIGCXX_DISABLE_DEPRECATED=1" />
+					<Add option="-DCAIROMM_DISABLE_DEPRECATED=1" />
+					<Add option="-DPANGOMM_DISABLE_DEPRECATED=1" />
+				</Compiler>
+				<Linker>
+					<Add option="-L/mingw64/lib" />
+					<Add option="-lgtkmm-3.0" />
+					<Add option="-latkmm-1.6" />
+					<Add option="-lgdkmm-3.0" />
+					<Add option="-lgiomm-2.4" />
+					<Add option="-lpangomm-1.4" />
+					<Add option="-lglibmm-2.4" />
+					<Add option="-lgtk-3" />
+					<Add option="-lgdk-3" />
+					<Add option="-lgdi32" />
+					<Add option="-limm32" />
+					<Add option="-lshell32" />
+					<Add option="-lole32" />
+					<Add option="-Wl,-luuid" />
+					<Add option="-lwinmm" />
+					<Add option="-ldwmapi" />
+					<Add option="-lz -lepoxy" />
+					<Add option="-lpangocairo-1.0" />
+					<Add option="-lpangoft2-1.0" />
+					<Add option="-lpangowin32-1.0" />
+					<Add option="-lgdi32 -lusp10" />
+					<Add option="-lpango-1.0 -lm" />
+					<Add option="-latk-1.0" />
+					<Add option="-lcairo-gobject" />
+					<Add option="-lgio-2.0 -lz" />
+					<Add option="-lcairomm-1.0" />
+					<Add option="-lcairo" />
+					<Add option="-lz" />
+					<Add option="-lpixman-1" />
+					<Add option="-lfontconfig" />
+					<Add option="-lexpat" />
+					<Add option="-lfreetype" />
+					<Add option="-liconv" />
+					<Add option="-lbz2" />
+					<Add option="-lharfbuzz" />
+					<Add option="-lpng16" />
+					<Add option="-lsigc-2.0" />
+					<Add option="-lgdk_pixbuf-2.0" />
+					<Add option="-lgmodule-2.0" />
+					<Add option="-pthread" />
+					<Add option="-lgobject-2.0" />
+					<Add option="-lffi" />
+					<Add option="-lglib-2.0" />
+					<Add option="-lintl" />
+					<Add option="-lws2_32" />
+					<Add option="-lshlwapi" />
+					<Add option="-llibboost_system-mt" />
+					<Add option="-llibboost_filesystem-mt" />
+					<Add option="-llibboost_random-mt" />
+					<Add directory="D:/Github/Install/msys64" />
+				</Linker>
+				<Environment>
+					<Variable name="INCLUDE_DIR" value="D:\Github\Install\msys64" />
+				</Environment>
+			</Target>
+		</Build>
+		<Linker>
+			<Add option="-L/mingw64/lib" />
+			<Add option="-lgtkmm-3.0" />
+			<Add option="-latkmm-1.6" />
+			<Add option="-lgdkmm-3.0" />
+			<Add option="-lgiomm-2.4" />
+			<Add option="-lpangomm-1.4" />
+			<Add option="-lglibmm-2.4" />
+			<Add option="-lgtk-3" />
+			<Add option="-lgdk-3" />
+			<Add option="-lgdi32" />
+			<Add option="-limm32" />
+			<Add option="-lshell32" />
+			<Add option="-lole32" />
+			<Add option="-Wl,-luuid" />
+			<Add option="-lwinmm" />
+			<Add option="-ldwmapi" />
+			<Add option="-lz" />
+			<Add option="-lepoxy" />
+			<Add option="-lpangocairo-1.0" />
+			<Add option="-lpangoft2-1.0" />
+			<Add option="-lpangowin32-1.0" />
+			<Add option="-lgdi32 -lusp10" />
+			<Add option="-lpango-1.0 -lm" />
+			<Add option="-latk-1.0" />
+			<Add option="-lcairo-gobject" />
+			<Add option="-lgio-2.0 -lz" />
+			<Add option="-lcairomm-1.0" />
+			<Add option="-lcairo" />
+			<Add option="-lpixman-1" />
+			<Add option="-lfontconfig" />
+			<Add option="-lexpat" />
+			<Add option="-lfreetype" />
+			<Add option="-liconv" />
+			<Add option="-lbz2" />
+			<Add option="-lharfbuzz" />
+			<Add option="-lpng16" />
+			<Add option="-lsigc-2.0" />
+			<Add option="-lgdk_pixbuf-2.0" />
+			<Add option="-lgmodule-2.0" />
+			<Add option="-pthread" />
+			<Add option="-lgobject-2.0" />
+			<Add option="-lffi" />
+			<Add option="-lglib-2.0" />
+			<Add option="-lintl" />
+			<Add option="-lws2_32" />
+			<Add option="-lshlwapi" />
+			<Add option="-llibboost_system-mt" />
+			<Add option="-llibboost_filesystem-mt" />
+			<Add option="-llibboost_random-mt" />
+		</Linker>
+		<Unit filename="../base_control.cc" />
+		<Unit filename="../base_control.hh" />
+		<Unit filename="../bet.cc" />
+		<Unit filename="../bet.hh" />
+		<Unit filename="../chip.cc" />
+		<Unit filename="../chip.hh" />
+		<Unit filename="../color.cc" />
+		<Unit filename="../color.hh" />
+		<Unit filename="../control.cc" />
+		<Unit filename="../control.hh" />
+		<Unit filename="../engine.cc" />
+		<Unit filename="../engine.hh" />
+		<Unit filename="../error.cc" />
+		<Unit filename="../error.hh" />
+		<Unit filename="../field.cc" />
+		<Unit filename="../field.hh" />
+		<Unit filename="../gcc.hh" />
+		<Unit filename="../history.cc" />
+		<Unit filename="../history.hh" />
+		<Unit filename="../icons/chip1.ico" />
+		<Unit filename="../icons/chip100.ico" />
+		<Unit filename="../icons/chip25.ico" />
+		<Unit filename="../icons/chip5.ico" />
+		<Unit filename="../icons/chip50.ico" />
+		<Unit filename="../icons/eraser.ico" />
+		<Unit filename="../icons/roulette.ico" />
+		<Unit filename="../infobar.cc" />
+		<Unit filename="../infobar.hh" />
+		<Unit filename="../main.cc" />
+		<Unit filename="../main.hh" />
+		<Unit filename="../pch.cc" />
+		<Unit filename="../pch.hh">
+			<Option compile="1" />
+			<Option weight="0" />
+		</Unit>
+		<Unit filename="../pragmas.hh" />
+		<Unit filename="../sets.cc" />
+		<Unit filename="../sets.hh" />
+		<Unit filename="../table.cc" />
+		<Unit filename="../table.hh" />
+		<Unit filename="../types.cc" />
+		<Unit filename="../types.hh" />
+		<Unit filename="../window.cc" />
+		<Unit filename="../window.hh" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

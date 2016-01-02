@@ -1,4 +1,3 @@
-
 /*
 roulette - roulette simulation program
 
@@ -20,19 +19,40 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 ///<summary>
 //
-//	color.cc
+//	racetrack.cc
 //
-//	Definition of Color class
+//	Definition of Racetrack class
+//
+// TODO: add description
 //
 ///</summary>
 
+// roulette
 #include "pch.hh"
-#include "pragmas.hh"
+#include "racetrack.hh"
 #include "color.hh"
+
+namespace
+{
+
+}
 
 namespace roulette
 {
-	Gdk::RGBA Color::m_background("rgb(0, 102, 0)");
-	Gdk::RGBA Color::m_foreground("rgb(255, 255, 255)");
+	Racetrack::Racetrack() :
+		IErrorHandler("Wheel")
+	{
+		set_size_request(500, 100);
+	}
 
-} // namespace roulette
+	bool Racetrack::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+	{
+		Gtk::Allocation alloc = get_allocation();
+
+		Gdk::Cairo::set_source_rgba(cr, Gdk::RGBA("Yellow"));// Color::get_background_color());
+
+		cr->paint();
+
+		return true;
+	}
+}

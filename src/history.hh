@@ -53,7 +53,7 @@ namespace roulette
 		History();
 
 		// set spin result to history
-		void set_result(unsigned result);
+		void set_result(uint16 result);
 
 	private:
 		// apply formating tags, background and foreground color

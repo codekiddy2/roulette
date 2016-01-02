@@ -28,11 +28,16 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 // roulette
 #include "pch.hh"
-#include "field.hh"
+#include "pragmas.hh"
 #include "table.hh"
+#include "field.hh"
+#include "sets.hh"
 
-// gtkmm
-#include <gtkmm/messagedialog.h>
+namespace
+{
+	using std::get; // to extract type_chip_tuple
+	using std::make_pair; // to make EField Field pair
+}
 
 namespace roulette
 {
@@ -41,14 +46,11 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
-	using std::endl;
-	using std::cout;
-	using std::make_pair;
 
 	Table::Table(const ETable table_type) :
 		IErrorHandler("Table"),
-		m_tablemax(0),
 		m_tabletype(table_type),
+		m_tablemax(0),
 		m_totalbets(0)
 	{
 		set_column_homogeneous(true);
@@ -56,14 +58,14 @@ namespace roulette
 
 		// create fields
 		EField temp;
-		for (size_t i = 0; i < static_cast<size_t>(EField::Dummy3); i++)
+		for (uint64 i = 0; i < static_cast<uint64>(EField::Dummy3); i++)
 		{
 			temp = static_cast<EField>(i);
 			m_fields.insert(make_pair(temp, new Field(temp, this)));
 		}
 		// TODO: check if any signals are connected more than once,
 		//ex: debug output how many times handlers get called per chip placed (should be twice at most - drawing and bet signal)
-	
+
 		// get dozens and their neighbors on top (column1) (will be used later, forward declaration.
 		auto zerro = m_fields.find(EField::Number0)->second;
 		auto number1 = m_fields.find(EField::Number1)->second;
@@ -124,9 +126,9 @@ namespace roulette
 			col3 = 3, // number from roulette column3 = 3
 			col = 1; // the acctual vertical column according to Gtk::Grid / or street acording to roulette table
 			col3 <= 36; // using roulette column3 here, it's the same as col2 <= 35 or col3 <= 34
-			col1 += 3, // increase number from roulete table column1 by 3 
-			col2 += 3, // increase number from roulete table column2 by 3 
-			col3 += 3, // increase number from roulete table column3 by 3 
+			col1 += 3, // increase number from roulete table column1 by 3
+			col2 += 3, // increase number from roulete table column2 by 3
+			col3 += 3, // increase number from roulete table column3 by 3
 			++col) // iterate street by street
 		{
 			// attach current street beginning from top to bottom
@@ -605,25 +607,28 @@ namespace roulette
 		}
 	}
 
-	bool Table::check_limits(type_chip_container& chips, type_chip& chip, EBet bet_type)
+	bool Table::check_limits(type_chip_container& chips, type_chip& chip)
 	{
-		auto limit = m_maximums.find(bet_type);
+		auto limit = m_maximums.find(get<2>(*chip));
 		if (limit == m_maximums.end())
 		{
 			error_handler(error("limit for this bet type not defined"));
 		}
-		unsigned current_bet = static_cast<unsigned>(chip->first);
+		uint16 current_bet = static_cast<uint16>(get<0>(*chip));
 
 		for (auto iter : chips)
 		{
-			if (iter->second.equal(chip->second))
+			// we need to compare points, since there are 4 splits or corners inside a field.
+			if (get<1>(*iter).equal(get<1>(*chip)))
 			{
-				current_bet += static_cast<unsigned>(iter->first);
+				current_bet += static_cast<uint16>(get<0>(*iter));
 			}
 		}
 
 		if (current_bet > limit->second)
 		{
+			get<2>(*chip) = EBet::LIMIT_EXCEEDED;
+
 			Gtk::Window* top_window = dynamic_cast<Gtk::Window*>(get_toplevel());
 
 			if (top_window->get_is_toplevel())
@@ -645,7 +650,15 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
-	void Table::set_debug(bool debug)
+	void Table::on_signal_spin(uint16 result)
+	{
+		for (auto iter : m_fields)
+		{
+			iter.second->on_signal_spin(result);
+		}
+	}
+
+	void Table::set_debug(bool debug) noexcept
 	{
 		for (auto pair : m_fields)
 		{
@@ -653,7 +666,7 @@ namespace roulette
 		}
 	}
 
-	void Table::set_table_max(const unsigned& limit /*= 0*/)
+	void Table::set_table_max(const uint32& limit /*= 0*/)
 	{
 		Gtk::Window* top_window = dynamic_cast<Gtk::Window*>(get_toplevel());
 
@@ -668,12 +681,7 @@ namespace roulette
 				dialog.run();
 				return;
 			}
-			else if (limit < 0)
-			{
-				dialog.set_secondary_text("Limit can't be negative");
-				dialog.run();
-				return;
-			}
+
 			auto iter = m_maximums.find(EBet::Red);
 			if (iter != m_maximums.end())
 			{
@@ -688,73 +696,25 @@ namespace roulette
 				m_tablelimit = limit;
 			}
 		} // if is_toplevel
-		else error_handler(error("ERROR: get_toplevel did not return a top level window"));
-	}
-
-	void Table::print_properties() const
-	{
-		cout << "Table properties" << endl;
-		cout << "**************************" << endl << endl;
-		cout << "Layout	";
-		switch (m_tabletype)
+		else
 		{
-		case ETable::NoZero:
-			cout << "	No zerro" << endl;
-			break;
-		case ETable::American:
-			cout << "	American" << endl;
-			break;
-		case ETable::European:
-			cout << "	European" << endl;
-			break;
-		case ETable::French:
-			cout << "	French ";
-			switch (m_tabletype)
-			{
-			case ETable::SingleImprisonment:
-				cout << "single imprisonment" << endl;
-				break;
-			case ETable::DoubleImprisonment:
-				cout << "double imprisonment" << endl;
-				break;
-			case ETable::TripleImprisonment:
-				cout << "triple imprisonment" << endl;
-				break;
-			case ETable::InfininiteImprisonment:
-				cout << "infinite imprisonment" << endl;
-				break;
-			default:
-				cout << endl;
-				break;
-			} //single zero table
-			cout << "Maximum bets    " << m_totalbets << endl;
-			break;
+			error_handler(error("ERROR: get_toplevel did not return a top level window"));
 		}
-		cout << "Inside min.	" << m_minimums.at(EMinimum::Inside) << endl;
-		cout << "Outside min.	" << m_minimums.at(EMinimum::Outside) << endl;
-		cout << "Table min.	" << m_minimums.at(EMinimum::Table) << endl;
-		cout << "Table max.	" << m_tablemax << endl;
-		cout << "StraightUp	" << m_maximums.at(EBet::StraightUp) << endl;
-		cout << "Split		" << m_maximums.at(EBet::Split) << endl;
-		cout << "Street		" << m_maximums.at(EBet::Street) << endl;
-		cout << "Corner		" << m_maximums.at(EBet::Corner) << endl;
-		cout << "Basket		" << m_maximums.at(EBet::Basket) << endl;
-		cout << "Line		" << m_maximums.at(EBet::Line) << endl;
-		cout << "Column/Dozen	" << m_maximums.at(EBet::Column1) << endl;
-		cout << "EvenMoney	" << m_maximums.at(EBet::Red) << endl;
 	}
 
-	unsigned Table::get_limit(const EBet& name)
+	uint16 Table::get_limit(const EBet& name)
 	{
 		if ((m_maxiter = m_maximums.find(name)) == m_maximums.end())
+		{
 			error_handler(error("Table -> get_limit -> iterator out of range"));
-
+		}
 		return m_maxiter->second;
 	}
 
-	unsigned Table::get_minimum(const EMinimum & minimum)
+	uint16 Table::get_minimum(const EMinimum & minimum)
 	{
 		auto iter = m_minimums.find(minimum);
+
 		if (iter == m_minimums.end())
 		{
 			error_handler(error("Table -> get_minimum -> minimum not found"));
@@ -762,19 +722,28 @@ namespace roulette
 		return iter->second;
 	}
 
-	void Table::set_minimum(const EMinimum& name, const unsigned& minimum)
+	void Table::set_minimum(const EMinimum& name, const uint16& minimum)
 	{
-		if (name == EMinimum::Table && (minimum < 0))
-			error_handler(error("Table -> set_minimum -> Table minimum less then 0"));
-
-		minimum > 1 ? m_minimums.find(name)->second = minimum :
-			error_handler(error("Table -> set_minimum -> Bet minimum less then 1"));
+		if (minimum > 1)
+      {
+         m_minimums.find(name)->second = minimum;
+      }
+      else
+      {
+         error_handler(error("Table -> set_minimum -> Bet minimum less then 1"));
+      }
 	}
 
-	void Table::set_maximum(const EBet& name, const unsigned& limit)
+	void Table::set_maximum(const EBet& name, const uint16& limit)
 	{
-		(m_maxiter = m_maximums.find(name)) != m_maximums.end() ? m_maxiter->second = limit :
-			error_handler(error("Table -> set_maximum -> Iterator out of range"));
+		if ((m_maxiter = m_maximums.find(name)) != m_maximums.end())
+      {
+         m_maxiter->second = limit;
+      }
+      else
+      {
+         error_handler(error("Table -> set_maximum -> Iterator out of range"));
+      }
 	}
 
 #ifdef _MSC_VER

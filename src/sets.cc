@@ -26,16 +26,15 @@ along with this program. If not, see http://www.gnu.org/licenses.
 //
 ///</summary>
 
+// roulette
 #include "pch.hh"
+#include "pragmas.hh"
 #include "sets.hh"
 
-#define MAKE_SET(...) \
-   make_shared<type_raw_set>(type_raw_set{ __VA_ARGS__ });
+#define MAKE_SET(...) std::make_shared<type_raw_set>(type_raw_set{ __VA_ARGS__ })
 
 namespace roulette
 {
-	using std::make_shared;
-
 	type_set Corner0 = MAKE_SET({ 0, 1, 2, 3 });
 	type_set Basket = MAKE_SET({ 0,37,1,2,3 });
 
@@ -72,7 +71,7 @@ namespace roulette
 	type_set Street3 = MAKE_SET({ 7, 8, 9});
 	type_set Street4 = MAKE_SET({ 10, 11, 12});
 	type_set Street5 = MAKE_SET({ 13, 14, 15});
-	type_set Street6 = MAKE_SET({ 15, 17, 18});
+	type_set Street6 = MAKE_SET({ 16, 17, 18});
 	type_set Street7 = MAKE_SET({ 19, 20, 21});
 	type_set Street8 = MAKE_SET({ 22, 23, 24});
 	type_set Street9 = MAKE_SET({ 25, 26, 27});

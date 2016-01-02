@@ -27,15 +27,17 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 // roulette
 #include "pch.hh"
+#include "pragmas.hh"
 #include "infobar.hh"
 #include "engine.hh"
 #include "table.hh"
 
-// std
-#include <string>
-using std::to_string;
-
-#include <utility>
+namespace
+{
+	using std::string; // used in on_update
+	using std::to_string; // used in ctor
+	using std::make_pair; // used in ctor
+}
 
 namespace roulette
 {
@@ -43,10 +45,6 @@ namespace roulette
 #ifdef _MSC_VER
 #pragma region
 #endif // _MSC_VER
-
-	using std::string;
-	using std::to_string;
-	using std::make_pair;
 
 	InfoBar::InfoBar(Engine* p_engine, Table* p_table) :
 		IErrorHandler("InfoBar"),
@@ -90,6 +88,7 @@ namespace roulette
 
 #ifdef _MSC_VER
 #pragma endregion begin
+
 #pragma region
 #endif // _MSC_VER
 

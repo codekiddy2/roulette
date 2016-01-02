@@ -27,14 +27,17 @@ along with this program. If not, see http://www.gnu.org/licenses.
 
 // roulette
 #include "pch.hh"
+#include "pragmas.hh"
 #include "engine.hh"
-#include "main.hh"
 #include "table.hh"
+#include "bet.hh"
 
-// std
-#include <algorithm>
-using std::equal;
-using std::find;
+namespace
+{
+	using std::equal; // used to compare selection of numbers
+	using std::find; // used in spin to search for numbers
+	using boost::random::random_device; // boost rng
+}
 
 namespace roulette
 {
@@ -43,9 +46,9 @@ namespace roulette
 #pragma region
 #endif // _MSC_VER
 
-	boost::random::random_device Engine::m_rng;
+	random_device Engine::m_rng;
 
-	Engine::Engine() :
+	Engine::Engine() noexcept :
 		IErrorHandler("Engine"),
 		m_spin_in_progress(false),
 		m_current_bet(0),
@@ -59,6 +62,19 @@ namespace roulette
 
 #pragma region
 #endif // _MSC_VER
+
+	type_set Engine::get_numbers() const noexcept
+	{
+		// if bets are cleared from the table return nullptr
+		if (m_bets.empty())
+		{
+			return nullptr;
+		}
+		else
+		{
+			return m_bets.back()->get_selection();
+		}
+	}
 
 	void Engine::place_bet(type_bet bet)
 	{
@@ -146,7 +162,7 @@ namespace roulette
 
 	void Engine::spin(const ETable table_type)
 	{
-		typedef boost::random::uniform_smallint<> type_dist;
+		typedef boost::random::uniform_smallint<uint16> type_dist;
 
 		switch (table_type)
 		{
@@ -155,10 +171,10 @@ namespace roulette
 			break;
 		case ETable::European:
 		{
-			static type_dist dist(0, static_cast<int>(EuropeanWheel->size()));
-			int result = dist(Engine::m_rng);
+			static type_dist dist(0, static_cast<uint16>(EuropeanWheel->size()));
+			uint16 result = dist(Engine::m_rng);
 
-			unsigned win = 0;
+			uint16 win = 0;
 			type_set current = nullptr;
 
 			for (auto iter : m_bets)
@@ -320,6 +336,7 @@ namespace roulette
 
 			m_bankroll += win;
 			m_spin_in_progress = true;
+			m_bets_saved = m_bets;
 			signal_spin.emit(result);
 			break;
 		}
@@ -334,7 +351,7 @@ namespace roulette
 		}
 	}
 
-	void Engine::clear_all_bets()
+	void Engine::clear_all_bets() noexcept
 	{
 		if (!m_bets.empty())
 		{
@@ -349,7 +366,6 @@ namespace roulette
 
 			m_current_bet = 0;
 			m_last_bet = 0;
-			m_bets_saved = m_bets;
 			m_bets.clear();
 
 			if (m_debug)
@@ -415,7 +431,7 @@ namespace roulette
 			m_last_bet = 0;
 		}
 
-		m_bets_saved = m_bets;
+		/*m_bets_saved = m_bets;*/
 
 		if (m_debug)
 			print();
@@ -432,11 +448,12 @@ namespace roulette
 
 	bool Engine::double_bets(Table* p_table)
 	{
-		unsigned total = 0;
+		uint16 total = 0;
+		uint32 table_limit = p_table->get_table_limit();
 		for (auto iter : m_bets)
 		{
 			total += iter->get_chip_value() * 2;
-			if (total > p_table->get_table_limit() || total > m_bankroll)
+			if (total > table_limit || total > m_bankroll)
 			{
 				return true;
 			}
@@ -446,7 +463,7 @@ namespace roulette
 
 		for (auto main = m_bets.begin(); main != m_bets.end(); ++main)
 		{
-			unsigned main_value = main->get()->get_chip_value() * 2;
+			uint16 main_value = main->get()->get_chip_value() * 2;
 			auto main_bet = main->get()->get_id();
 			auto main_selection = main->get()->get_selection();
 			temp.push_back(*main);
@@ -454,7 +471,7 @@ namespace roulette
 			// check how many same bets there are, and sum their duplicate value
 			for (auto iter = main + 1; iter != m_bets.end(); ++iter)
 			{
-				unsigned iter_value = iter->get()->get_chip_value() * 2;
+				uint16 iter_value = iter->get()->get_chip_value() * 2;
 				auto iter_bet = iter->get()->get_id();
 				auto iter_selection = iter->get()->get_selection();
 				
@@ -466,7 +483,7 @@ namespace roulette
 					// we achieve this during bet construction in signal handlers while emiting
 					if (equal(main_selection->begin(), main_selection->end(), iter_selection->begin()))
 					{
-						// if duplicate value for same bet (on same field) if grater than limit for the field
+						// if duplicate value for same bet (on same field) is grater than limit for the field
 						main_value += iter_value;
 						if (main_value > p_table->get_limit(main_bet))
 							return true;
@@ -496,44 +513,3 @@ namespace roulette
 #endif // _MSC_VER
 
 } // namespace roulette
-
-//
-//switch (main_bet)
-//{
-//case roulette::EBet::StraightUp:
-//	break;
-//case roulette::EBet::Split:
-//	break;
-//case roulette::EBet::Street:
-//	break;
-//case roulette::EBet::Corner:
-//	break;
-//case roulette::EBet::Line:
-//	break;
-//case roulette::EBet::Column1:
-//	break;
-//case roulette::EBet::Column2:
-//	break;
-//case roulette::EBet::Column3:
-//	break;
-//case roulette::EBet::Dozen1:
-//	break;
-//case roulette::EBet::Dozen2:
-//	break;
-//case roulette::EBet::Dozen3:
-//	break;
-//case roulette::EBet::Red:
-//	break;
-//case roulette::EBet::Black:
-//	break;
-//case roulette::EBet::Even:
-//	break;
-//case roulette::EBet::Odd:
-//	break;
-//case roulette::EBet::High:
-//	break;
-//case roulette::EBet::Low:
-//	break;
-//default:
-//	break;
-//}

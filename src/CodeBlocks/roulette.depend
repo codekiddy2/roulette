@@ -1,0 +1,266 @@
+# depslib dependency file v1.0
+1451507465 source:d:\github\roulette\src\base_control.cc
+	"pch.hh"
+	"pragmas.hh"
+	"base_control.hh"
+
+1451507365 d:\github\roulette\src\pch.hh
+	"pragmas.hh"
+	<vector>
+	<string>
+	<algorithm>
+	<iostream>
+	<exception>
+	<cmath>
+	<utility>
+	<map>
+	<unordered_map>
+	<memory>
+	<tuple>
+	<cstdint>
+	<gtkmm.h>
+	<gtkmm/gdkmm.h>
+	<glibmm/giomm.h>
+	<glibmm/glibmm.h>
+	<atkmm.h>
+	<pangomm.h>
+	<sigc++/sigc++.h>
+	<cairomm/cairomm.h>
+	<goocanvasmm.h>
+	<boost/random.hpp>
+	<boost/filesystem.hpp>
+	<boost/random/random_device.hpp>
+	<boost/uuid/uuid.hpp>
+	<boost/uuid/uuid_generators.hpp>
+
+1451483668 d:\github\roulette\src\base_control.hh
+	"error.hh"
+	"color.hh"
+	<gtkmm/widget.h>
+	<glibmm/refptr.h>
+	<pangomm/layout.h>
+	<pangomm/fontdescription.h>
+	<gdkmm/window.h>
+	<gdkmm/rectangle.h>
+	<cairomm/refptr.h>
+	<cairomm/context.h>
+
+1451469081 d:\github\roulette\src\error.hh
+	"types.hh"
+	<string>
+	<exception>
+
+1451483672 d:\github\roulette\src\types.hh
+	<map>
+	<tuple>
+	<vector>
+	<memory>
+	<cstdint>
+	<sigc++/signal.h>
+	<gdkmm/types.h>
+	<glibmm/refptr.h>
+	<gdkmm/pixbuf.h>
+	<pangomm/layout.h>
+	<gtkmm/targetentry.h>
+
+1451321349 d:\github\roulette\src\color.hh
+	<gdkmm/rgba.h>
+
+1451507465 source:d:\github\roulette\src\bet.cc
+	"pch.hh"
+	"pragmas.hh"
+	"bet.hh"
+	"chip.hh"
+
+1451341342 d:\github\roulette\src\bet.hh
+	"error.hh"
+	"main.hh"
+	"sets.hh"
+
+1451340348 d:\github\roulette\src\main.hh
+	"types.hh"
+
+1451339759 d:\github\roulette\src\sets.hh
+	"types.hh"
+
+1451341342 d:\github\roulette\src\chip.hh
+	"base_control.hh"
+
+1451507465 source:d:\github\roulette\src\chip.cc
+	"pch.hh"
+	"pragmas.hh"
+	"chip.hh"
+	"engine.hh"
+	"sets.hh"
+
+1451341033 d:\github\roulette\src\engine.hh
+	"error.hh"
+	"main.hh"
+	"sets.hh"
+	<boost/random/random_device.hpp>
+
+1451507465 source:d:\github\roulette\src\color.cc
+	"pch.hh"
+	"pragmas.hh"
+	"color.hh"
+
+1451507465 source:d:\github\roulette\src\control.cc
+	"pch.hh"
+	"pragmas.hh"
+	"control.hh"
+
+1450757041 d:\github\roulette\src\control.hh
+	"base_control.hh"
+
+1451507465 source:d:\github\roulette\src\engine.cc
+	"pch.hh"
+	"pragmas.hh"
+	"engine.hh"
+	"table.hh"
+	"bet.hh"
+
+1451340140 d:\github\roulette\src\table.hh
+	"error.hh"
+	"main.hh"
+	<gtkmm/grid.h>
+
+1451507465 source:d:\github\roulette\src\error.cc
+	"pch.hh"
+	"pragmas.hh"
+	"error.hh"
+	"sets.hh"
+
+1451507465 source:d:\github\roulette\src\field.cc
+	"pch.hh"
+	"pragmas.hh"
+	"field.hh"
+	"table.hh"
+	"color.hh"
+	"engine.hh"
+	"bet.hh"
+
+1451405895 d:\github\roulette\src\field.hh
+	"error.hh"
+	"main.hh"
+	<gtkmm/widget.h>
+	<gtkmm/selectiondata.h>
+	<glibmm/refptr.h>
+	<pangomm/layout.h>
+	<pangomm/fontdescription.h>
+	<gdkmm/rgba.h>
+	<gdkmm/dragcontext.h>
+	<gdkmm/window.h>
+	<gdkmm/rectangle.h>
+	<cairomm/refptr.h>
+	<cairomm/context.h>
+	<gdkmm/event.h>
+	<gtkmm/tooltip.h>
+
+1451507465 source:d:\github\roulette\src\history.cc
+	"pch.hh"
+	"pragmas.hh"
+	"history.hh"
+	"main.hh"
+
+1451340561 d:\github\roulette\src\history.hh
+	"error.hh"
+	<gtkmm/box.h>
+	<glibmm/refptr.h>
+	<gtkmm/textview.h>
+	<gtkmm/textbuffer.h>
+	<gtkmm/scrolledwindow.h>
+
+1451507465 source:d:\github\roulette\src\infobar.cc
+	"pch.hh"
+	"pragmas.hh"
+	"infobar.hh"
+	"engine.hh"
+	"table.hh"
+
+1451477066 d:\github\roulette\src\infobar.hh
+	"error.hh"
+	"main.hh"
+	<glibmm/refptr.h>
+	<cairomm/context.h>
+	<gdkmm/rgba.h>
+	<pangomm/font.h>
+	<pangomm/layout.h>
+	<gtkmm/drawingarea.h>
+	<gdkmm/window.h>
+
+1451507465 source:d:\github\roulette\src\main.cc
+	"pch.hh"
+	"pragmas.hh"
+	"window.hh"
+
+1451129180 d:\github\roulette\src\window.hh
+	"table.hh"
+	"history.hh"
+	"chip.hh"
+	"control.hh"
+	"engine.hh"
+	"infobar.hh"
+	<gtkmm/box.h>
+	<gtkmm/window.h>
+	<gdkmm/pixbuf.h>
+	<gdkmm/event.h>
+	<glibmm/refptr.h>
+
+1451507379 source:d:\github\roulette\src\pch.cc
+	"pch.hh"
+
+1451507465 source:d:\github\roulette\src\sets.cc
+	"pch.hh"
+	"pragmas.hh"
+	"sets.hh"
+
+1451507365 source:d:\github\roulette\src\pch.hh
+	"pragmas.hh"
+	<vector>
+	<string>
+	<algorithm>
+	<iostream>
+	<exception>
+	<cmath>
+	<utility>
+	<map>
+	<unordered_map>
+	<memory>
+	<tuple>
+	<cstdint>
+	<gtkmm.h>
+	<gtkmm/gdkmm.h>
+	<glibmm/giomm.h>
+	<glibmm/glibmm.h>
+	<atkmm.h>
+	<pangomm.h>
+	<sigc++/sigc++.h>
+	<cairomm/cairomm.h>
+	<goocanvasmm.h>
+	<boost/random.hpp>
+	<boost/filesystem.hpp>
+	<boost/random/random_device.hpp>
+	<boost/uuid/uuid.hpp>
+	<boost/uuid/uuid_generators.hpp>
+
+1451507465 source:d:\github\roulette\src\table.cc
+	"pch.hh"
+	"pragmas.hh"
+	"table.hh"
+	"field.hh"
+	"sets.hh"
+
+1451507465 source:d:\github\roulette\src\types.cc
+	"pch.hh"
+	"pragmas.hh"
+	"types.hh"
+
+1451507465 source:d:\github\roulette\src\window.cc
+	"pch.hh"
+	"pragmas.hh"
+	"window.hh"
+
+1451491172 d:\github\roulette\src\gcc.hh
+
+1451507282 d:\github\roulette\src\pragmas.hh
+

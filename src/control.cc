@@ -26,12 +26,16 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 #include "pch.hh"
+#include "pragmas.hh"
 #include "control.hh"
+
+namespace
+{
+	using std::string;
+}
 
 namespace roulette
 {
-	using std::string;
-
 	Control::Control(const string&& name) :
 		BaseControl(name.c_str())
 	{

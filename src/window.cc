@@ -26,7 +26,7 @@ along with this program. If not, see http://www.gnu.org/licenses.
 ///</summary>
 
 #include "pch.hh"
-#include "sets.hh"
+#include "pragmas.hh"
 #include "window.hh"
 
 namespace roulette
@@ -58,7 +58,7 @@ namespace roulette
 		m_BtnClear("Clear"),
 		m_BtnClose("Close"),
 		mp_engine(new Engine),
-		mp_table(new Table),
+		mp_table(new Table(ETable::European)),
 		m_infobar(mp_engine, mp_table),
 		m_Chip1(mp_engine, EChip::Chip1),
 		m_Chip5(mp_engine, EChip::Chip5),
@@ -83,9 +83,15 @@ namespace roulette
 
 		// PACKING from top to bottom
 		m_VBoxArea.pack_start(m_infobar, Gtk::PACK_SHRINK);
-		m_VBoxArea.pack_start(*mp_table, Gtk::PACK_EXPAND_WIDGET);
+		m_VBoxArea.pack_start(m_racetrack, Gtk::PACK_SHRINK);
+		m_VBoxArea.pack_start(m_HBoxTable, Gtk::PACK_EXPAND_WIDGET);
 		m_VBoxArea.pack_start(m_HBoxControls, Gtk::PACK_SHRINK);
 		m_VBoxArea.show_all();
+
+		// PACKING from right to left
+		m_HBoxTable.pack_start(m_wheel, Gtk::PACK_SHRINK);
+		m_HBoxTable.pack_start(*mp_table, Gtk::PACK_EXPAND_WIDGET);
+		m_HBoxTable.show_all();
 
 		// PACKING from right to left
 		m_HBoxControls.pack_end(m_Controlset, Gtk::PACK_SHRINK); // Controlset
@@ -125,6 +131,7 @@ namespace roulette
 		// signals connecting objects constructed by window
 		/// in this order
 		mp_engine->signal_spin.connect(sigc::mem_fun(m_history, &History::set_result));
+		mp_engine->signal_spin.connect(sigc::mem_fun(*mp_table, &Table::on_signal_spin));
 		mp_engine->signal_rebet.connect(sigc::mem_fun(m_infobar, &InfoBar::on_update));
 
 		/// in this order
@@ -170,7 +177,7 @@ namespace roulette
 		return true;
 	}
 
-	// sping 50 times
+	// double all bets
 	bool Window::on_button_x2(GdkEventButton* /*button_event*/)
 	{
 		if (mp_engine->double_bets(mp_table))
@@ -191,6 +198,7 @@ namespace roulette
 	// clear all chips from the table
 	bool Window::on_button_clear(GdkEventButton* /*button_event*/)
 	{
+		m_BtnRebet.set_sensitive(true);
 		mp_table->signal_clear_all.emit();
 		return true;
 	}
@@ -206,6 +214,7 @@ namespace roulette
 			dialog.run();
 			return false;
 		}
+		mp_table->signal_clear_all.emit();
 		mp_table->signal_rebet.emit();
 		mp_engine->rebet();
 		return true;
